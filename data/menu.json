@@ -1,0 +1,267 @@
+{
+  "currencySymbol": "₹",
+  "downloadMenuUrl": "#full-menu-pdf",
+  "categories": [
+    {
+      "id": "coffee-beverages",
+      "label": "Coffee & Beverages",
+      "description": "Specialty estate espresso, slow cold brews, and handcrafted signature coolers."
+    },
+    {
+      "id": "starters",
+      "label": "Starters",
+      "description": "Artisanal crostinis, fondue bowls, and crispy small bites for sharing."
+    },
+    {
+      "id": "mains",
+      "label": "Mains",
+      "description": "Hearty Continental plates, risottos, and wholesome European cafe bowls."
+    },
+    {
+      "id": "pizza-pasta",
+      "label": "Pizza & Pasta",
+      "description": "48-hour fermented crust pizzas and slow-simmered artisanal pasta."
+    },
+    {
+      "id": "desserts",
+      "label": "Desserts",
+      "description": "Classic Italian dolci, molten tarts, and sweet table finishers."
+    }
+  ],
+  "items": [
+    {
+      "id": "item-1",
+      "categoryId": "coffee-beverages",
+      "name": "Cielo Citrus Cold Brew",
+      "description": "Single-origin 18-hour cold brew infused with fresh orange zest and sparkling tonic.",
+      "price": 240,
+      "isVeg": true,
+      "tag": "Signature",
+      "image": "assets/images/dishes/orange-espresso-tonic.jpg"
+    },
+    {
+      "id": "item-2",
+      "categoryId": "coffee-beverages",
+      "name": "Sunset Spritzer Mocktail",
+      "description": "Vibrant layered mocktail featuring pomegranate reduction, citrus cordial, and crushed fresh mint.",
+      "price": 220,
+      "isVeg": true,
+      "tag": "Bestseller",
+      "image": "assets/images/dishes/sunset-mocktail.jpg"
+    },
+    {
+      "id": "item-3",
+      "categoryId": "coffee-beverages",
+      "name": "Artisan Caramel Flat White",
+      "description": "Double ristretto shot with velvety micro-foam, madagascar vanilla bean, and salted caramel drizzle.",
+      "price": 210,
+      "isVeg": true,
+      "tag": "Barista Pick",
+      "image": "assets/images/cafe/hero-table.jpg"
+    },
+    {
+      "id": "item-4",
+      "categoryId": "coffee-beverages",
+      "name": "Iced Shakerato Lemonade",
+      "description": "Vigorously shaken dark roast espresso over crushed ice with organic Sicilian lemon syrup.",
+      "price": 230,
+      "isVeg": true,
+      "tag": "Refreshing",
+      "image": "assets/images/cafe/interior-atmosphere.jpg"
+    },
+    {
+      "id": "item-5",
+      "categoryId": "coffee-beverages",
+      "name": "Spanish Cortado & Dark Mocha",
+      "description": "Balanced 1:1 espresso and silky textured milk with melted 70% dark Belgian cocoa.",
+      "price": 220,
+      "isVeg": true,
+      "tag": "Classic",
+      "image": "assets/images/cafe/all-day-spread.jpg"
+    },
+
+    {
+      "id": "item-6",
+      "categoryId": "starters",
+      "name": "Artisanal Burrata Bruschetta",
+      "description": "Charred sourdough baguette topped with ripe plum tomatoes, creamy stracciatella, Kalamata olives, and fresh basil.",
+      "price": 290,
+      "isVeg": true,
+      "tag": "Must Try",
+      "image": "assets/images/dishes/bruschetta-burrata.jpg"
+    },
+    {
+      "id": "item-7",
+      "categoryId": "starters",
+      "name": "Warm Cheese Fondue Platter",
+      "description": "Melted Gruyère and Emmental dip served with seasoned pita triangles, roasted broccoli florets, and herb croutons.",
+      "price": 380,
+      "isVeg": true,
+      "tag": "Chef Special",
+      "image": "assets/images/dishes/cheese-fondue-platter.jpg"
+    },
+    {
+      "id": "item-8",
+      "categoryId": "starters",
+      "name": "Crispy Peri-Peri Truffle Fries",
+      "description": "Hand-cut golden potato batons tossed in house spice rub, micro-greens, and served with garlic aioli.",
+      "price": 210,
+      "isVeg": true,
+      "tag": "Crowd Favorite",
+      "image": "assets/images/dishes/peri-peri-fries.jpg"
+    },
+    {
+      "id": "item-9",
+      "categoryId": "starters",
+      "name": "Classic Tomato Basil Crostini",
+      "description": "Toasted garlic sourdough slices crowned with slow-roasted cherry tomatoes, cold-pressed olive oil, and lime mist.",
+      "price": 260,
+      "isVeg": true,
+      "tag": "Italian Classic",
+      "image": "assets/images/dishes/bruschetta-carved.jpg"
+    },
+    {
+      "id": "item-10",
+      "categoryId": "starters",
+      "name": "Charred Cottage Cheese Skewers",
+      "description": "Soft Malai paneer cubes cured in sun-dried tomato pesto and grilled over open flame.",
+      "price": 320,
+      "isVeg": true,
+      "tag": "Tandoor Twist",
+      "image": "assets/images/cafe/hero-table.jpg"
+    },
+
+    {
+      "id": "item-11",
+      "categoryId": "mains",
+      "name": "Wild Mushroom Risotto Parmigiano",
+      "description": "Slow-stirred Arborio rice in Porcini mushroom broth, white wine reduction, finished with aged 24-month Parmigiano.",
+      "price": 420,
+      "isVeg": true,
+      "tag": "House Specialty",
+      "image": "assets/images/cafe/all-day-spread.jpg"
+    },
+    {
+      "id": "item-12",
+      "categoryId": "mains",
+      "name": "Rustic Tuscan Vegetable Stufato",
+      "description": "Slow-braised zucchini, bell peppers, baby aubergine, and chickpeas in rich pomodoro sauce with garlic sourdough.",
+      "price": 390,
+      "isVeg": true,
+      "tag": "Comfort Food",
+      "image": "assets/images/cafe/hero-table.jpg"
+    },
+    {
+      "id": "item-13",
+      "categoryId": "mains",
+      "name": "Creamy Polenta with Truffle Glaze",
+      "description": "Golden sweetcorn polenta cooked with butter and mascarpone, topped with charred greens and balsamic drizzle.",
+      "price": 370,
+      "isVeg": true,
+      "tag": "Gluten-Free",
+      "image": "assets/images/dishes/bruschetta-artisan.jpg"
+    },
+    {
+      "id": "item-14",
+      "categoryId": "mains",
+      "name": "Cielo Mediterranean Mezze Bowl",
+      "description": "Warm falafel patties, beetroot hummus, herb tabbouleh, marinated olives, and toasted pita crisps.",
+      "price": 360,
+      "isVeg": true,
+      "tag": "All-Day Bowl",
+      "image": "assets/images/dishes/cheese-fondue-platter.jpg"
+    },
+
+    {
+      "id": "item-15",
+      "categoryId": "pizza-pasta",
+      "name": "Spaghetti Pomodoro E Basilico",
+      "description": "Bronze-cut spaghetti twirled in sweet San Marzano tomato sauce, fresh cherry tomatoes, Kalamata olives, and sweet basil.",
+      "price": 360,
+      "isVeg": true,
+      "tag": "Signature",
+      "image": "assets/images/cafe/menu-cover-spaghetti.jpg"
+    },
+    {
+      "id": "item-16",
+      "categoryId": "pizza-pasta",
+      "name": "Genovese Pesto & Sundried Tomato Pizza",
+      "description": "Hand-stretched 48-hr crust, basil-pinenut pesto base, confit tomatoes, sun-dried tomatoes, and Fior di Latte mozzarella.",
+      "price": 460,
+      "isVeg": true,
+      "tag": "Chef Special",
+      "image": "assets/images/dishes/pesto-pizza.jpg"
+    },
+    {
+      "id": "item-17",
+      "categoryId": "pizza-pasta",
+      "name": "Cielo Quattro Formaggi Deluxe",
+      "description": "Creamy Mozzarella, Gorgonzola, smoked Scamorza, and shaved Parmesan with charred garlic and oregano.",
+      "price": 490,
+      "isVeg": true,
+      "tag": "Cheese Lover",
+      "image": "assets/images/cafe/all-day-spread.jpg"
+    },
+    {
+      "id": "item-18",
+      "categoryId": "pizza-pasta",
+      "name": "Truffle Penne Al Funghi",
+      "description": "Al dente penne rigate enveloped in rich white mushroom velouté, black truffle oil, and cracked pink peppercorn.",
+      "price": 390,
+      "isVeg": true,
+      "tag": "Bestseller",
+      "image": "assets/images/cafe/hero-table.jpg"
+    },
+    {
+      "id": "item-19",
+      "categoryId": "pizza-pasta",
+      "name": "Fire-Roasted Bell Pepper Pizza",
+      "description": "Spicy arrabbiata sauce base, chargrilled sweet peppers, yellow zucchini, jalapeños, and fresh bocconcini.",
+      "price": 440,
+      "isVeg": true,
+      "tag": "Spicy",
+      "image": "assets/images/cafe/all-day-spread.jpg"
+    },
+
+    {
+      "id": "item-20",
+      "categoryId": "desserts",
+      "name": "Classic Venetian Tiramisu",
+      "description": "Espresso-soaked Savoiardi ladyfingers layered with whipped mascarpone cream and dusted with raw cocoa powder.",
+      "price": 280,
+      "isVeg": true,
+      "tag": "Signature",
+      "image": "assets/images/cafe/menu-cover-spaghetti.jpg"
+    },
+    {
+      "id": "item-21",
+      "categoryId": "desserts",
+      "name": "Warm Belgian Molten Cake",
+      "description": "Gooey chocolate center served warm with Madagascan vanilla bean gelato and dark chocolate crumble.",
+      "price": 310,
+      "isVeg": true,
+      "tag": "Bestseller",
+      "image": "assets/images/cafe/hero-table.jpg"
+    },
+    {
+      "id": "item-22",
+      "categoryId": "desserts",
+      "name": "Baked New York Blueberry Cheesecake",
+      "description": "Creamy Philadelphia cheesecake on a crunchy graham crust crowned with slow-reduced wild berry compote.",
+      "price": 290,
+      "isVeg": true,
+      "tag": "Chef Special",
+      "image": "assets/images/dishes/bruschetta-carved.jpg"
+    },
+    {
+      "id": "item-23",
+      "categoryId": "desserts",
+      "name": "Espresso Affogato Al Caffe",
+      "description": "Two scoops of artisanal vanilla bean gelato drowned in a freshly pulled double shot of Cielo espresso.",
+      "price": 210,
+      "isVeg": true,
+      "tag": "Classic",
+      "image": "assets/images/dishes/orange-espresso-tonic.jpg"
+    }
+  ]
+}

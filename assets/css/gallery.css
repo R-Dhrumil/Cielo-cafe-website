@@ -1,0 +1,153 @@
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - GALLERY & INSTAGRAM VISUAL DIARY
+   ========================================================================== */
+
+.gallery-section {
+  padding: 5rem 0;
+  background-color: var(--bg-cream);
+}
+
+@media (min-width: 640px) {
+  .gallery-section {
+    padding: 7rem 0;
+  }
+}
+
+.gallery-header {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  margin-bottom: 3rem;
+  gap: 1.5rem;
+}
+
+@media (min-width: 768px) {
+  .gallery-header {
+    flex-direction: row;
+    align-items: flex-end;
+    margin-bottom: 4rem;
+  }
+}
+
+.gallery-title {
+  font-family: var(--font-display);
+  font-size: 2.15rem;
+  font-weight: 350;
+  letter-spacing: -0.025em;
+  color: var(--text-espresso);
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .gallery-title {
+    font-size: 3rem;
+  }
+}
+
+.gallery-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-espresso-muted);
+  max-width: 30rem;
+  margin-top: 0.5rem;
+  line-height: 1.6;
+}
+
+/* Gallery Grid */
+.gallery-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+}
+
+@media (min-width: 768px) {
+  .gallery-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .gallery-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+/* Gallery Item */
+.gallery-card {
+  position: relative;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--border-radius-lg);
+  overflow: hidden;
+  cursor: pointer;
+  background-color: rgba(27, 21, 17, 0.05);
+  border: 1px solid var(--border-light);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+}
+
+.gallery-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms ease-out;
+  display: block;
+}
+
+.gallery-card:hover img {
+  transform: scale(1.06);
+}
+
+/* Hover Gradient Overlay */
+.gallery-card-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, rgba(27, 21, 17, 0.9), rgba(27, 21, 17, 0.4) 50%, transparent);
+  opacity: 0;
+  transition: opacity 300ms ease;
+  padding: 1rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.gallery-card:hover .gallery-card-overlay {
+  opacity: 1;
+}
+
+.gallery-zoom-icon {
+  align-self: flex-end;
+  padding: 0.5rem;
+  border-radius: 50%;
+  background-color: rgba(246, 239, 227, 0.2);
+  color: var(--bg-cream);
+  backdrop-filter: blur(4px);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.gallery-zoom-icon svg {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.gallery-card-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.gallery-card-category {
+  font-size: 0.625rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: var(--accent-sky);
+}
+
+.gallery-card-title {
+  font-family: var(--font-serif);
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--bg-cream);
+  line-height: 1.3;
+}

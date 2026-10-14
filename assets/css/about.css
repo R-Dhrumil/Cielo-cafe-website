@@ -1,0 +1,83 @@
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - ABOUT PAGE SPECIFIC STYLES
+   ========================================================================== */
+
+.page-hero-banner {
+  padding: 8rem 0 4rem 0;
+  background-color: var(--text-espresso);
+  color: var(--bg-cream);
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.page-hero-title {
+  font-family: var(--font-serif);
+  font-size: 2.75rem;
+  color: var(--bg-cream);
+  margin-top: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .page-hero-title {
+    font-size: 3.75rem;
+  }
+}
+
+.page-hero-subtitle {
+  font-size: 1rem;
+  color: rgba(246, 239, 227, 0.85);
+  max-width: 36rem;
+  margin: 0.75rem auto 0 auto;
+  font-weight: 300;
+  line-height: 1.6;
+}
+
+.about-values-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.5rem;
+  margin-top: 3rem;
+}
+
+@media (min-width: 768px) {
+  .about-values-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+.about-value-card {
+  padding: 2rem;
+  border-radius: var(--border-radius-xl);
+  background-color: var(--bg-card);
+  border: 1px solid var(--border-light);
+  text-align: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+.about-value-icon {
+  width: 3rem;
+  height: 3rem;
+  margin: 0 auto 1rem auto;
+  border-radius: 50%;
+  background-color: rgba(143, 184, 216, 0.2);
+  color: var(--accent-sky-deep);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.about-value-title {
+  font-family: var(--font-serif);
+  font-size: 1.35rem;
+  font-weight: 700;
+  color: var(--text-espresso);
+  margin-bottom: 0.5rem;
+}
+
+.about-value-desc {
+  font-size: 0.8125rem;
+  color: var(--text-espresso-muted);
+  line-height: 1.6;
+  font-weight: 300;
+}

@@ -1,0 +1,52 @@
+{
+  "averageRating": 4.8,
+  "totalReviewsCount": "450+",
+  "googleReviewLink": "https://maps.app.goo.gl/4ZhVa2V1yxxoBSf69",
+  "reviews": [
+    {
+      "id": "rev-1",
+      "author": "Aarav Patel",
+      "badge": "Local Guide · Vadodara",
+      "rating": 5,
+      "date": "2 weeks ago",
+      "text": "[REPLACE WITH REAL GOOGLE REVIEWS] Absolutely magical ambiance! The arch lighting and warm tones give such a serene Italian cafe vibe. The hand-stretched Pesto Pizza and Sunset Cooler were outstanding. Best new spot in Vadodara for both work and dinner dates.",
+      "dishMentioned": "Genovese Pesto Pizza & Sunset Spritzer"
+    },
+    {
+      "id": "rev-2",
+      "author": "Dr. Radhika Shah",
+      "badge": "Food Enthusiast",
+      "rating": 5,
+      "date": "1 month ago",
+      "text": "[REPLACE WITH REAL GOOGLE REVIEWS] Finally a cafe in town that takes espresso seriously! The Flat White was creamy with authentic microfoam, and the Burrata Bruschetta was divine. Perfect quiet corner to read or catch up with friends.",
+      "dishMentioned": "Flat White & Burrata Bruschetta"
+    },
+    {
+      "id": "rev-3",
+      "author": "Mehul Desai",
+      "badge": "Vadodara Resident",
+      "rating": 5,
+      "date": "3 weeks ago",
+      "text": "[REPLACE WITH REAL GOOGLE REVIEWS] Hosted my sister's birthday dinner at Cielo. The team curated a personalized 4-course table setup with wonderful hospitality. The Cheese Fondue platter and Truffle Pasta were wiped clean in minutes!",
+      "dishMentioned": "Cheese Fondue Platter & Truffle Penne"
+    },
+    {
+      "id": "rev-4",
+      "author": "Pooja Trivedi",
+      "badge": "Local Guide",
+      "rating": 5,
+      "date": "A month ago",
+      "text": "[REPLACE WITH REAL GOOGLE REVIEWS] Loved the aesthetic interior and the calm music. The Citrus Cold Brew is super unique and refreshing. A true all-day cafe that turns romantic and lively after sunset. 10/10 recommendation!",
+      "dishMentioned": "Cielo Citrus Cold Brew"
+    },
+    {
+      "id": "rev-5",
+      "author": "Karan Singhania",
+      "badge": "Verified Diner",
+      "rating": 5,
+      "date": "2 months ago",
+      "text": "[REPLACE WITH REAL GOOGLE REVIEWS] Authentic Italian preparations with premium ingredients. The Spaghetti Pomodoro tasted just like a trattoria in Florence. Very welcoming staff and quick service.",
+      "dishMentioned": "Spaghetti Pomodoro E Basilico"
+    }
+  ]
+}

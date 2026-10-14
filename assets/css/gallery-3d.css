@@ -1,0 +1,160 @@
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - 3D INFINITE GALLERY
+   Theme: Italian Luxury Cafe & Night Restro
+   ========================================================================== */
+
+:root {
+  --gallery-bg: #0C0907;
+  --gallery-fg: #FFFFFF;
+  --gallery-fallback-bg: #14100D;
+  --gallery-fallback-fg: rgba(255, 255, 255, 0.7);
+}
+
+.gallery-page-container {
+  width: 100%;
+  position: relative;
+}
+
+/* ---- 3D Gallery Stage ---- */
+.gallery3d {
+  position: relative;
+  width: 100%;
+  height: clamp(520px, 82vh, 880px);
+  overflow: hidden;
+  background-color: var(--gallery-bg);
+  border-radius: var(--border-radius-xl, 1rem);
+  box-shadow: 0 20px 45px rgba(0, 0, 0, 0.2);
+}
+
+.gallery3d__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1;
+}
+
+.gallery3d__canvas canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  touch-action: none;
+  cursor: grab;
+}
+
+.gallery3d__canvas canvas:active {
+  cursor: grabbing;
+}
+
+.gallery3d__empty {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
+  color: var(--gallery-fallback-fg);
+  font-family: var(--font-sans);
+}
+
+/* ---- WebGL Fallback Grid ---- */
+.gallery3d__fallback {
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  padding: 2rem;
+  background: var(--gallery-fallback-bg);
+  color: var(--gallery-fallback-fg);
+}
+
+.gallery3d.is-fallback .gallery3d__fallback {
+  display: flex;
+}
+
+.gallery3d__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1rem;
+  max-height: 28rem;
+  overflow-y: auto;
+  width: 100%;
+  max-width: 50rem;
+}
+
+@media (min-width: 768px) {
+  .gallery3d__grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.gallery3d__grid img {
+  width: 100%;
+  height: 9rem;
+  object-fit: cover;
+  border-radius: var(--border-radius-md, 0.75rem);
+}
+
+/* ---- Center Title Overlay in Black Background ---- */
+.gallery-title-overlay {
+  position: absolute;
+  inset: 0;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 0 1.5rem;
+  text-align: center;
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gallery-title-overlay h1,
+.gallery-title-overlay h2 {
+  margin: 0;
+  font-family: var(--font-display, Georgia, serif);
+  font-size: clamp(3.2rem, 9.5vw, 8rem);
+  letter-spacing: -0.035em;
+  font-weight: 350;
+  line-height: 0.95;
+  color: #757575; /* Gray big font on black background */
+  text-transform: none;
+  user-select: none;
+}
+
+.gallery-title-overlay h1 span,
+.gallery-title-overlay h2 span {
+  font-style: italic;
+  font-weight: 300;
+  color: #8E8E8E; /* Harmonious accent gray */
+}
+
+/* ---- Interaction Hint Cue ---- */
+.gallery-hint-cue {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 2rem;
+  text-align: center;
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.7);
+  pointer-events: none;
+  z-index: 2;
+}
+
+.gallery-hint-cue p {
+  margin: 0;
+  text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
+}
+
+.gallery-hint-cue .gallery-hint__dim {
+  opacity: 0.55;
+  font-size: 0.6875rem;
+  margin-top: 0.25rem;
+}

@@ -1,0 +1,334 @@
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - BASE STYLES & DESIGN TOKENS
+   Theme: Italian Luxury Cafe & Night Restro
+   ========================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300..800;1,9..144,300..700&family=Geist:wght@300;400;500;600;700&family=Cinzel:wght@400;600;700;800&family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400;1,600&family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap');
+
+:root {
+  /* Main UI: High Contrast Palette (Default) */
+  --bg-cream: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --text-espresso: #000000;
+  --accent-sky: #3F6E96;
+  --accent-sky-deep: #1E3F5E;
+  --accent-terracotta: #B5623B;
+  --accent-terracotta-hover: #9C5230;
+
+  /* Neutrals & Alpha Tones */
+  --text-espresso-muted: #1A1A1A;
+  --text-espresso-faint: #3A3A3A;
+  --border-light: rgba(0, 0, 0, 0.16);
+  --border-dark: rgba(255, 255, 255, 0.25);
+  --cream-alpha-80: rgba(255, 255, 255, 0.95);
+
+  /* Typography (Villa Aurelia Font Pairings: Fraunces & Geist) */
+  --font-display: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --font-serif: 'Fraunces', 'Cormorant Garamond', Georgia, serif;
+  --font-sans: 'Geist', 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-brand: 'Fraunces', Georgia, serif;
+
+  /* Layout */
+  --container-max-width: 1280px;
+  --border-radius-sm: 0.5rem;
+  --border-radius-md: 0.75rem;
+  --border-radius-lg: 1rem;
+  --border-radius-xl: 1.5rem;
+  --border-radius-full: 9999px;
+
+  /* Base font size for accessibility scaling */
+  --base-font-size: 16px;
+  --transition-smooth: all 250ms cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Reset */
+*, *::before, *::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  font-size: var(--base-font-size);
+  scroll-behavior: smooth;
+  scroll-padding-top: 5.5rem;
+  overflow-x: clip;
+}
+
+body {
+  background-color: var(--bg-cream);
+  color: var(--text-espresso);
+  font-family: var(--font-sans);
+  line-height: 1.6;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: clip;
+  position: relative;
+  min-height: 100vh;
+}
+
+::selection {
+  background-color: rgba(63, 110, 150, 0.25);
+  color: var(--text-espresso);
+}
+
+/* Accessibility: Warm Contrast Mode (Current Palette ON/OFF Toggle) */
+body.warm-contrast {
+  --bg-cream: #F6EFE3;
+  --bg-card: #FBF8F2;
+  --text-espresso: #1B1511;
+  --accent-sky: #8FB8D8;
+  --accent-sky-deep: #3F6E96;
+  --accent-terracotta: #B5623B;
+  --accent-terracotta-hover: #9C5230;
+
+  --text-espresso-muted: rgba(27, 21, 17, 0.75);
+  --text-espresso-faint: rgba(27, 21, 17, 0.55);
+  --border-light: rgba(27, 21, 17, 0.12);
+  --border-dark: rgba(246, 239, 227, 0.15);
+  --cream-alpha-80: rgba(246, 239, 227, 0.85);
+}
+
+body.high-contrast {
+  --bg-cream: #FFFFFF;
+  --bg-card: #FFFFFF;
+  --text-espresso: #000000;
+  --text-espresso-muted: #111111;
+  --text-espresso-faint: #222222;
+  --border-light: #000000;
+  --accent-sky-deep: #000000;
+  --accent-terracotta: #000000;
+  --accent-terracotta-hover: #111111;
+}
+
+body.readable-font {
+  font-family: Arial, Helvetica, sans-serif !important;
+  letter-spacing: 0.02em;
+}
+
+/* Typography Helpers */
+h1, h2, h3, h4, h5, h6, .font-display {
+  font-family: var(--font-display);
+  font-feature-settings: 'opsz' auto, 'liga', 'dlig';
+  letter-spacing: -0.025em;
+  font-weight: 380;
+  color: var(--text-espresso);
+}
+
+.font-brand {
+  font-family: var(--font-brand);
+}
+
+.font-serif {
+  font-family: var(--font-serif);
+}
+
+.font-sans {
+  font-family: var(--font-sans);
+}
+
+.eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.6875rem;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  font-weight: 600;
+  display: inline-block;
+}
+
+/* Layout Container */
+.container {
+  width: 100%;
+  max-width: var(--container-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: 1.25rem;
+  padding-right: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .container {
+    padding-left: 2rem;
+    padding-right: 2rem;
+  }
+}
+
+/* Button System (Villa Aurelia Full Pill Aesthetics) */
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  background-color: var(--text-espresso);
+  color: var(--bg-cream);
+  border: 1px solid var(--text-espresso);
+  border-radius: var(--border-radius-full);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-primary:hover {
+  background-color: var(--bg-cream);
+  color: var(--text-espresso);
+  transform: translateY(-1px);
+}
+
+.btn-terracotta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  background-color: var(--accent-terracotta);
+  color: #FFFFFF;
+  border: 1px solid var(--accent-terracotta);
+  border-radius: var(--border-radius-full);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-terracotta:hover {
+  background-color: var(--accent-terracotta-hover);
+  border-color: var(--accent-terracotta-hover);
+  transform: translateY(-1px);
+}
+
+.btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  background-color: transparent;
+  color: var(--text-espresso);
+  border: 1px solid var(--border-light);
+  border-radius: var(--border-radius-full);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-outline:hover {
+  border-color: var(--text-espresso);
+  background-color: var(--text-espresso);
+  color: var(--bg-cream);
+  transform: translateY(-1px);
+}
+
+.btn-sky {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.85rem;
+  font-family: var(--font-sans);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  font-weight: 600;
+  background-color: var(--accent-sky);
+  color: #FFFFFF;
+  border: 1px solid var(--accent-sky);
+  border-radius: var(--border-radius-full);
+  text-decoration: none;
+  transition: var(--transition-smooth);
+  cursor: pointer;
+}
+
+.btn-sky:hover {
+  background-color: var(--accent-sky-deep);
+  border-color: var(--accent-sky-deep);
+  transform: translateY(-1px);
+}
+
+/* Image Zoom Utilities */
+.image-zoom-container {
+  overflow: hidden;
+  border-radius: var(--border-radius-lg);
+  position: relative;
+}
+
+.image-zoom-container img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 500ms cubic-bezier(0.25, 1, 0.5, 1);
+  display: block;
+}
+
+.image-zoom-container:hover img {
+  transform: scale(1.04);
+}
+
+/* Badge Utilities */
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.2rem 0.6rem;
+  border-radius: var(--border-radius-full);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.status-indicator {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: var(--border-radius-full);
+}
+
+.badge-open .status-indicator {
+  background-color: #34d399; /* Emerald pulse */
+  box-shadow: 0 0 8px #34d399;
+}
+
+.badge-closed .status-indicator {
+  background-color: var(--accent-terracotta);
+}
+
+/* ==========================================================================
+   HALLMARK INTERACTIVE STATE DISCIPLINE (Focus-visible & Active States)
+   ========================================================================== */
+
+:focus-visible {
+  outline: 2px solid var(--accent-terracotta);
+  outline-offset: 3px;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible,
+textarea:focus-visible,
+select:focus-visible {
+  outline: 2px solid var(--accent-terracotta);
+  outline-offset: 3px;
+}
+
+button:active,
+.btn-primary:active,
+.btn-terracotta:active,
+.btn-sky:active,
+.btn-outline:active,
+.btn-nav-reserve:active {
+  transform: translateY(1px);
+}

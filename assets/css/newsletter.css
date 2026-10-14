@@ -1,0 +1,142 @@
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - NEWSLETTER BANNER (THE CIELO CLUB)
+   ========================================================================== */
+
+.newsletter-section {
+  background-color: var(--text-espresso);
+  color: var(--bg-cream);
+  padding: 4rem 0;
+  border-top: 1px solid rgba(246, 239, 227, 0.15);
+}
+
+@media (min-width: 640px) {
+  .newsletter-section {
+    padding: 5rem 0;
+  }
+}
+
+.newsletter-box {
+  max-width: 42rem;
+  margin: 0 auto;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1rem;
+}
+
+.newsletter-eyebrow-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-full);
+  background-color: rgba(246, 239, 227, 0.1);
+  border: 1px solid rgba(246, 239, 227, 0.2);
+}
+
+.newsletter-eyebrow-pill .eyebrow {
+  color: var(--accent-sky);
+  font-size: 0.6875rem;
+}
+
+.newsletter-heading {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--bg-cream);
+}
+
+@media (min-width: 640px) {
+  .newsletter-heading {
+    font-size: 2.5rem;
+  }
+}
+
+.newsletter-desc {
+  font-size: 0.8125rem;
+  color: rgba(246, 239, 227, 0.75);
+  max-width: 30rem;
+  line-height: 1.6;
+}
+
+.newsletter-form {
+  margin-top: 1.5rem;
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.newsletter-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .newsletter-input-group {
+    flex-direction: row;
+  }
+}
+
+.newsletter-field-wrapper {
+  position: relative;
+  flex: 1;
+}
+
+.newsletter-field-icon {
+  position: absolute;
+  left: 0.875rem;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 1rem;
+  height: 1rem;
+  color: rgba(246, 239, 227, 0.5);
+}
+
+.newsletter-input {
+  width: 100%;
+  padding: 0.75rem 1rem 0.75rem 2.5rem;
+  border-radius: var(--border-radius-md);
+  background-color: rgba(246, 239, 227, 0.1);
+  border: 1px solid rgba(246, 239, 227, 0.25);
+  color: var(--bg-cream);
+  font-size: 0.75rem;
+  font-family: var(--font-sans);
+  outline: none;
+  transition: border-color 200ms ease;
+}
+
+.newsletter-input::placeholder {
+  color: rgba(246, 239, 227, 0.4);
+}
+
+.newsletter-input:focus {
+  border-color: var(--accent-sky);
+}
+
+.newsletter-submit-btn {
+  padding: 0.75rem 1.5rem;
+  white-space: nowrap;
+}
+
+.newsletter-privacy-text {
+  font-size: 0.625rem;
+  color: rgba(246, 239, 227, 0.5);
+  padding-top: 0.25rem;
+}
+
+.newsletter-success-alert {
+  padding: 1rem;
+  border-radius: var(--border-radius-lg);
+  background-color: rgba(143, 184, 216, 0.15);
+  border: 1px solid rgba(143, 184, 216, 0.3);
+  color: var(--accent-sky);
+  font-size: 0.75rem;
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-top: 1rem;
+  text-align: left;
+}

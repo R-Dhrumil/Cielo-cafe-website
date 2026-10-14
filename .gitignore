@@ -1,0 +1,59 @@
+# ==============================================================================
+# Cielo Cafe and Restro - Git Ignore Configuration
+# ==============================================================================
+
+# Operating System & Cache Files (macOS & Windows)
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+desktop.ini
+
+# Environment & Secret Credentials
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.cert
+
+# PHP & Web Server Logs
+vendor/
+composer.phar
+error_log
+*.log
+
+# Node & Build Artifacts (if tooling is used)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+/build
+/dist
+/coverage
+.next/
+.out/
+
+# IDE & Editor Configurations
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+*.swp
+*.swo
+*~
+
+# Local Development & AI Workspace Scratch Files
+.aider*
+.gemini/
+*.tmp
+*.temp
+
+.agents/
+skills-lock.json
+videos
+skills

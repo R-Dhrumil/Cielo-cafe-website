@@ -1,0 +1,86 @@
+{
+  "instagramHandle": "@cielocafebistro",
+  "instagramUrl": "https://instagram.com/cielocafebistro",
+  "items": [
+    {
+      "id": "gal-1",
+      "title": "Evening Table Spread",
+      "category": "Experience",
+      "image": "assets/images/cafe/hero-table.jpg",
+      "aspect": "aspect-[4/5]",
+      "caption": "Handcrafted pizzas, creamy pasta, signature coffee, and ambient evening lights."
+    },
+    {
+      "id": "gal-2",
+      "title": "Pesto & Sun-Dried Tomato Pizza",
+      "category": "Pizza",
+      "image": "assets/images/dishes/pesto-pizza.jpg",
+      "aspect": "aspect-[3/4]",
+      "caption": "48-hour fermented crust topped with house basil-pinenut pesto and cherry tomatoes."
+    },
+    {
+      "id": "gal-3",
+      "title": "Cielo Sunset Cooler",
+      "category": "Beverages",
+      "image": "assets/images/dishes/sunset-mocktail.jpg",
+      "aspect": "aspect-[3/4]",
+      "caption": "Layered pomegranate and citrus cooler with fresh mint leaves."
+    },
+    {
+      "id": "gal-4",
+      "title": "Artisanal Burrata Crostini",
+      "category": "Starters",
+      "image": "assets/images/dishes/bruschetta-burrata.jpg",
+      "aspect": "aspect-[4/5]",
+      "caption": "Toasted sourdough with fresh burrata, blistered cherry tomatoes, and microgreens."
+    },
+    {
+      "id": "gal-5",
+      "title": "Spaghetti Pomodoro & Official Menu",
+      "category": "Italian Restro",
+      "image": "assets/images/cafe/menu-cover-spaghetti.jpg",
+      "aspect": "aspect-[3/4]",
+      "caption": "Slow-simmered pomodoro sauce with bronze-cut spaghetti and gold cutlery."
+    },
+    {
+      "id": "gal-6",
+      "title": "Warm Cheese Fondue Platter",
+      "category": "Starters",
+      "image": "assets/images/dishes/cheese-fondue-platter.jpg",
+      "aspect": "aspect-[4/5]",
+      "caption": "Velvety cheese fondue with crispy seasoned nachos, broccoli, and croutons."
+    },
+    {
+      "id": "gal-7",
+      "title": "Signature Citrus Cold Brew",
+      "category": "Coffee",
+      "image": "assets/images/dishes/orange-espresso-tonic.jpg",
+      "aspect": "aspect-[3/4]",
+      "caption": "Single origin espresso cold brew paired with orange slice and sparkling tonic."
+    },
+    {
+      "id": "gal-8",
+      "title": "Spiced Peri-Peri Truffle Fries",
+      "category": "Starters",
+      "image": "assets/images/dishes/peri-peri-fries.jpg",
+      "aspect": "aspect-[4/5]",
+      "caption": "Crispy golden cut fries seasoned with house spice blend and microgreens."
+    },
+    {
+      "id": "gal-9",
+      "title": "Italian Table Feast",
+      "category": "Experience",
+      "image": "assets/images/cafe/all-day-spread.jpg",
+      "aspect": "aspect-[3/4]",
+      "caption": "Wood-fired pizza, spaghetti arrabbiata, and roasted garlic bread."
+    },
+    {
+      "id": "gal-10",
+      "title": "Gourmet Bruschetta Art",
+      "category": "Starters",
+      "image": "assets/images/dishes/bruschetta-artisan.jpg",
+      "aspect": "aspect-[4/5]",
+      "caption": "Carefully plated heirloom tomato and herbs on grilled artisan sourdough."
+    }
+  ]
+}

@@ -1,0 +1,196 @@
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - EVENTS & PRIVATE BOOKINGS
+   Theme: Dramatic Espresso with Sky & Terracotta Accents
+   ========================================================================== */
+
+.events-section {
+  padding: 5rem 0;
+  background-color: var(--text-espresso);
+  color: var(--bg-cream);
+  overflow: hidden;
+}
+
+@media (min-width: 640px) {
+  .events-section {
+    padding: 7rem 0;
+  }
+}
+
+.events-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 3rem;
+  align-items: center;
+}
+
+@media (min-width: 1024px) {
+  .events-grid {
+    grid-template-columns: repeat(12, 1fr);
+    gap: 4rem;
+  }
+
+  .events-col-left {
+    grid-column: span 7;
+  }
+
+  .events-col-right {
+    grid-column: span 5;
+  }
+}
+
+.events-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+.events-eyebrow-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.25rem 0.75rem;
+  border-radius: var(--border-radius-full);
+  background-color: rgba(246, 239, 227, 0.1);
+  border: 1px solid rgba(246, 239, 227, 0.2);
+  width: fit-content;
+}
+
+.events-eyebrow-badge .eyebrow {
+  color: var(--accent-sky);
+  font-size: 0.6875rem;
+}
+
+.events-heading {
+  font-family: var(--font-serif);
+  font-size: 2rem;
+  color: var(--bg-cream);
+  line-height: 1.15;
+}
+
+@media (min-width: 640px) {
+  .events-heading {
+    font-size: 2.75rem;
+  }
+}
+
+.events-desc {
+  font-size: 0.9375rem;
+  color: rgba(246, 239, 227, 0.8);
+  font-weight: 300;
+  line-height: 1.7;
+}
+
+/* Feature bullets */
+.events-features-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 0.75rem;
+  padding-top: 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .events-features-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+.events-feature-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.events-feature-icon {
+  width: 1rem;
+  height: 1rem;
+  color: var(--accent-sky);
+  flex-shrink: 0;
+  margin-top: 0.2rem;
+}
+
+.events-feature-text {
+  font-size: 0.75rem;
+  color: rgba(246, 239, 227, 0.9);
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.events-actions {
+  padding-top: 1rem;
+}
+
+.events-footnote {
+  display: block;
+  font-size: 0.6875rem;
+  color: rgba(246, 239, 227, 0.5);
+  font-style: italic;
+  margin-top: 0.65rem;
+}
+
+/* Layered Image Composition */
+.events-composition {
+  position: relative;
+  max-width: 28rem;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .events-composition {
+    max-width: none;
+  }
+}
+
+.events-img-primary {
+  position: relative;
+  width: 80%;
+  aspect-ratio: 4 / 5;
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(246, 239, 227, 0.2);
+}
+
+.events-img-primary img,
+.events-img-secondary img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.events-img-secondary {
+  position: absolute;
+  bottom: -2rem;
+  right: -1rem;
+  width: 60%;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--border-radius-xl);
+  overflow: hidden;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.6);
+  border: 2px solid var(--text-espresso);
+  outline: 4px solid rgba(143, 184, 216, 0.2);
+}
+
+@media (min-width: 640px) {
+  .events-img-secondary {
+    right: -2rem;
+  }
+}
+
+.events-booking-pill {
+  position: absolute;
+  top: 1rem;
+  left: -1rem;
+  background-color: var(--accent-terracotta);
+  color: var(--bg-card);
+  padding: 0.5rem 1rem;
+  border-radius: var(--border-radius-md);
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
