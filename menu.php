@@ -13,6 +13,8 @@ require __DIR__ . '/includes/header.php';
 ?>
 
 <main id="main-content" style="padding-top: 5rem;">
+  <?php require __DIR__ . '/includes/table_badge.php'; ?>
+
   <!-- Menu Page Banner -->
   <section class="subpage-hero-banner">
     <div class="container">

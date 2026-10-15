@@ -4,6 +4,8 @@
  * Production-ready lightweight PHP backend
  */
 
+require_once __DIR__ . '/../app/bootstrap.php';
+
 // Set Indian Standard Time for accurate operating hours calculation
 date_default_timezone_set('Asia/Kolkata');
 

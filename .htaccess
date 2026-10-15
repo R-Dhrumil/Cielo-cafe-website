@@ -1,0 +1,15 @@
+<IfModule mod_rewrite.c>
+  RewriteEngine On
+  RewriteBase /
+
+  # 1. Rewrite vanity table URLs: /t/{token} -> t.php?token={token}
+  RewriteRule ^t/([a-zA-Z0-9_-]+)/?$ t.php?token=$1 [QSA,L]
+
+  # 2. Block direct HTTP access to sensitive environment and system files
+  RewriteRule ^\.env - [F,L]
+  RewriteRule ^database/(.*\.sqlite|.*\.sql) - [F,L]
+  RewriteRule ^tests/ - [F,L]
+</IfModule>
+
+# Prevent directory listing
+Options -Indexes
