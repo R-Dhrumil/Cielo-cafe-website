@@ -98,6 +98,18 @@ $schemaData = [
       </div>
     </div>
   </div>
+  <script>
+    (function() {
+      try {
+        if (sessionStorage.getItem('cielo_page_transition') === '1') {
+          var s = document.getElementById('cieloTransitionScreen');
+          if (s) {
+            s.className = 'cielo-transition-screen state-hold';
+          }
+        }
+      } catch (e) {}
+    })();
+  </script>
 
   <!-- Global Header (Villa Aurelia Minimalist Cinematic Style) -->
   <header class="cielo-header">
@@ -141,8 +153,10 @@ $schemaData = [
     <div>
       <div class="drawer-header">
         <div>
-          <span class="font-display" style="font-size: 2rem; font-weight: 350; letter-spacing: -0.02em; color: var(--bg-cream);">Cielo</span>
-          <span style="font-size: 0.625rem; letter-spacing: 0.16em; color: var(--accent-sky); text-transform: uppercase; display: block; margin-top: 0.2rem;">Cafe & Restro · Vadodara</span>
+          <a href="index.php" class="brand-logo drawer-brand-logo" aria-label="Cielo Homepage" style="text-decoration: none; color: inherit; display: block;">
+            <span class="font-display" style="font-size: 2rem; font-weight: 350; letter-spacing: -0.02em; color: var(--bg-cream);">Cielo</span>
+            <span style="font-size: 0.625rem; letter-spacing: 0.16em; color: var(--accent-sky); text-transform: uppercase; display: block; margin-top: 0.2rem;">Cafe &amp; Restro · Vadodara</span>
+          </a>
         </div>
         <button type="button" id="closeDrawerBtn" class="drawer-close" aria-label="Close navigation menu">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round">

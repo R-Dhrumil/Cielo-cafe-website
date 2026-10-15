@@ -210,34 +210,88 @@
             else if (e.key === 'ArrowDown' || e.key === 'ArrowRight') nudge(2 * speed);
         });
 
+        // Mobile "Tap to Interact" Controls Integration
+        var unlockBtn = document.getElementById('galleryUnlockBtn');
+        var activeBar = document.getElementById('galleryActiveBar');
+        var doneBtn = document.getElementById('galleryDoneBtn');
+        var navPrev = document.getElementById('galleryNavPrev');
+        var navNext = document.getElementById('galleryNavNext');
+
+        function setInteractive(active) {
+            if (active) {
+                root.classList.add('is-interactive');
+                if (unlockBtn) unlockBtn.style.display = 'none';
+                if (activeBar) activeBar.style.display = 'inline-flex';
+                nudge(1.2 * speed);
+            } else {
+                root.classList.remove('is-interactive');
+                if (activeBar) activeBar.style.display = 'none';
+                if (unlockBtn) unlockBtn.style.display = 'inline-flex';
+            }
+        }
+
+        if (unlockBtn) {
+            unlockBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setInteractive(true);
+            });
+        }
+
+        if (doneBtn) {
+            doneBtn.addEventListener('click', function (e) {
+                e.stopPropagation();
+                setInteractive(false);
+            });
+        }
+
+        if (navPrev) {
+            navPrev.addEventListener('click', function (e) {
+                e.stopPropagation();
+                nudge(-3.5 * speed);
+            });
+        }
+
+        if (navNext) {
+            navNext.addEventListener('click', function (e) {
+                e.stopPropagation();
+                nudge(3.5 * speed);
+            });
+        }
+
         var touchY = null;
         var touchX = null;
         canvas.addEventListener('touchstart', function (e) {
+            if (!root.classList.contains('is-interactive')) return;
             touchY = e.touches[0].clientY;
             touchX = e.touches[0].clientX;
         }, { passive: true });
+
         canvas.addEventListener('touchmove', function (e) {
-            if (touchY === null || touchX === null) return;
+            if (!root.classList.contains('is-interactive') || touchY === null || touchX === null) return;
             var x = e.touches[0].clientX;
             var y = e.touches[0].clientY;
             var dx = touchX - x;
             var dy = touchY - y;
 
-            // If user gesture is primarily horizontal, control 3D gallery scrub
-            if (Math.abs(dx) > Math.abs(dy)) {
-                if (e.cancelable) e.preventDefault();
-                nudge(dx * 0.05 * speed);
-                touchX = x;
-                touchY = y;
-            }
+            if (e.cancelable) e.preventDefault();
+            var primaryDelta = Math.abs(dx) > Math.abs(dy) ? dx : dy;
+            nudge(primaryDelta * 0.05 * speed);
+            touchX = x;
+            touchY = y;
         }, { passive: false });
+
         canvas.addEventListener('touchend', function () {
             touchY = null;
             touchX = null;
         });
 
         setInterval(function () {
-            if (Date.now() - lastInteraction > 3000) autoPlay = true;
+            var idleTime = Date.now() - lastInteraction;
+            if (idleTime > 3000) autoPlay = true;
+            // Auto-revert to free scroll mode after 8 seconds of idle in interactive mode
+            if (idleTime > 8000 && root.classList.contains('is-interactive')) {
+                setInteractive(false);
+            }
         }, 1000);
 
         // Hover (flag-wave) via raycasting

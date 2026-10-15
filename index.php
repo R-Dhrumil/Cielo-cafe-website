@@ -507,10 +507,29 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
           <h2>Moments at <span>Cielo</span></h2>
         </div>
 
-        <!-- Interaction Hint Cue -->
+        <!-- Interaction Hint Cue (Desktop) -->
         <div class="gallery-hint-cue">
           <p>Scroll, drag or swipe to explore the 3D gallery</p>
           <p class="gallery-hint__dim">Hover over photos to trigger wave animation</p>
+        </div>
+
+        <!-- Mobile Interactive Mode Trigger & Done Controls -->
+        <div class="gallery3d-mobile-controls" id="galleryMobileControls" aria-label="3D gallery mobile controls">
+          <button type="button" class="btn-gallery-unlock" id="galleryUnlockBtn" aria-label="Tap to interact with 3D gallery">
+            <span class="unlock-pulse" aria-hidden="true"></span>
+            <span>Tap to Explore 3D</span>
+          </button>
+
+          <div class="gallery-active-bar" id="galleryActiveBar" style="display: none;">
+            <button type="button" class="btn-gallery-nav" id="galleryNavPrev" aria-label="Previous photo">‹</button>
+            <button type="button" class="btn-gallery-done" id="galleryDoneBtn" aria-label="Done exploring, resume page scroll">
+              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="color: #34d399;">
+                <polyline points="20 6 9 17 4 12"/>
+              </svg>
+              <span>Done · Scroll Page</span>
+            </button>
+            <button type="button" class="btn-gallery-nav" id="galleryNavNext" aria-label="Next photo">›</button>
+          </div>
         </div>
 
         <!-- WebGL Fallback Grid -->

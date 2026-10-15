@@ -195,16 +195,6 @@
     font-size: 0.75rem;
   }
 }
-  font-family: var(--font-sans);
-  font-size: 0.75rem;
-  font-weight: 500;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: rgba(255, 255, 255, 0.7);
-  pointer-events: none;
-  z-index: 2;
-}
-
 .gallery-hint-cue p {
   margin: 0;
   text-shadow: 0 2px 8px rgba(0, 0, 0, 0.7);
@@ -214,4 +204,157 @@
   opacity: 0.55;
   font-size: 0.6875rem;
   margin-top: 0.25rem;
+}
+
+/* Hide desktop hint on mobile when mobile controls are visible */
+@media (max-width: 768px) {
+  .gallery-hint-cue {
+    display: none;
+  }
+}
+
+/* ==========================================================================
+   MOBILE "TAP TO INTERACT" OVERLAY CONTROLS
+   Zero scroll trapping by default; tap to unlock 3D gestures with Done button
+   ========================================================================== */
+
+/* By default on touch/mobile devices, disable canvas pointer events so page scrolls 100% freely */
+@media (max-width: 768px) {
+  .gallery3d:not(.is-interactive) .gallery3d__canvas canvas {
+    pointer-events: none !important;
+    touch-action: pan-y !important;
+  }
+
+  .gallery3d.is-interactive {
+    box-shadow: 0 0 0 2px var(--accent-sky), 0 20px 45px rgba(0, 0, 0, 0.4);
+  }
+
+  .gallery3d.is-interactive .gallery3d__canvas canvas {
+    pointer-events: auto !important;
+    touch-action: none !important;
+  }
+}
+
+.gallery3d-mobile-controls {
+  position: absolute;
+  bottom: 1.25rem;
+  left: 0;
+  right: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 10;
+  pointer-events: auto;
+  padding: 0 1rem;
+}
+
+@media (min-width: 769px) {
+  .gallery3d-mobile-controls {
+    display: none !important;
+  }
+}
+
+/* 1. Unlock Pill Button (Tap to Explore 3D) */
+.btn-gallery-unlock {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.65rem 1.25rem;
+  min-height: 44px;
+  border-radius: var(--border-radius-full);
+  background-color: rgba(12, 9, 7, 0.88);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  color: var(--bg-cream);
+  border: 1px solid rgba(255, 255, 255, 0.22);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.45);
+  font-family: var(--font-sans);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 250ms ease;
+  user-select: none;
+}
+
+.btn-gallery-unlock:active {
+  transform: scale(0.97);
+  background-color: var(--accent-sky-deep);
+}
+
+.btn-gallery-unlock .unlock-pulse {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: var(--accent-sky);
+  box-shadow: 0 0 8px var(--accent-sky);
+  animation: pulseDot 1.8s infinite ease-in-out;
+}
+
+/* 2. Active Mode Controls Bar (Prev + Done + Next) */
+.gallery-active-bar {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.35rem 0.5rem;
+  border-radius: var(--border-radius-full);
+  background-color: rgba(12, 9, 7, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--accent-sky);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.6);
+  animation: fadeInSlideUp 250ms ease forwards;
+}
+
+@keyframes fadeInSlideUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.btn-gallery-nav {
+  width: 40px;
+  height: 40px;
+  min-width: 40px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.1);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  font-size: 1.25rem;
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background-color 200ms ease;
+}
+
+.btn-gallery-nav:active {
+  background-color: var(--accent-sky);
+  color: var(--text-espresso);
+}
+
+.btn-gallery-done {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.45rem;
+  padding: 0.55rem 1rem;
+  min-height: 40px;
+  border-radius: var(--border-radius-full);
+  background-color: rgba(255, 255, 255, 0.14);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-family: var(--font-sans);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: all 200ms ease;
+  white-space: nowrap;
+}
+
+.btn-gallery-done:active {
+  background-color: #34d399;
+  color: #000000;
 }
