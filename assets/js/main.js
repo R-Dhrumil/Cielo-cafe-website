@@ -9,14 +9,70 @@ document.addEventListener('DOMContentLoaded', () => {
   const openDrawerBtn = document.getElementById('openDrawerBtn');
   const closeDrawerBtn = document.getElementById('closeDrawerBtn');
 
-  // 1. Sticky Navigation on Scroll
-  window.addEventListener('scroll', () => {
-    if (window.scrollY > 30) {
-      header?.classList.add('is-scrolled');
+  // 1. Sticky Navigation & Dynamic Header Contrast Alteration (White/Black background detection)
+  const heroSection = document.getElementById('heroSection');
+  const footer = document.querySelector('.cielo-footer');
+
+  function updateHeaderContrast() {
+    if (!header) return;
+
+    const scrollY = window.scrollY || window.pageYOffset;
+
+    // Toggle sticky scrolled state
+    if (scrollY > 20) {
+      header.classList.add('is-scrolled');
     } else {
-      header?.classList.remove('is-scrolled');
+      header.classList.remove('is-scrolled');
     }
-  }, { passive: true });
+
+    const headerHeight = header.offsetHeight || 60;
+
+    // Check if the header is currently overlapping a dark background section
+    let isOverDark = false;
+
+    // A. Check Hero Section on homepage (dark night entrance photo)
+    if (heroSection) {
+      const heroRect = heroSection.getBoundingClientRect();
+      // As long as hero bottom is below the top part of the header, we're over the dark hero
+      if (heroRect.bottom > (headerHeight * 0.45)) {
+        isOverDark = true;
+      }
+    }
+
+    // B. Check dark footer
+    if (!isOverDark && footer) {
+      const footerRect = footer.getBoundingClientRect();
+      if (footerRect.top <= (headerHeight * 0.55) && footerRect.bottom > 0) {
+        isOverDark = true;
+      }
+    }
+
+    // C. Check any other section explicitly flagged as dark
+    if (!isOverDark) {
+      const darkSections = document.querySelectorAll('[data-header-theme="dark"]');
+      for (let sec of darkSections) {
+        if (sec === heroSection || sec === footer) continue;
+        const rect = sec.getBoundingClientRect();
+        if (rect.top <= (headerHeight * 0.55) && rect.bottom >= (headerHeight * 0.45)) {
+          isOverDark = true;
+          break;
+        }
+      }
+    }
+
+    // Apply the alternating contrast classes
+    if (isOverDark) {
+      header.classList.remove('theme-light-bg');
+      header.classList.add('theme-dark-bg');
+    } else {
+      header.classList.remove('theme-dark-bg');
+      header.classList.add('theme-light-bg');
+    }
+  }
+
+  window.addEventListener('scroll', updateHeaderContrast, { passive: true });
+  window.addEventListener('resize', updateHeaderContrast, { passive: true });
+  updateHeaderContrast();
 
   // 2. Cinematic Page Transitions (Full-Screen Luxury Curtain)
   const transitionScreen = document.getElementById('cieloTransitionScreen');

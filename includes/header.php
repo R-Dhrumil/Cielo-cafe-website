@@ -7,6 +7,8 @@ require_once __DIR__ . '/config.php';
 $pageTitle = $pageTitle ?? ($business['name'] . ' | Cafe & Restaurant in Vadodara');
 $pageDesc = $pageDesc ?? $business['description'];
 $openStatus = isCieloOpen();
+$isHome = (basename($_SERVER['PHP_SELF'] ?? '') === 'index.php' || empty(basename($_SERVER['PHP_SELF'] ?? '')));
+$headerThemeClass = $isHome ? 'theme-dark-bg' : 'theme-light-bg';
 
 // Schema.org Restaurant / Cafe JSON-LD
 $schemaData = [
@@ -112,7 +114,7 @@ $schemaData = [
   </script>
 
   <!-- Global Header (Villa Aurelia Minimalist Cinematic Style) -->
-  <header class="cielo-header">
+  <header class="cielo-header <?= $headerThemeClass ?>">
     <div class="cielo-navbar">
       <div class="container navbar-content">
         <!-- Logo in Editorial Fraunces Serif -->

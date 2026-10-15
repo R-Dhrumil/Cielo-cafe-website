@@ -4,7 +4,7 @@
  */
 ?>
   <!-- Global Footer -->
-  <footer class="cielo-footer">
+  <footer class="cielo-footer" data-header-theme="dark">
     <div class="container footer-content">
       <!-- Centered Brand Mark -->
       <div class="footer-brand">

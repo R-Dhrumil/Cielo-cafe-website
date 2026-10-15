@@ -57,7 +57,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
 
 <main id="main-content">
   <!-- 1. Cinematic Hero Section Inspired by Villa Aurelia -->
-  <section id="heroSection" class="hero-cinematic-section">
+  <section id="heroSection" class="hero-cinematic-section" data-header-theme="dark">
     <!-- Smooth Cinematic Vignette Overlay -->
     <div class="hero-cinematic-vignette" aria-hidden="true"></div>
 
@@ -145,10 +145,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
       <div class="split-col-5">
         <div class="split-image-card image-zoom-container">
           <img src="assets/images/cafe/interior-atmosphere.jpg" alt="Cielo Cafe Interior and Ambient Dining Vibe">
-          <div class="atmosphere-pill">
-            <span class="atmosphere-title">Atmosphere & Ambiance</span>
-            <p class="atmosphere-caption">Cane-back armchairs, warm arched lighting & artisanal cold brew.</p>
-          </div>
+         
         </div>
       </div>
     </section>

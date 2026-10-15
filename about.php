@@ -49,10 +49,7 @@ require __DIR__ . '/includes/header.php';
       <div class="split-col-5">
         <div class="split-image-card image-zoom-container">
           <img src="assets/images/cafe/interior-atmosphere.jpg" alt="Cielo Cafe Interior and Ambient Dining Vibe">
-          <div class="atmosphere-pill">
-            <span class="atmosphere-title">Atmosphere & Ambiance</span>
-            <p class="atmosphere-caption">Cane-back armchairs, warm arched lighting & artisanal cold brew.</p>
-          </div>
+          
         </div>
       </div>
     </section>

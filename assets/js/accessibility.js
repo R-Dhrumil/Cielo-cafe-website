@@ -46,6 +46,7 @@ document.addEventListener('DOMContentLoaded', () => {
       headerContrastToggle.title = isWarm ? 'Switch to High Contrast (Day)' : 'Switch to Warm Contrast (Night)';
     }
     localStorage.setItem('cielo_warm_contrast', isWarm ? '1' : '0');
+    window.dispatchEvent(new Event('scroll'));
   }
 
   // Restore preferences
