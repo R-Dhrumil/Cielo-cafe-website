@@ -14,13 +14,13 @@ require __DIR__ . '/includes/header.php';
 
 <main id="main-content" style="padding-top: 5rem;">
   <!-- Contact Hero Banner -->
-  <section style="background-color: var(--text-espresso); color: var(--bg-cream); padding: 5rem 0 3.5rem 0; text-align: center;">
+  <section class="subpage-hero-banner">
     <div class="container">
       <span class="eyebrow" style="color: var(--accent-sky);">VISIT CIELO</span>
-      <h1 class="font-serif" style="font-size: 3rem; color: var(--bg-cream); margin-top: 0.5rem; margin-bottom: 0.75rem;">
+      <h1 class="subpage-hero-title">
         Location & Timings
       </h1>
-      <p style="font-size: 0.9375rem; color: rgba(246, 239, 227, 0.85); max-width: 38rem; margin: 0 auto; line-height: 1.6;">
+      <p class="subpage-hero-subtitle">
         Nestled in Vadodara, Gujarat. Join us for early morning artisanal roasts or unwind with friends over late-night Italian comfort plates.
       </p>
     </div>

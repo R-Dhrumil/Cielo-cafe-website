@@ -211,17 +211,30 @@
         });
 
         var touchY = null;
+        var touchX = null;
         canvas.addEventListener('touchstart', function (e) {
             touchY = e.touches[0].clientY;
+            touchX = e.touches[0].clientX;
         }, { passive: true });
         canvas.addEventListener('touchmove', function (e) {
-            if (touchY === null) return;
-            e.preventDefault();
+            if (touchY === null || touchX === null) return;
+            var x = e.touches[0].clientX;
             var y = e.touches[0].clientY;
-            nudge((touchY - y) * 0.05 * speed);
-            touchY = y;
+            var dx = touchX - x;
+            var dy = touchY - y;
+
+            // If user gesture is primarily horizontal, control 3D gallery scrub
+            if (Math.abs(dx) > Math.abs(dy)) {
+                if (e.cancelable) e.preventDefault();
+                nudge(dx * 0.05 * speed);
+                touchX = x;
+                touchY = y;
+            }
         }, { passive: false });
-        canvas.addEventListener('touchend', function () { touchY = null; });
+        canvas.addEventListener('touchend', function () {
+            touchY = null;
+            touchX = null;
+        });
 
         setInterval(function () {
             if (Date.now() - lastInteraction > 3000) autoPlay = true;

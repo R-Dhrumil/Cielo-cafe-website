@@ -53,6 +53,7 @@ html {
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
   overflow-x: clip;
+  -webkit-text-size-adjust: 100%;
 }
 
 body {
@@ -65,6 +66,7 @@ body {
   overflow-x: clip;
   position: relative;
   min-height: 100vh;
+  min-height: 100dvh;
 }
 
 ::selection {
@@ -331,4 +333,84 @@ button:active,
 .btn-outline:active,
 .btn-nav-reserve:active {
   transform: translateY(1px);
+}
+
+/* ==========================================================================
+   MOBILE & TABLET RESPONSIVE CORE FOUNDATION
+   Touch targets, iOS zoom prevention, fluid typography, safe-area support
+   ========================================================================== */
+
+button,
+a,
+input,
+select,
+textarea {
+  touch-action: manipulation;
+}
+
+/* iOS Safari Auto-Zoom Prevention */
+@media (max-width: 767px) {
+  input[type="text"],
+  input[type="email"],
+  input[type="tel"],
+  input[type="date"],
+  input[type="time"],
+  input[type="number"],
+  select,
+  textarea {
+    font-size: 16px !important;
+  }
+}
+
+/* Smooth Touch Momentum Scrolling */
+.menu-tabs-nav,
+.mobile-drawer-overlay,
+.reservation-modal-window,
+.gallery3d__grid {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Responsive Container Padding Adjustments */
+@media (max-width: 480px) {
+  .container {
+    padding-left: 1rem;
+    padding-right: 1rem;
+  }
+}
+
+@media (min-width: 481px) and (max-width: 1023px) {
+  .container {
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+  }
+}
+
+/* Common Page Hero Banner Fluid Styling across all subpages */
+.subpage-hero-banner {
+  background-color: var(--text-espresso);
+  color: var(--bg-cream);
+  padding: clamp(3.5rem, 8vw, 5.5rem) 0 clamp(2.25rem, 5vw, 3.5rem) 0;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+}
+
+.subpage-hero-title {
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(2rem, 5.5vw, 3.25rem);
+  color: var(--bg-cream);
+  margin-top: 0.5rem;
+  margin-bottom: 0.75rem;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+.subpage-hero-subtitle {
+  font-size: clamp(0.8125rem, 2vw, 0.9375rem);
+  color: rgba(246, 239, 227, 0.85);
+  max-width: 38rem;
+  margin: 0 auto;
+  line-height: 1.6;
+  font-weight: 300;
+  padding: 0 0.5rem;
 }

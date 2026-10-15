@@ -476,7 +476,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
   </section>
 
   <!-- 6. 3D Infinite Gallery (Default Experience) -->
-  <section id="gallery" class="gallery-section gallery-section-3d" style="padding: 4.5rem 0 5rem 0;">
+  <section id="gallery" class="gallery-section gallery-section-3d">
     <div class="container">
       <div class="gallery-header" style="margin-bottom: 2rem;">
         <div>

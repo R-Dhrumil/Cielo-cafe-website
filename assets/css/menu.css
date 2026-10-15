@@ -55,10 +55,12 @@
   align-items: center;
   justify-content: flex-start;
   overflow-x: auto;
-  padding-bottom: 1rem;
-  gap: 0.75rem;
+  padding-bottom: 0.75rem;
+  gap: 0.5rem;
   scrollbar-width: none;
   -ms-overflow-style: none;
+  -webkit-overflow-scrolling: touch;
+  scroll-padding: 0.5rem;
 }
 
 .menu-tabs-nav::-webkit-scrollbar {
@@ -68,6 +70,8 @@
 @media (min-width: 640px) {
   .menu-tabs-nav {
     justify-content: center;
+    gap: 0.75rem;
+    padding-bottom: 1rem;
   }
 }
 
@@ -75,7 +79,8 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
-  padding: 0.75rem 1.25rem;
+  padding: 0.65rem 1rem;
+  min-height: 44px;
   border-radius: var(--border-radius-md);
   font-size: 0.75rem;
   text-transform: uppercase;
@@ -87,6 +92,12 @@
   border: 1px solid rgba(27, 21, 17, 0.15);
   cursor: pointer;
   transition: var(--transition-smooth);
+}
+
+@media (min-width: 640px) {
+  .menu-tab-btn {
+    padding: 0.75rem 1.25rem;
+  }
 }
 
 .menu-tab-btn:hover {
@@ -305,19 +316,31 @@
   text-decoration: none;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  transition: color 200ms ease;
+  padding: 0.45rem 0.85rem;
+  min-height: 40px;
+  border-radius: var(--border-radius-full);
+  background: rgba(30, 63, 94, 0.06);
+  transition: all 200ms ease;
 }
 
 .dish-order-btn:hover {
-  color: var(--accent-terracotta);
+  color: #FFFFFF;
+  background-color: var(--accent-terracotta);
 }
 
 /* PDF Menu Download Box */
 .menu-download-box {
-  margin-top: 4rem;
+  margin-top: 3rem;
   text-align: center;
-  padding-top: 2rem;
+  padding-top: 1.5rem;
   border-top: 1px solid var(--border-light);
+}
+
+@media (min-width: 640px) {
+  .menu-download-box {
+    margin-top: 4rem;
+    padding-top: 2rem;
+  }
 }
 
 .menu-download-card {
@@ -325,9 +348,11 @@
   flex-direction: column;
   align-items: center;
   gap: 1rem;
+  width: 100%;
+  max-width: 32rem;
   background-color: var(--bg-card);
   border: 1px solid rgba(27, 21, 17, 0.15);
-  padding: 1.25rem 1.75rem;
+  padding: 1.25rem 1.5rem;
   border-radius: var(--border-radius-lg);
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
 }
@@ -336,6 +361,7 @@
   .menu-download-card {
     flex-direction: row;
     padding: 1.5rem 2rem;
+    width: auto;
   }
 }
 

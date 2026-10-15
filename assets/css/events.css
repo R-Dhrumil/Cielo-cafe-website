@@ -4,13 +4,19 @@
    ========================================================================== */
 
 .events-section {
-  padding: 5rem 0;
+  padding: 4rem 0;
   background-color: var(--text-espresso);
   color: var(--bg-cream);
   overflow: hidden;
 }
 
 @media (min-width: 640px) {
+  .events-section {
+    padding: 5.5rem 0;
+  }
+}
+
+@media (min-width: 1024px) {
   .events-section {
     padding: 7rem 0;
   }
@@ -19,8 +25,14 @@
 .events-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 3rem;
+  gap: 2.5rem;
   align-items: center;
+}
+
+@media (min-width: 640px) {
+  .events-grid {
+    gap: 3.5rem;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -41,7 +53,13 @@
 .events-content {
   display: flex;
   flex-direction: column;
-  gap: 1.5rem;
+  gap: 1.25rem;
+}
+
+@media (min-width: 640px) {
+  .events-content {
+    gap: 1.5rem;
+  }
 }
 
 .events-eyebrow-badge {
@@ -62,15 +80,9 @@
 
 .events-heading {
   font-family: var(--font-serif);
-  font-size: 2rem;
+  font-size: clamp(1.85rem, 5vw, 2.75rem);
   color: var(--bg-cream);
   line-height: 1.15;
-}
-
-@media (min-width: 640px) {
-  .events-heading {
-    font-size: 2.75rem;
-  }
 }
 
 .events-desc {
@@ -88,7 +100,7 @@
   padding-top: 0.5rem;
 }
 
-@media (min-width: 640px) {
+@media (min-width: 480px) {
   .events-features-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
@@ -116,7 +128,7 @@
 }
 
 .events-actions {
-  padding-top: 1rem;
+  padding-top: 0.75rem;
 }
 
 .events-footnote {
@@ -130,8 +142,16 @@
 /* Layered Image Composition */
 .events-composition {
   position: relative;
-  max-width: 28rem;
+  max-width: 24rem;
   margin: 0 auto;
+  padding: 0 0.5rem;
+}
+
+@media (min-width: 640px) {
+  .events-composition {
+    max-width: 28rem;
+    padding: 0;
+  }
 }
 
 @media (min-width: 1024px) {
@@ -142,7 +162,7 @@
 
 .events-img-primary {
   position: relative;
-  width: 80%;
+  width: 82%;
   aspect-ratio: 4 / 5;
   border-radius: var(--border-radius-xl);
   overflow: hidden;
@@ -160,9 +180,9 @@
 
 .events-img-secondary {
   position: absolute;
-  bottom: -2rem;
-  right: -1rem;
-  width: 60%;
+  bottom: -1.25rem;
+  right: 0;
+  width: 55%;
   aspect-ratio: 1 / 1;
   border-radius: var(--border-radius-xl);
   overflow: hidden;
@@ -173,19 +193,21 @@
 
 @media (min-width: 640px) {
   .events-img-secondary {
-    right: -2rem;
+    bottom: -2rem;
+    right: -1.5rem;
+    width: 60%;
   }
 }
 
 .events-booking-pill {
   position: absolute;
-  top: 1rem;
-  left: -1rem;
+  top: 0.75rem;
+  left: 0.5rem;
   background-color: var(--accent-terracotta);
   color: var(--bg-card);
-  padding: 0.5rem 1rem;
+  padding: 0.45rem 0.85rem;
   border-radius: var(--border-radius-md);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   font-weight: 700;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -193,4 +215,14 @@
   display: inline-flex;
   align-items: center;
   gap: 0.5rem;
+  z-index: 2;
+}
+
+@media (min-width: 640px) {
+  .events-booking-pill {
+    top: 1rem;
+    left: -0.75rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.75rem;
+  }
 }

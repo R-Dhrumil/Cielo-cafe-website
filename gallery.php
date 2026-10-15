@@ -56,7 +56,7 @@ $configJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
 
 <main id="main-content" style="padding-top: 5rem;">
   <!-- 3D Infinite Gallery Stage -->
-  <section class="gallery-page-container" style="padding: 1.5rem 1rem 2rem 1rem;">
+  <section class="gallery-page-container">
     <div class="container">
       <div id="gallery3d" class="gallery3d" data-config='<?= htmlspecialchars($configJson, ENT_QUOTES, 'UTF-8') ?>'>
         <div id="gallery3dCanvas" class="gallery3d__canvas"></div>

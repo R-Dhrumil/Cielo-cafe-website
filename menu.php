@@ -14,13 +14,13 @@ require __DIR__ . '/includes/header.php';
 
 <main id="main-content" style="padding-top: 5rem;">
   <!-- Menu Page Banner -->
-  <section style="background-color: var(--text-espresso); color: var(--bg-cream); padding: 5rem 0 3.5rem 0; text-align: center;">
+  <section class="subpage-hero-banner">
     <div class="container">
       <span class="eyebrow" style="color: var(--accent-sky);">CIELO RESTRO & CAFE</span>
-      <h1 class="font-serif" style="font-size: 3rem; color: var(--bg-cream); margin-top: 0.5rem; margin-bottom: 0.75rem;">
+      <h1 class="subpage-hero-title">
         Artisanal Dining Menu
       </h1>
-      <p style="font-size: 0.9375rem; color: rgba(246, 239, 227, 0.85); max-width: 38rem; margin: 0 auto; line-height: 1.6;">
+      <p class="subpage-hero-subtitle">
         From 18-hour cold brews and crispy crostinis to 48-hour fermented crust pizzas and classic Venetian tiramisu. Handcrafted with honest ingredients in Vadodara.
       </p>
     </div>

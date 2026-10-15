@@ -98,14 +98,21 @@
 .newsletter-input {
   width: 100%;
   padding: 0.75rem 1rem 0.75rem 2.5rem;
+  min-height: 44px;
   border-radius: var(--border-radius-md);
   background-color: rgba(246, 239, 227, 0.1);
   border: 1px solid rgba(246, 239, 227, 0.25);
   color: var(--bg-cream);
-  font-size: 0.75rem;
+  font-size: 16px;
   font-family: var(--font-sans);
   outline: none;
   transition: border-color 200ms ease;
+}
+
+@media (min-width: 768px) {
+  .newsletter-input {
+    font-size: 0.8125rem;
+  }
 }
 
 .newsletter-input::placeholder {
@@ -118,6 +125,7 @@
 
 .newsletter-submit-btn {
   padding: 0.75rem 1.5rem;
+  min-height: 44px;
   white-space: nowrap;
 }
 

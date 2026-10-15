@@ -3,7 +3,7 @@
    ========================================================================== */
 
 .page-hero-banner {
-  padding: 8rem 0 4rem 0;
+  padding: clamp(5.5rem, 12vw, 8rem) 0 clamp(2.5rem, 6vw, 4rem) 0;
   background-color: var(--text-espresso);
   color: var(--bg-cream);
   text-align: center;
@@ -12,47 +12,59 @@
 }
 
 .page-hero-title {
-  font-family: var(--font-serif);
-  font-size: 2.75rem;
+  font-family: var(--font-display, var(--font-serif));
+  font-size: clamp(2.15rem, 6vw, 3.75rem);
   color: var(--bg-cream);
   margin-top: 0.5rem;
-}
-
-@media (min-width: 640px) {
-  .page-hero-title {
-    font-size: 3.75rem;
-  }
+  line-height: 1.15;
+  letter-spacing: -0.02em;
 }
 
 .page-hero-subtitle {
-  font-size: 1rem;
+  font-size: clamp(0.875rem, 2vw, 1rem);
   color: rgba(246, 239, 227, 0.85);
   max-width: 36rem;
   margin: 0.75rem auto 0 auto;
   font-weight: 300;
   line-height: 1.6;
+  padding: 0 0.5rem;
 }
 
 .about-values-grid {
   display: grid;
   grid-template-columns: 1fr;
-  gap: 1.5rem;
-  margin-top: 3rem;
+  gap: 1.25rem;
+  margin-top: 2rem;
 }
 
-@media (min-width: 768px) {
+@media (min-width: 640px) {
+  .about-values-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1.5rem;
+    margin-top: 2.5rem;
+  }
+}
+
+@media (min-width: 1024px) {
   .about-values-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
+    margin-top: 3rem;
   }
 }
 
 .about-value-card {
-  padding: 2rem;
+  padding: 1.5rem;
   border-radius: var(--border-radius-xl);
   background-color: var(--bg-card);
   border: 1px solid var(--border-light);
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.04);
+}
+
+@media (min-width: 640px) {
+  .about-value-card {
+    padding: 2rem;
+  }
 }
 
 .about-value-icon {
