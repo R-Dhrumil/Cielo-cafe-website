@@ -57,3 +57,6 @@ yarn-error.log*
 skills-lock.json
 videos
 skills
+
+menu 
+implementation_plan.md
