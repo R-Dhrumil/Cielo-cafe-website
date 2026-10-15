@@ -13,9 +13,14 @@ class SettingsService
      */
     public static function getGstRates(): array
     {
+        $cgst = (float)Setting::get('gst_cgst_percent', 2.5);
+        $sgst = (float)Setting::get('gst_sgst_percent', 2.5);
+
         return [
-            'cgst' => (float)Setting::get('gst_cgst_percent', 2.5),
-            'sgst' => (float)Setting::get('gst_sgst_percent', 2.5),
+            'cgst' => $cgst,
+            'sgst' => $sgst,
+            'cgst_percent' => $cgst,
+            'sgst_percent' => $sgst,
             'gstin' => (string)Setting::get('cafe_gstin', '24ABCDE1234F1Z5'),
             'is_enabled' => (bool)Setting::get('gst_enabled', true),
         ];
@@ -26,14 +31,27 @@ class SettingsService
      */
     public static function getLoyaltyConfig(): array
     {
+        $pointsPer100 = (int)Setting::get('loyalty_points_per_100', 10);
+        $pointValue = (int)Setting::get('loyalty_point_value_paise', 100);
+        $maxRedeem = (float)Setting::get('loyalty_max_redeem_percent', 50.0);
+        $minRedeem = (int)Setting::get('loyalty_min_redeem_points', 50);
+
         return [
             'is_enabled' => (bool)Setting::get('loyalty_enabled', true),
-            'points_per_100_spent' => (int)Setting::get('loyalty_points_per_100', 10),
-            'point_value_paise' => (int)Setting::get('loyalty_point_value_paise', 100), // 1 point = ₹1 (100 paise)
-            'min_redeem_points' => (int)Setting::get('loyalty_min_redeem_points', 50),
-            'max_redeem_percent' => (float)Setting::get('loyalty_max_redeem_percent', 50.0), // max 50% of bill via points
+            'points_per_100_spent' => $pointsPer100,
+            'earn_points_per_100_inr' => $pointsPer100,
+            'point_value_paise' => $pointValue,
+            'redeem_value_per_point_paise' => $pointValue,
+            'min_redeem_points' => $minRedeem,
+            'max_redeem_percent' => $maxRedeem,
+            'max_redeem_percentage' => $maxRedeem,
             'review_points' => (int)Setting::get('loyalty_review_points', 50),
         ];
+    }
+
+    public static function getLoyaltyRules(): array
+    {
+        return self::getLoyaltyConfig();
     }
 
     /**

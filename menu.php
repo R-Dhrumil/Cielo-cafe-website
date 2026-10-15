@@ -6,8 +6,8 @@ require_once __DIR__ . '/includes/config.php';
 
 $pageTitle = "Artisanal Menu | Cielo Cafe and Restro, Vadodara";
 $pageDesc = "Browse our Italian-inspired menu featuring 48-hour cold-fermented pizzas, bronze-cut pasta, signature cold brews, and velvety desserts in Vadodara.";
-$pageCss = ['menu.css'];
-$pageJs = ['menu-tabs.js'];
+$pageCss = ['menu.css', 'cart-drawer.css'];
+$pageJs = ['menu-tabs.js', 'cart-drawer.js'];
 
 require __DIR__ . '/includes/header.php';
 ?>
@@ -62,13 +62,13 @@ require __DIR__ . '/includes/header.php';
 
       <!-- Dishes Grid -->
       <div class="dish-grid">
-        <?php foreach ($menu['items'] as $item): ?>
+        <?php foreach ($menu['items'] as $index => $item): ?>
           <?php
-          $dishWaUrl = "https://wa.me/" . e($business['whatsappNumber']) . "?text=" . urlencode("Hello Cielo Cafe! I'd like to order: " . $item['name'] . " (" . $business['currency'] . $item['price'] . ").");
+          $dishId = $index + 1;
           $initialDisplay = ($item['categoryId'] === $menu['categories'][0]['id']) ? 'flex' : 'none';
           ?>
           <article class="dish-card" data-category="<?= e($item['categoryId']) ?>" style="display: <?= $initialDisplay ?>;">
-            <div class="dish-card-media">
+            <div class="dish-card-media" onclick="window.CieloCart.quickAdd(<?= $dishId ?>)" style="cursor: pointer;">
               <img src="<?= e(asset_url($item['image'])) ?>" alt="<?= e($item['name']) ?>" class="dish-card-img" loading="lazy">
               <div class="dish-badges-top">
                 <div class="veg-indicator" title="<?= $item['isVeg'] ? 'Vegetarian' : 'Non-Vegetarian' ?>">
@@ -88,14 +88,14 @@ require __DIR__ . '/includes/header.php';
               </div>
 
               <div class="dish-card-footer">
-                <span class="dish-footer-note">Freshly Prepared</span>
-                <a href="<?= $dishWaUrl ?>" target="_blank" rel="noopener noreferrer" class="dish-order-btn" aria-label="Order <?= e($item['name']) ?> on WhatsApp">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M3 21l1.65-3.8a9 9 0 1 1 3.4 2.9L3 21"/>
-                    <path d="M9 10a.5.5 0 0 0 1 0V9a.5.5 0 0 0-1 0v1a5 5 0 0 0 5 5h1a.5.5 0 0 0 0-1h-1a.5.5 0 0 0 0 1"/>
+                <span class="dish-footer-note">Handcrafted · Fresh</span>
+                <button type="button" class="dish-order-btn" onclick="window.CieloCart.quickAdd(<?= $dishId ?>)" aria-label="Add <?= e($item['name']) ?> to cart">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="12" y1="5" x2="12" y2="19"/>
+                    <line x1="5" y1="12" x2="19" y2="12"/>
                   </svg>
-                  Order
-                </a>
+                  <span>Add</span>
+                </button>
               </div>
             </div>
           </article>
@@ -119,6 +119,9 @@ require __DIR__ . '/includes/header.php';
       </div>
     </div>
   </section>
+
+  <!-- Interactive Slide-out Cart Drawer & Customizer -->
+  <?php require __DIR__ . '/includes/cart_drawer.php'; ?>
 </main>
 
 <?php require __DIR__ . '/includes/footer.php'; ?>

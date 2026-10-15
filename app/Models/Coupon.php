@@ -22,6 +22,22 @@ class Coupon extends Model
             1
         );
 
-        return $rows[0] ?? null;
+        if (empty($rows[0])) {
+            return null;
+        }
+
+        $row = $rows[0];
+        // Standardize attribute aliases
+        $row['discount_type'] = $row['type'] ?? 'percentage';
+        $row['discount_value'] = (float)($row['value'] ?? 0);
+        $row['max_uses_per_user'] = (int)($row['usage_limit_per_user'] ?? 1);
+        $row['max_uses_total'] = (int)($row['usage_limit_total'] ?? 0);
+
+        return $row;
+    }
+
+    public static function findValidCoupon(string $code): ?array
+    {
+        return self::findActiveByCode($code);
     }
 }
