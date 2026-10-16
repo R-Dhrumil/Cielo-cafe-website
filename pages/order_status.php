@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Displays real-time 4-step kitchen progress, receipt breakdown, and counter payment directions.
  */
 
-require_once __DIR__ . '/includes/config.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 
 use App\Models\Order;
 use App\Models\OrderItem;
@@ -25,7 +25,7 @@ $pageTitle = "Order Tracking | Cielo Cafe and Restro";
 $pageDesc = "Track your live kitchen order status at Cielo Cafe Vadodara.";
 $pageCss = ['menu.css'];
 
-require __DIR__ . '/includes/header.php';
+require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <main id="main-content" style="padding-top: 5.5rem; min-height: 85vh; background: var(--bg-cream, #F7F4EE);">
@@ -317,4 +317,4 @@ function updateLiveStatusUI(orderData) {
 }
 </script>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/footer.php'; ?>

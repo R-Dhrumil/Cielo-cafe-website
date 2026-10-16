@@ -2,7 +2,7 @@
 /**
  * Cielo Cafe and Restro - Dedicated Photo Gallery Page with 3D Infinite Canvas
  */
-require_once __DIR__ . '/includes/config.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 
 $pageTitle = "Visual Diary & 3D Gallery | Cielo Cafe and Restro, Vadodara";
 $pageDesc = "Explore photos of handcrafted pizzas, estate espresso brews, and cozy ambient cafe interiors at Cielo Cafe and Restro, Vadodara in an interactive 3D canvas.";
@@ -13,7 +13,7 @@ $pageJs = [
     'gallery-3d.js'
 ];
 
-require __DIR__ . '/includes/header.php';
+require dirname(__DIR__) . '/includes/header.php';
 
 // Prepare images and config for 3D Infinite Gallery
 $gallery3dImages = [];
@@ -148,4 +148,4 @@ $configJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
   </section>
 </main>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/footer.php'; ?>

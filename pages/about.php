@@ -2,14 +2,14 @@
 /**
  * Cielo Cafe and Restro - Our Story & Philosophy Page
  */
-require_once __DIR__ . '/includes/config.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 
 $pageTitle = "Our Story | Cielo Cafe and Restro, Vadodara";
 $pageDesc = "Discover the story behind Cielo Cafe and Restro. Named after the Italian sky, bringing artisanal Italian cooking and vibrant cafe culture to Vadodara.";
 $pageCss = ['home.css', 'about.css'];
 $pageJs = [];
 
-require __DIR__ . '/includes/header.php';
+require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <main id="main-content" style="padding-top: 5rem;">
@@ -142,4 +142,4 @@ require __DIR__ . '/includes/header.php';
   </div>
 </main>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/footer.php'; ?>

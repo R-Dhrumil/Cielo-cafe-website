@@ -2,18 +2,18 @@
 /**
  * Cielo Cafe and Restro - Dedicated Menu Page
  */
-require_once __DIR__ . '/includes/config.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 
 $pageTitle = "Artisanal Menu | Cielo Cafe and Restro, Vadodara";
 $pageDesc = "Browse our Italian-inspired menu featuring 48-hour cold-fermented pizzas, bronze-cut pasta, signature cold brews, and velvety desserts in Vadodara.";
 $pageCss = ['menu.css', 'cart-drawer.css'];
 $pageJs = ['menu-tabs.js', 'cart-drawer.js'];
 
-require __DIR__ . '/includes/header.php';
+require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <main id="main-content" style="padding-top: 5rem;">
-  <?php require __DIR__ . '/includes/table_badge.php'; ?>
+  <?php require dirname(__DIR__) . '/includes/table_badge.php'; ?>
 
   <!-- Menu Page Banner -->
   <section class="subpage-hero-banner">
@@ -121,7 +121,7 @@ require __DIR__ . '/includes/header.php';
   </section>
 
   <!-- Interactive Slide-out Cart Drawer & Customizer -->
-  <?php require __DIR__ . '/includes/cart_drawer.php'; ?>
+  <?php require dirname(__DIR__) . '/includes/cart_drawer.php'; ?>
 </main>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/footer.php'; ?>

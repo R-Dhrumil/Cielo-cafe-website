@@ -10,6 +10,9 @@ define('CIELO_ROOT', dirname(__DIR__));
 define('CIELO_APP', CIELO_ROOT . '/app');
 define('CIELO_CONFIG', CIELO_ROOT . '/config');
 define('CIELO_DATABASE', CIELO_ROOT . '/database');
+define('CIELO_STORAGE', CIELO_ROOT . '/storage');
+define('CIELO_INCLUDES', CIELO_ROOT . '/includes');
+define('CIELO_PAGES', CIELO_ROOT . '/pages');
 
 // 1. PSR-4 Autoloader for "App\" namespace
 spl_autoload_register(function (string $class) {
@@ -64,10 +67,49 @@ function loadDotEnv(string $filePath): void {
 
 loadDotEnv(CIELO_ROOT . '/.env');
 
-// 3. Timezone Setting (Indian Standard Time)
+// 3. Environment & Production Error Handling Configuration
+$appEnv = getenv('APP_ENV') ?: 'development';
+$appDebug = filter_var(getenv('APP_DEBUG') ?? ($appEnv === 'development' ? 'true' : 'false'), FILTER_VALIDATE_BOOLEAN);
+
+if ($appDebug) {
+    error_reporting(E_ALL);
+    ini_set('display_errors', '1');
+    ini_set('display_startup_errors', '1');
+} else {
+    // In production: hide errors from browser, log to protected storage/logs
+    error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+    ini_set('display_errors', '0');
+    ini_set('display_startup_errors', '0');
+}
+
+ini_set('log_errors', '1');
+$logDir = CIELO_STORAGE . '/logs';
+if (!is_dir($logDir)) {
+    @mkdir($logDir, 0755, true);
+}
+ini_set('error_log', $logDir . '/error.log');
+
+// 4. Timezone Setting (Indian Standard Time)
 date_default_timezone_set('Asia/Kolkata');
 
-// 4. Secure Session Startup
+// 5. Storage Path Helper
+function storage_path(string $path = ''): string {
+    return CIELO_STORAGE . ($path ? '/' . ltrim($path, '/') : '');
+}
+
+// 6. Application Logger Helper
+function cielo_log(string $message, string $level = 'info'): void {
+    $dir = CIELO_STORAGE . '/logs';
+    if (!is_dir($dir)) {
+        @mkdir($dir, 0755, true);
+    }
+    $file = $dir . '/' . date('Y-m-d') . '.log';
+    $timestamp = date('Y-m-d H:i:s');
+    $level = strtoupper($level);
+    @file_put_contents($file, "[{$timestamp}] [{$level}] {$message}\n", FILE_APPEND | LOCK_EX);
+}
+
+// 7. Secure Session Startup
 function startCieloSession(): void {
     if (session_status() === PHP_SESSION_NONE) {
         if (!headers_sent()) {

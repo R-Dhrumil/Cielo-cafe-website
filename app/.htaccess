@@ -1,0 +1,8 @@
+# Deny direct browser execution of backend application classes
+<IfModule !mod_authz_core.c>
+  Order Deny,Allow
+  Deny from all
+</IfModule>
+<IfModule mod_authz_core.c>
+  Require all denied
+</IfModule>

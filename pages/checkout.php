@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Allows customers to review items, choose payment method, and submit table order.
  */
 
-require_once __DIR__ . '/includes/config.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 
 use App\Services\TableSessionService;
 
@@ -18,7 +18,7 @@ $pageTitle = "Checkout | Cielo Cafe and Restro";
 $pageDesc = "Review and confirm your artisanal dining order at Cielo Cafe Vadodara.";
 $pageCss = ['menu.css', 'cart-drawer.css'];
 
-require __DIR__ . '/includes/header.php';
+require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <main id="main-content" style="padding-top: 5.5rem; min-height: 80vh; background-color: var(--bg-cream, #F7F4EE);">
@@ -320,4 +320,4 @@ async function handlePlaceOrder(event) {
 }
 </script>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/footer.php'; ?>

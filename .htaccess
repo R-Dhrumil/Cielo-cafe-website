@@ -1,15 +1,74 @@
+# ==============================================================================
+# Cielo Cafe and Restro - Production Apache Configuration (.htaccess)
+# ==============================================================================
+
+# 1. Disable Directory Indexing
+Options -Indexes -MultiViews
+
+# 2. Set Default Charset
+AddDefaultCharset UTF-8
+
+# 3. URL Rewriting Engine
 <IfModule mod_rewrite.c>
   RewriteEngine On
   RewriteBase /
 
-  # 1. Rewrite vanity table URLs: /t/{token} -> t.php?token={token}
-  RewriteRule ^t/([a-zA-Z0-9_-]+)/?$ t.php?token=$1 [QSA,L]
+  # Route legacy /menu/ images to /assets/images/menu/
+  RewriteRule ^menu/(.*\.(?:png|jpg|jpeg|webp|svg|gif))$ assets/images/menu/$1 [L,NC]
 
-  # 2. Block direct HTTP access to sensitive environment and system files
-  RewriteRule ^\.env - [F,L]
-  RewriteRule ^database/(.*\.sqlite|.*\.sql) - [F,L]
-  RewriteRule ^tests/ - [F,L]
+  # Block direct access to hidden files and sensitive directories
+  RewriteRule (^|/)\. - [F,L]
+  RewriteRule ^(app|config|database|storage|tests|data|includes|pages)(/|$) - [F,L]
+
+  # Front-controller: route all other requests to index.php
+  RewriteCond %{REQUEST_FILENAME} !-f
+  RewriteCond %{REQUEST_FILENAME} !-d
+  RewriteRule ^(.*)$ index.php [QSA,L]
 </IfModule>
 
-# Prevent directory listing
-Options -Indexes
+# 4. Production Security Headers
+<IfModule mod_headers.c>
+  Header always set X-Content-Type-Options "nosniff"
+  Header always set X-Frame-Options "SAMEORIGIN"
+  Header always set X-XSS-Protection "1; mode=block"
+  Header always set Referrer-Policy "strict-origin-when-cross-origin"
+  Header always set Permissions-Policy "geolocation=(), microphone=(), camera=()"
+</IfModule>
+
+# 5. Asset Caching & Expiration Rules (High Performance)
+<IfModule mod_expires.c>
+  ExpiresActive On
+  ExpiresDefault "access plus 1 month"
+
+  # Images and Media
+  ExpiresByType image/webp "access plus 1 year"
+  ExpiresByType image/jpeg "access plus 1 year"
+  ExpiresByType image/png "access plus 1 year"
+  ExpiresByType image/svg+xml "access plus 1 year"
+  ExpiresByType image/x-icon "access plus 1 year"
+
+  # Web Fonts
+  ExpiresByType font/woff2 "access plus 1 year"
+  ExpiresByType font/woff "access plus 1 year"
+  ExpiresByType font/ttf "access plus 1 year"
+
+  # CSS & JavaScript
+  ExpiresByType text/css "access plus 1 month"
+  ExpiresByType application/javascript "access plus 1 month"
+
+  # Data & Dynamic Content
+  ExpiresByType application/json "access plus 0 seconds"
+  ExpiresByType text/html "access plus 0 seconds"
+</IfModule>
+
+# 6. Gzip / Deflate Compression
+<IfModule mod_deflate.c>
+  AddOutputFilterByType DEFLATE text/html
+  AddOutputFilterByType DEFLATE text/css
+  AddOutputFilterByType DEFLATE text/plain
+  AddOutputFilterByType DEFLATE text/xml
+  AddOutputFilterByType DEFLATE application/javascript
+  AddOutputFilterByType DEFLATE application/json
+  AddOutputFilterByType DEFLATE application/xml
+  AddOutputFilterByType DEFLATE image/svg+xml
+</IfModule>

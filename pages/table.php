@@ -9,7 +9,7 @@ declare(strict_types=1);
  * Verifies table cryptographic token, binds table session, and redirects to menu.
  */
 
-require_once __DIR__ . '/app/bootstrap.php';
+require_once dirname(__DIR__) . '/app/bootstrap.php';
 
 use App\Services\TableSessionService;
 use App\Models\Table;

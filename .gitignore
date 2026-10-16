@@ -20,11 +20,18 @@ desktop.ini
 *.key
 *.cert
 
-# PHP & Web Server Logs
+# PHP & Web Server Logs & Storage
 vendor/
 composer.phar
 error_log
 *.log
+storage/logs/*.log
+storage/cache/*
+!storage/cache/.gitkeep
+!storage/cache/.gitignore
+storage/backups/*
+!storage/backups/.gitkeep
+!storage/backups/.gitignore
 
 # Node & Build Artifacts (if tooling is used)
 node_modules/
@@ -60,3 +67,4 @@ skills
 
 menu 
 implementation_plan.md
+tests

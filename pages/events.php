@@ -2,14 +2,14 @@
 /**
  * Cielo Cafe and Restro - Dedicated Events & Celebrations Page
  */
-require_once __DIR__ . '/includes/config.php';
+require_once dirname(__DIR__) . '/includes/config.php';
 
 $pageTitle = "Private Events & Celebrations | Cielo Cafe and Restro, Vadodara";
 $pageDesc = "Host your birthdays, kitty parties, acoustic live evenings, and family gatherings at Cielo Cafe and Restro, Vadodara. Customized menus and warm ambient arches.";
 $pageCss = ['events.css'];
 $pageJs = [];
 
-require __DIR__ . '/includes/header.php';
+require dirname(__DIR__) . '/includes/header.php';
 ?>
 
 <main id="main-content" style="padding-top: 5rem;">
@@ -90,4 +90,4 @@ require __DIR__ . '/includes/header.php';
   </section>
 </main>
 
-<?php require __DIR__ . '/includes/footer.php'; ?>
+<?php require dirname(__DIR__) . '/includes/footer.php'; ?>
