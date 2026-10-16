@@ -13,6 +13,20 @@ class Setting extends Model
     private static array $cache = [];
 
     /**
+     * Cast string database value according to setting type
+     */
+    public static function castValue(mixed $val, ?string $type = 'string'): mixed
+    {
+        return match ($type) {
+            'json', 'array' => json_decode((string)$val ?: '[]', true) ?: [],
+            'int', 'integer' => (int)$val,
+            'float' => (float)$val,
+            'bool', 'boolean' => filter_var($val, FILTER_VALIDATE_BOOLEAN),
+            default => $val,
+        };
+    }
+
+    /**
      * Retrieve a setting value by key with optional default
      */
     public static function get(string $key, mixed $default = null): mixed
@@ -26,16 +40,7 @@ class Setting extends Model
             return $default;
         }
 
-        $val = $row['value'];
-        $type = $row['type'] ?? 'string';
-
-        $parsed = match ($type) {
-            'json', 'array' => json_decode($val ?? '[]', true) ?: [],
-            'int', 'integer' => (int)$val,
-            'float' => (float)$val,
-            'bool', 'boolean' => filter_var($val, FILTER_VALIDATE_BOOLEAN),
-            default => $val,
-        };
+        $parsed = self::castValue($row['value'], $row['type'] ?? 'string');
 
         self::$cache[$key] = $parsed;
         return $parsed;

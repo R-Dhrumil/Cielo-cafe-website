@@ -259,7 +259,7 @@ if ($filterId) {
 
         <div>
           <h3 class="table-headline">TABLE <?= e($t['table_number']) ?></h3>
-          <span class="table-location"><?= e($t['floor']) ?> · Capacity <?= (int)$t['capacity'] ?></span>
+          <span class="table-location"><?= e($t['floor'] ?? ((int)$t['table_number'] > 6 ? 'Upper Patio' : 'Ground Floor')) ?> · Capacity <?= (int)$t['capacity'] ?></span>
           <p class="instruction-text">
             Point your phone camera at the QR code to explore the artisanal menu, order directly & earn loyalty points.
           </p>
