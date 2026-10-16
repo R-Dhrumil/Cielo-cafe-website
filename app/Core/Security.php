@@ -44,6 +44,14 @@ class Security
     }
 
     /**
+     * Alias for csrfToken
+     */
+    public static function generateCsrfToken(): string
+    {
+        return self::csrfToken();
+    }
+
+    /**
      * Validate submitted CSRF token
      */
     public static function verifyCsrfToken(?string $token): bool

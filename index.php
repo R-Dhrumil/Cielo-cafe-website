@@ -68,8 +68,8 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
 
         <!-- Grand Editorial Brand Heading in Fraunces -->
         <h1 class="hero-brand-title">
-          <span class="hero-brand-name">Cielo</span>
-          <span class="hero-brand-tagline">Cafe and Restro</span>
+          <span class="hero-brand-name"><?= e($cmsHeroName ?? 'Cielo') ?></span>
+          <span class="hero-brand-tagline"><?= e($cmsHeroTagline ?? 'Cafe and Restro') ?></span>
         </h1>
 
         <!-- Scroll Cue Right Aligned -->

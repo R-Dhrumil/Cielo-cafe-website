@@ -27,7 +27,17 @@ return [
 
         'sqlite' => [
             'driver' => 'sqlite',
-            'database' => getenv('DB_DATABASE') ?: __DIR__ . '/../database/cielo.sqlite',
+            'database' => (function() {
+                $raw = (string)(getenv('DB_DATABASE') ?: '');
+                if (empty($raw) || $raw === 'cielo_cafe') {
+                    return (defined('CIELO_DATABASE') ? CIELO_DATABASE : __DIR__ . '/../database') . '/cielo.sqlite';
+                }
+                if (str_starts_with($raw, '/') || preg_match('/^[A-Za-z]:[\\\\\/]/', $raw)) {
+                    return $raw;
+                }
+                $root = defined('CIELO_ROOT') ? CIELO_ROOT : dirname(__DIR__);
+                return $root . '/' . ltrim($raw, '/');
+            })(),
             'options' => [
                 PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
                 PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
