@@ -86,7 +86,7 @@ $activeTable = TableSessionService::getActiveTable();
         <span id="billGrandTotal">₹ 0.00</span>
       </div>
 
-      <button type="button" id="btnDrawerCheckout" class="btn-checkout-cta" onclick="window.location.href='/checkout.php'">
+      <button type="button" id="btnDrawerCheckout" class="btn-checkout-cta" onclick="window.location.href='/checkout'">
         <span>Proceed to Place Order</span>
         <span id="checkoutBtnAmount" style="font-weight:400; opacity:0.9;">₹ 0.00</span>
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>

@@ -7,10 +7,11 @@
 
 declare(strict_types=1);
 
-// 1. Support PHP Built-in Web Server static asset pass-through
+// 1. Support PHP Built-in Web Server static asset pass-through (images, css, js, fonts)
 if (php_sapi_name() === 'cli-server') {
-    $requestedFile = __DIR__ . parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
-    if (is_file($requestedFile)) {
+    $urlPath = parse_url($_SERVER['REQUEST_URI'] ?? '', PHP_URL_PATH);
+    $requestedFile = __DIR__ . $urlPath;
+    if (is_file($requestedFile) && pathinfo($requestedFile, PATHINFO_EXTENSION) !== 'php') {
         return false; // Serve static file directly
     }
 }
@@ -22,6 +23,11 @@ require_once __DIR__ . '/includes/config.php';
 $uri = $_SERVER['REQUEST_URI'] ?? '/';
 $path = parse_url($uri, PHP_URL_PATH) ?? '/';
 $cleanPath = trim(strtolower($path), '/');
+
+// Normalize /index.php or subfolder/index.php to root or clean route
+if ($cleanPath === 'index.php' || str_ends_with($cleanPath, '/index.php')) {
+    $cleanPath = trim((string)preg_replace('#(^|/)index\.php$#i', '', $cleanPath), '/');
+}
 
 // Support menu images legacy fallback
 if (preg_match('#^menu/(.+\.(?:png|jpg|jpeg|webp|svg|gif))$#i', $cleanPath, $imgMatch)) {
@@ -80,6 +86,11 @@ switch (true) {
     // Order Live Tracking
     case $cleanPath === 'order-status' || $cleanPath === 'order_status' || $cleanPath === 'order_status.php':
         require CIELO_PAGES . '/order_status.php';
+        break;
+
+    // Patron Profile & Rewards Hub
+    case $cleanPath === 'profile' || $cleanPath === 'profile.php' || $cleanPath === 'club' || $cleanPath === 'loyalty':
+        require CIELO_PAGES . '/profile.php';
         break;
 
     // Table QR Resolver: /t/{token} or /table/{token} or /t.php?token=...

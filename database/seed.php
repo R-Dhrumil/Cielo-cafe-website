@@ -21,6 +21,7 @@ use App\Models\ItemVariant;
 use App\Models\ItemAddon;
 use App\Models\RewardRule;
 use App\Models\Coupon;
+use App\Models\Offer;
 
 echo "========================================================\n";
 echo " Cielo Cafe & Restro - Database Seeder\n";
@@ -259,6 +260,20 @@ try {
             'audience' => 'first_time',
             'is_active' => 1,
         ],
+        [
+            'code' => 'CIELOVIP',
+            'title' => 'VIP Connoisseur Flat ₹100 Off',
+            'type' => 'flat',
+            'value' => 100.0,
+            'min_order_paise' => 60000, // ₹600 min
+            'max_discount_paise' => 10000,
+            'start_date' => date('Y-m-d', strtotime('-1 day')),
+            'end_date' => date('Y-m-d', strtotime('+90 days')),
+            'usage_limit_total' => 200,
+            'usage_limit_per_user' => 5,
+            'audience' => 'vip',
+            'is_active' => 1,
+        ],
     ];
 
     foreach ($coupons as $c) {
@@ -266,6 +281,51 @@ try {
         if (!$existing) {
             Coupon::create($c);
             echo "  ✔ Coupon created: {$c['code']} ({$c['title']})\n";
+        }
+    }
+
+    // 7. Seed Time-Based Offers (Happy Hours & Combos)
+    echo "\n7. Seeding Promotional Offers...\n";
+    $offers = [
+        [
+            'title' => 'Aperitivo Happy Hour - 20% Off Beverages',
+            'type' => 'happy_hour',
+            'rules_json' => json_encode([
+                'categories' => ['coffee-beverages', 'specialty-coffee', 'beverages', 'coffee'],
+                'discount_percent' => 20.0,
+            ]),
+            'schedule_json' => json_encode([
+                'days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday'],
+                'start_time' => '15:00',
+                'end_time' => '18:00',
+            ]),
+            'banner_url' => 'assets/images/cafe/happy-hour.jpg',
+            'priority' => 1,
+            'is_active' => 1,
+        ],
+        [
+            'title' => 'Milano Sourdough Combo (Pasta + Coffee)',
+            'type' => 'combo',
+            'rules_json' => json_encode([
+                'required_categories' => ['pizza-pasta', 'coffee-beverages'],
+                'bundle_discount_paise' => 5000, // ₹50 savings
+            ]),
+            'schedule_json' => json_encode([
+                'days' => ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
+                'start_time' => '11:00',
+                'end_time' => '23:30',
+            ]),
+            'banner_url' => 'assets/images/cafe/combo-promo.jpg',
+            'priority' => 2,
+            'is_active' => 1,
+        ],
+    ];
+
+    foreach ($offers as $off) {
+        $existing = Offer::findBy('title', $off['title']);
+        if (!$existing) {
+            Offer::create($off);
+            echo "  ✔ Offer created: {$off['title']}\n";
         }
     }
 

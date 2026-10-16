@@ -173,11 +173,11 @@ http_response_code(404);
     </p>
 
     <div class="btn-group">
-      <a href="/menu.php" class="btn-action btn-primary">
+      <a href="/menu" class="btn-action btn-primary">
         <span>Browse Menu as Guest</span>
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
       </a>
-      <a href="/index.php" class="btn-action btn-secondary">
+      <a href="/" class="btn-action btn-secondary">
         Return to Home
       </a>
     </div>

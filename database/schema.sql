@@ -310,4 +310,18 @@ CREATE TABLE IF NOT EXISTS `audit_log` (
   FOREIGN KEY (`staff_id`) REFERENCES `staff_users` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
+-- 21. Customer OTP Verifications & Security Rate-Limiting
+CREATE TABLE IF NOT EXISTS `otp_verifications` (
+  `id` INT UNSIGNED AUTO_INCREMENT PRIMARY KEY,
+  `phone` VARCHAR(15) NOT NULL,
+  `otp_hash` VARCHAR(255) NOT NULL,
+  `expires_at` DATETIME NOT NULL,
+  `attempts` TINYINT UNSIGNED NOT NULL DEFAULT 0,
+  `is_verified` TINYINT(1) NOT NULL DEFAULT 0,
+  `ip_address` VARCHAR(45) NOT NULL DEFAULT '127.0.0.1',
+  `created_at` DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  INDEX `idx_otp_phone` (`phone`, `created_at`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
 SET FOREIGN_KEY_CHECKS = 1;
+

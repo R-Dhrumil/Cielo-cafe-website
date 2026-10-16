@@ -21,4 +21,15 @@ class CouponUsage extends Model
     {
         return self::count('`coupon_id` = :cid', ['cid' => $couponId]);
     }
+
+    public static function recordUsage(int|string $couponId, int|string $orderId, int|string $userId, int $discountPaise): int
+    {
+        return (int)self::create([
+            'coupon_id' => $couponId,
+            'order_id' => $orderId,
+            'user_id' => $userId,
+            'discount_paise' => $discountPaise,
+            'used_at' => date('Y-m-d H:i:s'),
+        ]);
+    }
 }

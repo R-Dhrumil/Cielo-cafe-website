@@ -54,5 +54,15 @@ Response::json(true, [
             'url' => '/api/kitchen_orders.php',
             'desc' => 'KDS order queue and status lifecycle transitions',
         ],
+        'auth_otp' => [
+            'method' => 'GET / POST',
+            'url' => '/api/auth_otp.php?action={send_otp|verify_otp|me|update_profile|logout}',
+            'desc' => 'Customer mobile OTP login, guest order merging, and profile management',
+        ],
+        'promotions' => [
+            'method' => 'GET',
+            'url' => '/api/promotions.php',
+            'desc' => 'Active Happy Hours, combos, and public promotional vouchers',
+        ],
     ]
 ], 'Cielo Cafe API is active and operational.');

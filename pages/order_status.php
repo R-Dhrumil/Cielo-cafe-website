@@ -40,7 +40,7 @@ require dirname(__DIR__) . '/includes/header.php';
         <p style="color: var(--text-muted, #6E6259); margin: 0 0 1.5rem;">
           We could not locate this order. Please check the order link or scan your table QR code.
         </p>
-        <a href="/menu.php" class="btn-primary" style="display: inline-block; padding: 0.85rem 1.75rem; border-radius: 999px; text-decoration: none; font-weight: 600;">
+        <a href="/menu" class="btn-primary" style="display: inline-block; padding: 0.85rem 1.75rem; border-radius: 999px; text-decoration: none; font-weight: 600;">
           Return to Menu
         </a>
       </div>
@@ -216,7 +216,7 @@ require dirname(__DIR__) . '/includes/header.php';
         </div>
 
         <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-          <a href="/menu.php" style="flex: 1; text-align: center; background: rgba(26,20,18,0.06); color: var(--text-espresso, #1A1412); text-decoration: none; padding: 0.85rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;">
+          <a href="/menu" style="flex: 1; text-align: center; background: rgba(26,20,18,0.06); color: var(--text-espresso, #1A1412); text-decoration: none; padding: 0.85rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;">
             Order More Dishes
           </a>
         </div>

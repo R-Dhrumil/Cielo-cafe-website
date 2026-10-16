@@ -11,6 +11,8 @@ require_once __DIR__ . '/../app/bootstrap.php';
 use App\Services\AuthService;
 use App\Models\Setting;
 use App\Models\AuditLog;
+use App\Models\Coupon;
+use App\Models\Offer;
 use App\Core\Security;
 
 // Require owner or admin role
@@ -42,6 +44,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             } elseif (in_array($key, ['loyalty_points_per_100', 'loyalty_point_value_paise', 'loyalty_min_redeem_points'], true)) {
                 $type = 'int';
                 $val = (int)$val;
+            } elseif ($key === 'promo_stacking_mode') {
+                $type = 'string';
+                $val = in_array($val, ['stackable', 'exclusive'], true) ? $val : 'stackable';
             }
 
             Setting::set($key, $val, 'system', $type);
@@ -58,6 +63,10 @@ $current = [];
 foreach ($allSettings as $s) {
     $current[$s['key']] = Setting::castValue($s['value'], $s['type']);
 }
+
+// Read active coupons and automated promotional offers
+$couponsList = Coupon::all('id ASC');
+$offersList = Offer::all('priority ASC, id ASC');
 
 $csrfToken = Security::generateCsrfToken();
 $activeNav = 'cms';
@@ -863,6 +872,122 @@ $activeNav = 'cms';
                   <span class="help-hint">Protects margins (e.g. points cannot cover >50% of bill).</span>
                 </div>
               </div>
+            </div>
+
+            <!-- 6. Promotional Engine: Coupons, Happy Hours & Stacking Rules -->
+            <div class="cms-card">
+              <div class="section-header">
+                <div class="section-icon" style="color:var(--accent-sky-deep);">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                </div>
+                <div>
+                  <h2 class="section-title">Promotions, Happy Hours & Stacking Engine</h2>
+                  <div class="section-desc">Audience targeting, automated time-window offers, sourdough combos, and coupon stacking policy.</div>
+                </div>
+              </div>
+
+              <!-- Promo Stacking Configuration -->
+              <div class="form-grid single-col" style="margin-bottom: 1.5rem;">
+                <div class="form-group">
+                  <label>Promotional Stacking Policy</label>
+                  <select name="settings[promo_stacking_mode]">
+                    <option value="stackable" <?= (($current['promo_stacking_mode'] ?? 'stackable') === 'stackable') ? 'selected' : '' ?>>
+                      Stackable Mode (Recommended: Automated Happy Hours & Sourdough Combos combine with Coupon Codes)
+                    </option>
+                    <option value="exclusive" <?= (($current['promo_stacking_mode'] ?? 'stackable') === 'exclusive') ? 'selected' : '' ?>>
+                      Exclusive Mode (Margin Protection: Automated Happy Hours & Combos block Coupon Codes from stacking)
+                    </option>
+                  </select>
+                  <span class="help-hint">Controls how the authoritative cart evaluator applies multiple promotions at checkout.</span>
+                </div>
+              </div>
+
+              <!-- Automated Time-Based Offers (Happy Hours & Combos) -->
+              <div style="margin-top: 1.25rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                  <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-espresso); margin:0;">Automated Offers & Combos</h3>
+                  <span style="font-size:0.75rem; color:var(--text-muted);"><?= count($offersList) ?> Active Schedules</span>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                  <?php foreach ($offersList as $off): ?>
+                    <?php 
+                      $rules = !empty($off['rules_json']) ? json_decode($off['rules_json'], true) : [];
+                      $sched = !empty($off['schedule_json']) ? json_decode($off['schedule_json'], true) : [];
+                      $daysText = !empty($sched['days']) ? implode(', ', array_slice($sched['days'], 0, 4)) . (count($sched['days']) > 4 ? '...' : '') : 'Everyday';
+                      $timeText = (!empty($sched['start_time']) && !empty($sched['end_time'])) ? ($sched['start_time'] . ' - ' . $sched['end_time']) : 'All Day';
+                    ?>
+                    <div style="background:var(--bg-cream); border:1px solid var(--border-warm); border-radius:12px; padding:0.9rem 1.15rem; display:flex; justify-content:space-between; align-items:center;">
+                      <div>
+                        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
+                          <span style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 8px; border-radius:4px; background:<?= $off['type'] === 'happy_hour' ? 'rgba(107, 154, 196, 0.2)' : 'rgba(201, 106, 82, 0.18)' ?>; color:<?= $off['type'] === 'happy_hour' ? '#3B6A8F' : '#A74A34' ?>;">
+                            <?= $off['type'] === 'happy_hour' ? 'Happy Hour' : 'Sourdough Combo' ?>
+                          </span>
+                          <strong style="font-size:0.9rem; color:var(--text-espresso);"><?= e($off['title']) ?></strong>
+                        </div>
+                        <div style="font-size:0.78rem; color:var(--text-muted);">
+                          Schedule: <span style="color:var(--text-espresso); font-weight:600;"><?= e($daysText) ?> (<?= e($timeText) ?>)</span>
+                        </div>
+                      </div>
+                      <span style="font-size:0.75rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:4px 10px; border-radius:999px;">
+                        Active
+                      </span>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+
+              <!-- Active Coupons & Audience Targeting -->
+              <div style="margin-top: 1.5rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                  <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-espresso); margin:0;">Vouchers & Audience Targeting</h3>
+                  <span style="font-size:0.75rem; color:var(--text-muted);"><?= count($couponsList) ?> Configured Vouchers</span>
+                </div>
+
+                <div style="display:flex; flex-direction:column; gap:0.75rem;">
+                  <?php foreach ($couponsList as $cp): ?>
+                    <?php
+                      $audBadgeColor = match($cp['audience']) {
+                        'vip' => 'background:rgba(26,20,18,0.08); color:var(--text-espresso); border:1px solid rgba(26,20,18,0.2);',
+                        'first_time' => 'background:rgba(201,106,82,0.15); color:var(--accent-terracotta); border:1px solid rgba(201,106,82,0.3);',
+                        default => 'background:rgba(107,154,196,0.15); color:var(--accent-sky-deep); border:1px solid rgba(107,154,196,0.3);',
+                      };
+                      $audLabel = match($cp['audience']) {
+                        'vip' => 'VIP Patrons (5+ visits or 500+ pts)',
+                        'first_time' => 'First-Time Guests Only',
+                        default => 'All Dining Guests',
+                      };
+                      $discountDisplay = ($cp['type'] === 'percentage') 
+                        ? ($cp['value'] . '% Off (Capped at ₹' . ($cp['max_discount_paise'] / 100) . ')')
+                        : ('Flat ₹' . $cp['value'] . ' Off');
+                    ?>
+                    <div style="background:#FFFFFF; border:1px solid var(--border-warm); border-radius:12px; padding:0.9rem 1.15rem; display:flex; justify-content:space-between; align-items:center;">
+                      <div>
+                        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.3rem;">
+                          <span style="font-family:monospace; font-weight:800; font-size:0.92rem; background:rgba(26,20,18,0.06); padding:2px 8px; border-radius:6px; letter-spacing:0.05em; color:var(--text-espresso);">
+                            <?= e($cp['code']) ?>
+                          </span>
+                          <span style="font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:999px; <?= $audBadgeColor ?>">
+                            <?= e($audLabel) ?>
+                          </span>
+                        </div>
+                        <div style="font-size:0.8rem; color:var(--text-espresso); font-weight:600;">
+                          <?= e($cp['title']) ?> &middot; <span style="color:var(--accent-terracotta);"><?= e($discountDisplay) ?></span>
+                        </div>
+                        <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
+                          Min Order: ₹<?= number_format($cp['min_order_paise'] / 100) ?> &middot; Limit: <?= $cp['usage_limit_per_user'] ?>x per patron
+                        </div>
+                      </div>
+                      <div style="text-align:right;">
+                        <span style="font-size:0.75rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:4px 10px; border-radius:999px;">
+                          <?= (!empty($cp['is_active'])) ? 'Active' : 'Inactive' ?>
+                        </span>
+                      </div>
+                    </div>
+                  <?php endforeach; ?>
+                </div>
+              </div>
+
             </div>
 
           </div>

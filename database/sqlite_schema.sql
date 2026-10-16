@@ -291,3 +291,17 @@ CREATE TABLE IF NOT EXISTS `audit_log` (
   `created_at` TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
   FOREIGN KEY (`staff_id`) REFERENCES `staff_users` (`id`) ON DELETE SET NULL
 );
+
+-- 21. Customer OTP Verifications & Security Rate-Limiting
+CREATE TABLE IF NOT EXISTS `otp_verifications` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `phone` TEXT NOT NULL,
+  `otp_hash` TEXT NOT NULL,
+  `expires_at` TEXT NOT NULL,
+  `attempts` INTEGER NOT NULL DEFAULT 0,
+  `is_verified` INTEGER NOT NULL DEFAULT 0,
+  `ip_address` TEXT NOT NULL DEFAULT '127.0.0.1',
+  `created_at` TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+);
+CREATE INDEX IF NOT EXISTS `idx_otp_phone` ON `otp_verifications` (`phone`, `created_at`);
+

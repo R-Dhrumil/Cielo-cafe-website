@@ -102,33 +102,34 @@ try {
         ];
     }
 
-    // 4. Calculate Coupon Discount
-    $couponDiscountPaise = 0;
+    // 4. Authoritative Promotional Engine (Happy Hours, Combos, Stacking Rules & Coupon)
+    $evalItems = array_map(function ($li) {
+        return [
+            'item_id' => $li['item_id'],
+            'name' => $li['name'],
+            'price_paise' => $li['single_item_total_paise'],
+            'quantity' => $li['quantity'],
+        ];
+    }, $lineItems);
+
+    $promoEval = \App\Services\PromotionService::evaluateCart($evalItems, $couponCode !== '' ? $couponCode : null, $userId);
+
+    $appliedOffers = $promoEval['applied_offers'] ?? [];
+    $offerDiscountsPaise = (int)($promoEval['offer_discounts_paise'] ?? 0);
+    $couponDiscountPaise = (int)($promoEval['coupon_discount_paise'] ?? 0);
     $appliedCoupon = null;
 
-    if ($couponCode !== '') {
-        $coupon = Coupon::findValidCoupon($couponCode);
-        if ($coupon && $rawSubtotalPaise >= (int)$coupon['min_order_paise']) {
-            if ($coupon['discount_type'] === 'percentage') {
-                $couponDiscountPaise = Money::calculateDiscount(
-                    $rawSubtotalPaise,
-                    (string)$coupon['discount_type'],
-                    (float)$coupon['discount_value'],
-                    (int)$coupon['max_discount_paise']
-                );
-            } else {
-                $couponDiscountPaise = min((int)$coupon['discount_value'], $rawSubtotalPaise);
-            }
-            $appliedCoupon = [
-                'id' => (int)$coupon['id'],
-                'code' => (string)$coupon['code'],
-                'discount_paise' => $couponDiscountPaise,
-                'discount_inr' => Money::toRupees($couponDiscountPaise),
-            ];
-        }
+    if (!empty($promoEval['coupon']['success']) && !empty($promoEval['coupon']['coupon'])) {
+        $cData = $promoEval['coupon']['coupon'];
+        $appliedCoupon = [
+            'id' => (int)$cData['id'],
+            'code' => (string)$cData['code'],
+            'discount_paise' => (int)$cData['discount_paise'],
+            'discount_inr' => (float)($cData['discount_paise'] / 100),
+        ];
     }
 
-    // 5. Calculate Loyalty Points Discount
+    // 5. Calculate Loyalty Points Discount (after promotional & coupon discounts)
     $loyaltyDiscountPaise = 0;
     $appliedPoints = 0;
     $loyaltyConfig = SettingsService::getLoyaltyRules();
@@ -142,15 +143,15 @@ try {
             $rawPointsDiscount = $pointsToRedeem * $valuePerPointPaise;
 
             // Cap at configured max % of remaining subtotal (e.g. 50%)
-            $subtotalAfterCoupon = max(0, $rawSubtotalPaise - $couponDiscountPaise);
-            $maxAllowedDiscount = (int)round(($subtotalAfterCoupon * ($loyaltyConfig['max_redeem_percentage'] ?? 50)) / 100);
+            $subtotalAfterPromos = max(0, $rawSubtotalPaise - $offerDiscountsPaise - $couponDiscountPaise);
+            $maxAllowedDiscount = (int)round(($subtotalAfterPromos * ($loyaltyConfig['max_redeem_percentage'] ?? 50)) / 100);
             $loyaltyDiscountPaise = min($rawPointsDiscount, $maxAllowedDiscount);
             $appliedPoints = (int)ceil($loyaltyDiscountPaise / $valuePerPointPaise);
         }
     }
 
     // 6. Net Subtotal & Dynamic Taxes
-    $totalDiscountPaise = $couponDiscountPaise + $loyaltyDiscountPaise;
+    $totalDiscountPaise = $offerDiscountsPaise + $couponDiscountPaise + $loyaltyDiscountPaise;
     $taxableSubtotalPaise = max(0, $rawSubtotalPaise - $totalDiscountPaise);
 
     $gstRates = SettingsService::getGstRates();
@@ -166,7 +167,10 @@ try {
         'financials' => [
             'subtotal_paise' => $rawSubtotalPaise,
             'subtotal_inr' => Money::toRupees($rawSubtotalPaise),
+            'applied_offers' => $appliedOffers,
+            'offer_discounts_paise' => $offerDiscountsPaise,
             'coupon' => $appliedCoupon,
+            'coupon_eval' => $promoEval['coupon'] ?? null,
             'coupon_discount_paise' => $couponDiscountPaise,
             'loyalty_points_used' => $appliedPoints,
             'loyalty_discount_paise' => $loyaltyDiscountPaise,

@@ -138,7 +138,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
           </blockquote>
         </div>
         <div style="padding-top: 0.5rem;">
-          <a href="menu.php" class="btn-primary">View Full Menu</a>
+          <a href="/menu" class="btn-primary">View Full Menu</a>
         </div>
       </div>
 

@@ -7,7 +7,9 @@ require_once __DIR__ . '/config.php';
 $pageTitle = $pageTitle ?? ($business['name'] . ' | Cafe & Restaurant in Vadodara');
 $pageDesc = $pageDesc ?? $business['description'];
 $openStatus = isCieloOpen();
-$isHome = (basename($_SERVER['PHP_SELF'] ?? '') === 'index.php' || empty(basename($_SERVER['PHP_SELF'] ?? '')));
+
+$requestPath = trim(strtolower((string)parse_url($_SERVER['REQUEST_URI'] ?? '/', PHP_URL_PATH)), '/');
+$isHome = ($requestPath === '' || $requestPath === 'home' || $requestPath === 'index.php');
 $headerThemeClass = $isHome ? 'theme-dark-bg' : 'theme-light-bg';
 
 // Schema.org Restaurant / Cafe JSON-LD
@@ -118,7 +120,7 @@ $schemaData = [
     <div class="cielo-navbar">
       <div class="container navbar-content">
         <!-- Logo in Editorial Fraunces Serif -->
-        <a href="index.php" class="brand-logo" aria-label="Cielo Homepage">
+        <a href="/" class="brand-logo" aria-label="Cielo Homepage">
           <span class="brand-title">Cielo</span>
         </a>
 
@@ -131,6 +133,16 @@ $schemaData = [
             </span>
             <span id="headerThemeText" class="theme-text-label">Night</span>
           </button>
+
+          <!-- Patron Club Pill Button -->
+          <?php
+          $patronUser = class_exists(\App\Services\CustomerAuthService::class) 
+              ? \App\Services\CustomerAuthService::getCurrentUser() 
+              : null;
+          ?>
+          <a href="/profile" class="header-pill-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; <?= $patronUser ? 'border-color: var(--accent-terracotta); color: var(--accent-terracotta); background: rgba(201,106,82,0.1);' : '' ?>">
+            <span><?= $patronUser ? ('★ ' . e(explode(' ', $patronUser['name'] ?: 'Patron')[0])) : 'Patron Club' ?></span>
+          </a>
 
           <!-- Reserve a Table Pill Button -->
           <button type="button" class="header-pill-btn btn-open-reservation">
@@ -155,7 +167,7 @@ $schemaData = [
     <div>
       <div class="drawer-header">
         <div>
-          <a href="index.php" class="brand-logo drawer-brand-logo" aria-label="Cielo Homepage" style="text-decoration: none; color: inherit; display: block;">
+          <a href="/" class="brand-logo drawer-brand-logo" aria-label="Cielo Homepage" style="text-decoration: none; color: inherit; display: block;">
             <span class="font-display" style="font-size: 2rem; font-weight: 350; letter-spacing: -0.02em; color: var(--bg-cream);">Cielo</span>
             <span style="font-size: 0.625rem; letter-spacing: 0.16em; color: var(--accent-sky); text-transform: uppercase; display: block; margin-top: 0.2rem;">Cafe &amp; Restro · Vadodara</span>
           </a>
@@ -169,27 +181,31 @@ $schemaData = [
       </div>
 
       <nav class="drawer-nav">
-        <a href="menu.php" class="drawer-nav-link">
+        <a href="/profile" class="drawer-nav-link" style="color: var(--accent-terracotta);">
+          <span class="drawer-nav-num">★</span>
+          <span class="drawer-nav-label"><?= $patronUser ? ('Rewards (' . e($patronUser['name']) . ')') : 'Patron Club & Login' ?></span>
+        </a>
+        <a href="/menu" class="drawer-nav-link">
           <span class="drawer-nav-num">01</span>
           <span class="drawer-nav-label">Menu</span>
         </a>
-        <a href="index.php#story" class="drawer-nav-link">
+        <a href="/#story" class="drawer-nav-link">
           <span class="drawer-nav-num">02</span>
           <span class="drawer-nav-label">Our Story</span>
         </a>
-        <a href="index.php#celebrations" class="drawer-nav-link">
+        <a href="/#celebrations" class="drawer-nav-link">
           <span class="drawer-nav-num">03</span>
           <span class="drawer-nav-label">Events & DJ</span>
         </a>
-        <a href="index.php#gallery" class="drawer-nav-link">
+        <a href="/#gallery" class="drawer-nav-link">
           <span class="drawer-nav-num">04</span>
           <span class="drawer-nav-label">Gallery</span>
         </a>
-        <a href="index.php#reviews" class="drawer-nav-link">
+        <a href="/#reviews" class="drawer-nav-link">
           <span class="drawer-nav-num">05</span>
           <span class="drawer-nav-label">Reviews</span>
         </a>
-        <a href="index.php#location" class="drawer-nav-link">
+        <a href="/#location" class="drawer-nav-link">
           <span class="drawer-nav-num">06</span>
           <span class="drawer-nav-label">Visit Us</span>
         </a>

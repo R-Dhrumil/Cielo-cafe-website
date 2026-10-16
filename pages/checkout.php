@@ -27,7 +27,7 @@ require dirname(__DIR__) . '/includes/header.php';
     <!-- Breadcrumb & Table Info -->
     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
       <div>
-        <a href="/menu.php" style="color: var(--accent-sky, #6B9AC4); font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
+        <a href="/menu" style="color: var(--accent-sky, #6B9AC4); font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Back to Menu
         </a>
@@ -51,7 +51,7 @@ require dirname(__DIR__) . '/includes/header.php';
     <div id="checkoutEmptyWarning" style="display: none; background: #FFFFFF; padding: 3rem 2rem; border-radius: 20px; text-align: center; border: 1px solid rgba(26,20,18,0.1);">
       <h2 style="font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--text-espresso, #1A1412); margin: 0 0 0.75rem;">Your Cart is Empty</h2>
       <p style="color: var(--text-muted, #6E6259); margin: 0 0 1.5rem;">Please select delicious items from our menu before proceeding to checkout.</p>
-      <a href="/menu.php" class="btn-primary" style="display: inline-block; padding: 0.85rem 1.75rem; border-radius: 999px; text-decoration: none; font-weight: 600;">
+      <a href="/menu" class="btn-primary" style="display: inline-block; padding: 0.85rem 1.75rem; border-radius: 999px; text-decoration: none; font-weight: 600;">
         Browse Menu
       </a>
     </div>
