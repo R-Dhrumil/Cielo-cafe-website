@@ -52,7 +52,7 @@ html {
   font-size: var(--base-font-size);
   scroll-behavior: smooth;
   scroll-padding-top: 5.5rem;
-  overflow-x: clip;
+  overflow-x: hidden;
   -webkit-text-size-adjust: 100%;
 }
 
@@ -63,7 +63,7 @@ body {
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  overflow-x: clip;
+  overflow-x: hidden;
   position: relative;
   min-height: 100vh;
   min-height: 100dvh;

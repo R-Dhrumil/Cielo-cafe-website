@@ -52,6 +52,7 @@ $schemaData = [
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title><?= e($pageTitle) ?></title>
   <meta name="description" content="<?= e($pageDesc) ?>">
@@ -134,6 +135,19 @@ $schemaData = [
             <span id="headerThemeText" class="theme-text-label">Night</span>
           </button>
 
+          <!-- Active Table Indicator Pill -->
+          <?php
+          $headerActiveTable = class_exists(\App\Services\TableSessionService::class)
+              ? \App\Services\TableSessionService::getActiveTable()
+              : null;
+          ?>
+          <?php if ($headerActiveTable): ?>
+            <a href="/menu" class="header-pill-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; border-color: #2E7D32; color: #2E7D32; background: rgba(46,125,50,0.1); font-weight: 700;" title="Active Table <?= e($headerActiveTable['table_number']) ?> Session">
+              <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#2E7D32;"></span>
+              <span>T-<?= e($headerActiveTable['table_number']) ?></span>
+            </a>
+          <?php endif; ?>
+
           <!-- Patron Club Pill Button -->
           <?php
           $patronUser = class_exists(\App\Services\CustomerAuthService::class) 
@@ -181,6 +195,12 @@ $schemaData = [
       </div>
 
       <nav class="drawer-nav">
+        <?php if ($headerActiveTable): ?>
+          <a href="/menu" class="drawer-nav-link" style="color: #2E7D32; font-weight: 700;">
+            <span class="drawer-nav-num">●</span>
+            <span class="drawer-nav-label">Your Table <?= e($headerActiveTable['table_number']) ?> (Active)</span>
+          </a>
+        <?php endif; ?>
         <a href="/profile" class="drawer-nav-link" style="color: var(--accent-terracotta);">
           <span class="drawer-nav-num">★</span>
           <span class="drawer-nav-label"><?= $patronUser ? ('Rewards (' . e($patronUser['name']) . ')') : 'Patron Club & Login' ?></span>

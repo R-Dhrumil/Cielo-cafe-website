@@ -215,10 +215,16 @@ require dirname(__DIR__) . '/includes/header.php';
           </div>
         </div>
 
-        <div style="margin-top: 2rem; display: flex; gap: 1rem;">
-          <a href="/menu" style="flex: 1; text-align: center; background: rgba(26,20,18,0.06); color: var(--text-espresso, #1A1412); text-decoration: none; padding: 0.85rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;">
+        <div style="margin-top: 2rem; display: flex; gap: 1rem; flex-wrap: wrap;">
+          <a href="/menu" style="flex: 1; min-width: 160px; text-align: center; background: rgba(26,20,18,0.06); color: var(--text-espresso, #1A1412); text-decoration: none; padding: 0.85rem; border-radius: 12px; font-weight: 600; font-size: 0.9rem;">
             Order More Dishes
           </a>
+          <?php if ($status === 'completed'): ?>
+            <a href="/profile" style="flex: 1; min-width: 200px; text-align: center; background: var(--accent-terracotta, #C96A52); color: #ffffff; text-decoration: none; padding: 0.85rem; border-radius: 12px; font-weight: 700; font-size: 0.9rem; display: inline-flex; align-items: center; justify-content: center; gap: 0.4rem; box-shadow: 0 4px 14px rgba(201,106,82,0.3);">
+              <span>★</span>
+              <span>Review & Earn +50 Pts</span>
+            </a>
+          <?php endif; ?>
         </div>
 
       </div>

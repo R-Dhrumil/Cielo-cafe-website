@@ -433,7 +433,7 @@ require dirname(__DIR__) . '/includes/header.php';
       </div>
 
       <!-- EDIT PROFILE MODAL -->
-      <div id="modalEditProfile" style="display: none; position: fixed; inset: 0; background: rgba(26,20,18,0.6); backdrop-filter: blur(4px); z-index: 9999; align-items: center; justify-content: center; padding: 1.25rem;">
+      <div id="modalEditProfile" style="display: none; position: fixed; inset: 0; background: rgba(26,20,18,0.6); backdrop-filter: blur(4px); z-index: 10050; align-items: center; justify-content: center; padding: 1.25rem;">
         <div style="background: #ffffff; border-radius: 20px; max-width: 440px; width: 100%; padding: 2rem; box-shadow: 0 20px 40px rgba(0,0,0,0.2);">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.5rem;">
             <h2 style="font-family: var(--font-display, serif); font-size: 1.4rem; color: var(--text-espresso, #1A1412); margin: 0;">Edit Profile</h2>
@@ -465,7 +465,7 @@ require dirname(__DIR__) . '/includes/header.php';
       </div>
 
       <!-- VERIFIED DINER REVIEW MODAL -->
-      <div id="modalReview" style="display: none; position: fixed; inset: 0; background: rgba(26,20,18,0.65); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; padding: 1.25rem;">
+      <div id="modalReview" style="display: none; position: fixed; inset: 0; background: rgba(26,20,18,0.65); backdrop-filter: blur(5px); z-index: 10050; align-items: center; justify-content: center; padding: 1.25rem;">
         <div style="background: #ffffff; border-radius: 24px; max-width: 480px; width: 100%; padding: 2.25rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); position: relative; max-height: 90vh; overflow-y: auto;">
           
           <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
