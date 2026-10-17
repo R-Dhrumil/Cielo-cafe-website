@@ -12,6 +12,7 @@ $currentScript = basename($_SERVER['PHP_SELF'] ?? '');
 $activeNav = $activeNav ?? match ($currentScript) {
     'orders.php' => 'orders',
     'cms.php' => 'cms',
+    'reviews.php' => 'reviews',
     'tables_print.php' => 'tables',
     default => 'orders'
 };
@@ -86,6 +87,20 @@ $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff M
           </svg>
           <span>Website CMS Studio</span>
         </div>
+      </a>
+
+      <!-- Customer Reviews Moderation -->
+      <?php $pendingReviewsCount = \App\Models\Review::countPending(); ?>
+      <a href="/admin/reviews.php" class="sidebar-link <?= $activeNav === 'reviews' ? 'active' : '' ?>">
+        <div class="sidebar-link-left">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+          </svg>
+          <span>Customer Reviews</span>
+        </div>
+        <?php if ($pendingReviewsCount > 0): ?>
+          <span class="sidebar-badge-pulse" style="background: var(--accent-terracotta);"><?= $pendingReviewsCount ?></span>
+        <?php endif; ?>
       </a>
 
       <!-- Table QR Stands & Printouts -->

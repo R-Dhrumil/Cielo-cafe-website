@@ -222,6 +222,11 @@ class CustomerAuthService
         return $stmt->rowCount();
     }
 
+    public static function user(): ?array
+    {
+        return self::getCurrentUser();
+    }
+
     /**
      * Retrieve currently authenticated customer
      */
@@ -381,6 +386,11 @@ class CustomerAuthService
                 "SELECT * FROM order_items WHERE order_id = ? ORDER BY id ASC",
                 [$ord['id']]
             );
+            $review = $db->fetch(
+                "SELECT id, rating, review_text, photo_url, status, created_at FROM reviews WHERE order_id = ?",
+                [$ord['id']]
+            );
+            $canReview = ($ord['status'] === 'completed' && empty($review));
 
             $orderHistory[] = [
                 'id' => (int)$ord['id'],
@@ -393,6 +403,15 @@ class CustomerAuthService
                 'total_formatted' => '₹' . number_format((int)$ord['total_paise'] / 100, 2),
                 'created_at' => $ord['created_at'],
                 'items_count' => count($items),
+                'can_review' => $canReview,
+                'review' => $review ? [
+                    'id' => (int)$review['id'],
+                    'rating' => (int)$review['rating'],
+                    'review_text' => $review['review_text'],
+                    'photo_url' => $review['photo_url'],
+                    'status' => $review['status'],
+                    'created_at' => $review['created_at'],
+                ] : null,
                 'items' => array_map(function ($it) {
                     return [
                         'item_name' => $it['item_name'],

@@ -62,6 +62,25 @@ try {
         $cmsHeroTagline = (string)(\App\Models\Setting::get('cms_hero_tagline') ?: 'Cafe and Restro');
         $cmsHeroBadge = (string)(\App\Models\Setting::get('cms_hero_badge') ?: 'Vadodara · Italian Sanctuary');
         $cmsHeroCta = (string)(\App\Models\Setting::get('cms_hero_cta') ?: 'Explore Artisanal Menu');
+
+        if (class_exists(\App\Models\Review::class)) {
+            $approvedReviews = \App\Models\Review::getApprovedWithDetails(6);
+            if (!empty($approvedReviews)) {
+                $dbReviewCards = [];
+                foreach ($approvedReviews as $ar) {
+                    $dbReviewCards[] = [
+                        'id' => 'db-' . $ar['id'],
+                        'author' => $ar['user_name'] ?: 'Verified Diner',
+                        'badge' => '★ Verified Diner',
+                        'rating' => (int)$ar['rating'],
+                        'date' => date('M Y', strtotime($ar['created_at'])),
+                        'text' => $ar['review_text'],
+                        'dishMentioned' => $ar['primary_dish'] ?? 'Artisanal Selection',
+                    ];
+                }
+                $reviews['reviews'] = array_merge($dbReviewCards, $reviews['reviews'] ?? []);
+            }
+        }
     }
 } catch (\Throwable $e) {
     // Graceful fallback to static JSON files

@@ -405,13 +405,26 @@ require dirname(__DIR__) . '/includes/header.php';
                   <?php endforeach; ?>
                 </div>
 
-                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(26,20,18,0.06); padding-top: 0.75rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; border-top: 1px solid rgba(26,20,18,0.06); padding-top: 0.75rem; flex-wrap: wrap; gap: 0.5rem;">
                   <span style="font-size: 0.8rem; color: rgba(26,20,18,0.5);">
                     Payment: <?= e(ucfirst(str_replace('_', ' ', $ord['payment_method']))) ?> (<?= e(ucfirst($ord['payment_status'])) ?>)
                   </span>
-                  <a href="/order-status?order=<?= urlencode($ord['order_number']) ?>" style="color: var(--accent-terracotta, #C96A52); font-size: 0.85rem; font-weight: 600; text-decoration: none;">
-                    View Live Tracker →
-                  </a>
+
+                  <div style="display: flex; align-items: center; gap: 0.65rem; flex-wrap: wrap;">
+                    <?php if (!empty($ord['can_review'])): ?>
+                      <button type="button" onclick="openReviewModal(<?= (int)$ord['id'] ?>, '<?= e($ord['order_number']) ?>', <?= htmlspecialchars(json_encode(array_column($ord['items'], 'item_name')), ENT_QUOTES) ?>)" style="background: rgba(201,106,82,0.1); color: var(--accent-terracotta, #C96A52); border: 1px solid rgba(201,106,82,0.3); border-radius: 9999px; padding: 0.35rem 0.85rem; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 0.35rem; transition: all 0.15s;">
+                        <span style="color: #F59E0B;">★</span> Write Review (+50 Pts)
+                      </button>
+                    <?php elseif (!empty($ord['review'])): ?>
+                      <span style="font-size: 0.78rem; font-weight: 600; color: #16a34a; background: rgba(22,163,74,0.1); padding: 0.25rem 0.65rem; border-radius: 9999px; display: inline-flex; align-items: center; gap: 0.3rem;">
+                        <span style="color: #F59E0B;">★ <?= (int)$ord['review']['rating'] ?>/5</span> Reviewed
+                      </span>
+                    <?php endif; ?>
+
+                    <a href="/order-status?order=<?= urlencode($ord['order_number']) ?>" style="color: var(--accent-terracotta, #C96A52); font-size: 0.85rem; font-weight: 600; text-decoration: none;">
+                      View Live Tracker →
+                    </a>
+                  </div>
                 </div>
               </div>
             <?php endforeach; ?>
@@ -446,6 +459,74 @@ require dirname(__DIR__) . '/includes/header.php';
             <div style="display: flex; gap: 0.75rem;">
               <button type="button" onclick="closeEditProfileModal()" style="flex: 1; background: rgba(26,20,18,0.06); border: none; border-radius: 10px; padding: 0.75rem; font-weight: 600; cursor: pointer;">Cancel</button>
               <button type="submit" id="btnSaveProfile" style="flex: 1; background: var(--text-espresso, #1A1412); color: #fff; border: none; border-radius: 10px; padding: 0.75rem; font-weight: 600; cursor: pointer;">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <!-- VERIFIED DINER REVIEW MODAL -->
+      <div id="modalReview" style="display: none; position: fixed; inset: 0; background: rgba(26,20,18,0.65); backdrop-filter: blur(5px); z-index: 9999; align-items: center; justify-content: center; padding: 1.25rem;">
+        <div style="background: #ffffff; border-radius: 24px; max-width: 480px; width: 100%; padding: 2.25rem; box-shadow: 0 25px 50px rgba(0,0,0,0.25); position: relative; max-height: 90vh; overflow-y: auto;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 1.25rem;">
+            <div>
+              <span style="font-size: 0.72rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; color: var(--accent-terracotta, #C96A52); display: block; margin-bottom: 0.25rem;">
+                Verified Dining Experience
+              </span>
+              <h2 style="font-family: var(--font-display, serif); font-size: 1.45rem; color: var(--text-espresso, #1A1412); margin: 0;">
+                Review Order <span id="reviewOrderNumber" style="font-family: monospace; font-size: 1.15rem; color: var(--accent-sky, #6B9AC4);"></span>
+              </h2>
+            </div>
+            <button type="button" onclick="closeReviewModal()" style="background: none; border: none; font-size: 1.5rem; cursor: pointer; color: rgba(26,20,18,0.4); line-height: 1;">×</button>
+          </div>
+
+          <!-- Incentive Banner -->
+          <div style="background: linear-gradient(135deg, rgba(201,106,82,0.1) 0%, rgba(212,175,55,0.1) 100%); border-radius: 12px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; display: flex; align-items: center; gap: 0.65rem; border: 1px solid rgba(201,106,82,0.2);">
+            <div style="font-size: 1.25rem;">🎁</div>
+            <div style="font-size: 0.82rem; color: var(--text-espresso, #1A1412);">
+              Submit your genuine dining impressions to receive <strong>+50 Bonus Loyalty Points</strong> directly to your wallet!
+            </div>
+          </div>
+
+          <form id="formSubmitReview" onsubmit="handleSubmitReview(event)">
+            <input type="hidden" id="reviewOrderId" value="">
+
+            <!-- 1 to 5 Star Rating Selector -->
+            <div style="margin-bottom: 1.25rem; text-align: center;">
+              <label style="display: block; font-size: 0.85rem; font-weight: 600; margin-bottom: 0.5rem; color: var(--text-espresso, #1A1412);">Overall Dining Score</label>
+              <div id="starContainer" style="display: inline-flex; gap: 0.4rem; font-size: 2.2rem; cursor: pointer; user-select: none;">
+                <span class="star-btn" data-val="1" onclick="setRating(1)" style="color: #F59E0B; transition: transform 0.15s;">★</span>
+                <span class="star-btn" data-val="2" onclick="setRating(2)" style="color: #F59E0B; transition: transform 0.15s;">★</span>
+                <span class="star-btn" data-val="3" onclick="setRating(3)" style="color: #F59E0B; transition: transform 0.15s;">★</span>
+                <span class="star-btn" data-val="4" onclick="setRating(4)" style="color: #F59E0B; transition: transform 0.15s;">★</span>
+                <span class="star-btn" data-val="5" onclick="setRating(5)" style="color: #F59E0B; transition: transform 0.15s;">★</span>
+              </div>
+              <input type="hidden" id="reviewRating" value="5">
+              <div id="ratingDescription" style="font-size: 0.82rem; color: var(--accent-terracotta, #C96A52); font-weight: 600; margin-top: 0.25rem;">Exceptional (5 / 5)</div>
+            </div>
+
+            <!-- Ordered Dishes quick highlight -->
+            <div id="reviewDishesGroup" style="margin-bottom: 1.25rem; display: none;">
+              <label style="display: block; font-size: 0.82rem; font-weight: 600; margin-bottom: 0.4rem; color: rgba(26,20,18,0.7);">Your Ordered Dishes (Click to highlight):</label>
+              <div id="reviewDishesList" style="display: flex; flex-wrap: wrap; gap: 0.35rem;"></div>
+            </div>
+
+            <!-- Review Text -->
+            <div style="margin-bottom: 1.5rem;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 0.35rem;">
+                <label style="font-size: 0.85rem; font-weight: 600; color: var(--text-espresso, #1A1412);">Your Thoughts & Flavors</label>
+                <span id="charCount" style="font-size: 0.75rem; color: rgba(26,20,18,0.4);">0 / 1000</span>
+              </div>
+              <textarea id="reviewText" required minlength="5" maxlength="1000" rows="4" placeholder="How was the espresso, stone-baked sourdough crust, or ambiance? Tell other diners what you loved!" oninput="updateCharCount()" style="width: 100%; border: 1.5px solid rgba(26,20,18,0.15); border-radius: 12px; padding: 0.85rem 1rem; font-family: inherit; font-size: 0.9rem; box-sizing: border-box; outline: none; transition: border-color 0.2s; resize: vertical;"></textarea>
+            </div>
+
+            <div id="reviewAlert" style="display: none; padding: 0.75rem 1rem; border-radius: 10px; margin-bottom: 1rem; font-size: 0.85rem;"></div>
+
+            <div style="display: flex; gap: 0.75rem;">
+              <button type="button" onclick="closeReviewModal()" style="flex: 1; background: rgba(26,20,18,0.06); border: none; border-radius: 12px; padding: 0.85rem; font-weight: 600; cursor: pointer; color: var(--text-espresso, #1A1412);">Cancel</button>
+              <button type="submit" id="btnSubmitReview" style="flex: 1.5; background: var(--accent-terracotta, #C96A52); color: #fff; border: none; border-radius: 12px; padding: 0.85rem; font-weight: 700; cursor: pointer; transition: background 0.15s;">
+                Submit & Claim +50 Pts
+              </button>
             </div>
           </form>
         </div>
@@ -657,6 +738,136 @@ async function handleUpdateProfile(e) {
   } finally {
     btn.disabled = false;
     btn.textContent = 'Save Changes';
+  }
+}
+
+// -------------------------------------------------------------
+// VERIFIED DINER REVIEW HANDLERS
+// -------------------------------------------------------------
+const ratingLabels = {
+  1: 'Disappointing (1 / 5)',
+  2: 'Could Be Better (2 / 5)',
+  3: 'Pleasant (3 / 5)',
+  4: 'Delightful (4 / 5)',
+  5: 'Exceptional (5 / 5)'
+};
+
+function openReviewModal(orderId, orderNumber, dishes = []) {
+  const modal = document.getElementById('modalReview');
+  if (!modal) return;
+
+  document.getElementById('reviewOrderId').value = orderId;
+  document.getElementById('reviewOrderNumber').textContent = orderNumber;
+  document.getElementById('reviewText').value = '';
+  document.getElementById('reviewAlert').style.display = 'none';
+  document.getElementById('charCount').textContent = '0 / 1000';
+  setRating(5);
+
+  const dishesGroup = document.getElementById('reviewDishesGroup');
+  const dishesList = document.getElementById('reviewDishesList');
+  if (dishes && dishes.length > 0) {
+    dishesGroup.style.display = 'block';
+    dishesList.innerHTML = dishes.map(dish => `
+      <button type="button" onclick="addDishToReview('${dish.replace(/'/g, "\\'")}')" style="background: rgba(107,154,196,0.12); color: #4A7A9F; border: 1px solid rgba(107,154,196,0.3); border-radius: 9999px; padding: 0.25rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer; transition: background 0.15s;">
+        + ${dish}
+      </button>
+    `).join('');
+  } else {
+    dishesGroup.style.display = 'none';
+    dishesList.innerHTML = '';
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closeReviewModal() {
+  const modal = document.getElementById('modalReview');
+  if (modal) modal.style.display = 'none';
+}
+
+function setRating(val) {
+  val = Math.max(1, Math.min(5, parseInt(val) || 5));
+  document.getElementById('reviewRating').value = val;
+  document.getElementById('ratingDescription').textContent = ratingLabels[val] || `${val} / 5`;
+
+  const starBtns = document.querySelectorAll('#starContainer .star-btn');
+  starBtns.forEach(btn => {
+    const starVal = parseInt(btn.getAttribute('data-val'));
+    if (starVal <= val) {
+      btn.style.color = '#F59E0B';
+    } else {
+      btn.style.color = '#E5E7EB';
+    }
+  });
+}
+
+function updateCharCount() {
+  const text = document.getElementById('reviewText').value;
+  const countEl = document.getElementById('charCount');
+  if (countEl) {
+    countEl.textContent = `${text.length} / 1000`;
+  }
+}
+
+function addDishToReview(dish) {
+  const textarea = document.getElementById('reviewText');
+  const mention = `The ${dish} was `;
+  if (!textarea.value.includes(dish)) {
+    textarea.value = (textarea.value.trim() ? textarea.value.trim() + " " : "") + mention;
+    textarea.focus();
+    updateCharCount();
+  }
+}
+
+async function handleSubmitReview(e) {
+  e.preventDefault();
+  const btn = document.getElementById('btnSubmitReview');
+  const alertEl = document.getElementById('reviewAlert');
+  alertEl.style.display = 'none';
+  btn.disabled = true;
+  btn.textContent = 'Submitting Review...';
+
+  const payload = {
+    order_id: parseInt(document.getElementById('reviewOrderId').value),
+    rating: parseInt(document.getElementById('reviewRating').value),
+    review_text: document.getElementById('reviewText').value.trim()
+  };
+
+  try {
+    const res = await fetch('/api/reviews.php?action=submit', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    const data = await res.json();
+
+    if (data.success) {
+      alertEl.style.background = '#ECFDF5';
+      alertEl.style.color = '#065F46';
+      alertEl.style.border = '1px solid #A7F3D0';
+      alertEl.innerHTML = `<strong>✔ Review Submitted!</strong> ${data.data.points_awarded > 0 ? `+${data.data.points_awarded} loyalty points added!` : ''} Refreshing...`;
+      alertEl.style.display = 'block';
+
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
+    } else {
+      alertEl.style.background = '#FEF2F2';
+      alertEl.style.color = '#991B1B';
+      alertEl.style.border = '1px solid #FECACA';
+      alertEl.textContent = data.message || 'Failed to submit review. Please check your text.';
+      alertEl.style.display = 'block';
+      btn.disabled = false;
+      btn.textContent = 'Submit & Claim +50 Pts';
+    }
+  } catch (err) {
+    alertEl.style.background = '#FEF2F2';
+    alertEl.style.color = '#991B1B';
+    alertEl.style.border = '1px solid #FECACA';
+    alertEl.textContent = 'Network error while submitting review.';
+    alertEl.style.display = 'block';
+    btn.disabled = false;
+    btn.textContent = 'Submit & Claim +50 Pts';
   }
 }
 </script>

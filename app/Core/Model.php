@@ -92,6 +92,11 @@ abstract class Model
         return db()->update($table, $data, "`{$pk}` = :id_filter", ['id_filter' => $id]);
     }
 
+    public static function update(int|string $id, array $data): int
+    {
+        return static::updateById($id, $data);
+    }
+
     public static function deleteById(int|string $id): int
     {
         $table = static::$table;

@@ -35,7 +35,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
             // Determine type casting
             $type = 'string';
-            if (in_array($key, ['gst_enabled', 'announcement_enabled', 'loyalty_enabled', 'payment_counter_cash', 'payment_counter_upi', 'payment_online_razorpay'], true)) {
+            if (in_array($key, ['gst_enabled', 'announcement_enabled', 'loyalty_enabled', 'payment_counter_cash', 'payment_counter_upi', 'payment_online_razorpay', 'reviews_auto_approve_positive'], true)) {
                 $type = 'bool';
                 $val = ($val === '1' || $val === 'true' || $val === 1);
             } elseif (in_array($key, ['gst_cgst_percent', 'gst_sgst_percent', 'loyalty_max_redeem_percent'], true)) {
@@ -986,6 +986,43 @@ $activeNav = 'cms';
                     </div>
                   <?php endforeach; ?>
                 </div>
+              </div>
+
+            </div>
+
+            <!-- 7. Verified Customer Reviews & Social Proof -->
+            <div class="cms-card">
+              <div class="section-header">
+                <div class="section-icon" style="color:#F59E0B;">
+                  <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                </div>
+                <div>
+                  <h2 class="section-title">Verified Customer Reviews & Social Proof</h2>
+                  <div class="section-desc">Patron dining feedback, automated +50 points reward gate, and homepage social proof showcases.</div>
+                </div>
+              </div>
+
+              <div class="form-grid single-col" style="margin-bottom: 1.5rem;">
+                <div class="form-group">
+                  <label style="display:flex; align-items:center; gap:0.5rem; cursor:pointer;">
+                    <input type="hidden" name="settings[reviews_auto_approve_positive]" value="0">
+                    <input type="checkbox" name="settings[reviews_auto_approve_positive]" value="1" <?= (!isset($current['reviews_auto_approve_positive']) || $current['reviews_auto_approve_positive']) ? 'checked' : '' ?> style="width:18px; height:18px; accent-color:var(--accent-terracotta);">
+                    <span>Auto-Publish Positive Reviews (4 & 5 Stars)</span>
+                  </label>
+                  <span class="help-hint">When enabled, genuine 4 and 5 star reviews with no profanity are published immediately to the website homepage showcase and +50 points are credited to the patron. Lower ratings (1-3 stars) are queued in moderation.</span>
+                </div>
+              </div>
+
+              <div style="background:var(--bg-cream); border-radius:12px; padding:1.25rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:1rem;">
+                <div>
+                  <div style="font-size:0.85rem; font-weight:700; color:var(--text-espresso);">Review Moderation Queue</div>
+                  <div style="font-size:0.78rem; color:var(--text-muted); margin-top:2px;">
+                    Inspect, approve, or hide customer dining testimonials and photos.
+                  </div>
+                </div>
+                <a href="/admin/reviews.php" class="btn-action" style="text-decoration:none; background:var(--accent-terracotta); color:#ffffff; padding:0.6rem 1.25rem; border-radius:8px; font-size:0.82rem; font-weight:700; display:inline-flex; align-items:center; gap:0.4rem;">
+                  <span>Open Moderation Hub →</span>
+                </a>
               </div>
 
             </div>

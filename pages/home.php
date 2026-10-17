@@ -559,7 +559,10 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
           </div>
         </div>
 
-        <div>
+        <div style="display: flex; gap: 0.75rem; flex-wrap: wrap;">
+          <a href="/profile" class="btn-secondary" style="font-size: 0.75rem; border: 1px solid var(--accent-terracotta); color: var(--accent-terracotta); background: rgba(201,106,82,0.06); padding: 0.65rem 1.15rem; border-radius: 9999px; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 0.4rem;">
+            <span>★</span> Review Your Dining Order (+50 Pts)
+          </a>
           <a href="<?= e($reviews['googleReviewLink']) ?>" target="_blank" rel="noopener noreferrer" class="btn-primary" style="font-size: 0.75rem;">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
               <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/>
@@ -573,7 +576,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
       </div>
 
       <div class="reviews-grid">
-        <?php foreach (array_slice($reviews['reviews'], 0, 3) as $rev): ?>
+        <?php foreach (array_slice($reviews['reviews'], 0, 6) as $rev): ?>
           <div class="review-card">
             <div>
               <div class="review-card-top">
