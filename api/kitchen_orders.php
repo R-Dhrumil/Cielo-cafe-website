@@ -20,6 +20,7 @@ use App\Models\OrderItem;
 use App\Models\Table;
 use App\Models\AuditLog;
 use App\Services\AuthService;
+use App\Services\LoyaltyService;
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Status update action
@@ -56,6 +57,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $updateData = ['status' => $newStatus];
 
     Order::updateById($orderId, $updateData);
+
+    if ($newStatus === 'completed' && $order['payment_status'] === 'paid') {
+        LoyaltyService::processOrderCompletion($orderId);
+    } elseif ($newStatus === 'cancelled') {
+        LoyaltyService::reverseOrderLoyalty($orderId, 'Cancelled via Kitchen KDS');
+    }
 
     $staff = AuthService::user();
     AuditLog::log(

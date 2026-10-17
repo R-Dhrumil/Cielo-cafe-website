@@ -14,9 +14,9 @@ class Visit extends Model
     /**
      * Log a customer visit for today (Idempotent: 1 visit per calendar day)
      */
-    public static function logVisit(int|string $userId, int|string $orderId, bool $isCounted = true): bool
+    public static function logVisit(int|string $userId, int|string $orderId, bool $isCounted = true, ?string $visitDate = null): bool
     {
-        $today = date('Y-m-d');
+        $today = $visitDate ?: date('Y-m-d');
 
         // Check if visit already recorded for this user today
         $existing = self::where('`user_id` = :uid AND `visit_date` = :vdate', [

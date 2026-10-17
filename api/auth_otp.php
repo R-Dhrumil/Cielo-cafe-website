@@ -83,6 +83,8 @@ switch ($action) {
             'points' => $metrics['points'] ?? null,
             'tier' => $metrics['points']['tier'] ?? null,
             'visits' => $metrics['visits'] ?? null,
+            'rewards' => $metrics['rewards'] ?? [],
+            'coupons' => $metrics['coupons'] ?? [],
         ], 'Customer authenticated');
         break;
 

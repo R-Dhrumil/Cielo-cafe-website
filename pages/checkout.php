@@ -159,6 +159,11 @@ require dirname(__DIR__) . '/includes/header.php';
               <span id="chkDiscount">- ₹ 0.00</span>
             </div>
 
+            <div id="chkRewardRow" style="display: none; justify-content: space-between; color: var(--accent-terracotta, #C96A52); font-weight: 600;">
+              <span id="chkRewardLabel">Milestone Reward</span>
+              <span id="chkRewardVal">- ₹ 0.00</span>
+            </div>
+
             <div style="display: flex; justify-content: space-between; color: var(--text-muted, #6E6259);">
               <span>Restaurant GST (5%)</span>
               <span id="chkTax" style="font-weight: 600; color: var(--text-espresso, #1A1412);">₹ 0.00</span>
@@ -209,6 +214,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           note: i.note
         })),
         coupon_code: cart.couponCode || '',
+        reward_id: cart.rewardId || null,
         redeem_points: cart.redeemPoints || 0
       })
     });
@@ -251,6 +257,14 @@ function renderCheckoutSummary(lineItems, fin) {
     document.getElementById('chkDiscount').textContent = `- ₹ ${(fin.total_discount_paise / 100).toFixed(2)}`;
   }
 
+  if (fin.applied_reward && fin.reward_discount_paise > 0) {
+    document.getElementById('chkRewardRow').style.display = 'flex';
+    document.getElementById('chkRewardLabel').textContent = `★ ${fin.applied_reward.title}`;
+    document.getElementById('chkRewardVal').textContent = `- ₹ ${(fin.reward_discount_paise / 100).toFixed(2)}`;
+  } else {
+    document.getElementById('chkRewardRow').style.display = 'none';
+  }
+
   document.getElementById('chkTax').textContent = `₹ ${(fin.total_tax_paise / 100).toFixed(2)}`;
   document.getElementById('chkGrandTotal').textContent = `₹ ${fin.grand_total_inr.toFixed(2)}`;
 }
@@ -288,6 +302,7 @@ async function handlePlaceOrder(event) {
         payment_method: paymentMethod,
         kitchen_notes: notes,
         coupon_code: cart.couponCode || '',
+        reward_id: cart.rewardId || null,
         redeem_points: cart.redeemPoints || 0,
         items: cart.items.map(i => ({
           id: i.id,

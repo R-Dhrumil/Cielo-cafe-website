@@ -10,6 +10,7 @@ use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Coupon;
 use App\Models\CouponUsage;
+use App\Models\UserReward;
 
 class CustomerAuthService
 {
@@ -425,6 +426,20 @@ class CustomerAuthService
                 'completed_milestones' => $completedCycles,
                 'next_milestone_reward' => 'Complimentary Artisanal Beverage & 100 Bonus Points',
             ],
+            'rewards' => array_map(function ($rw) {
+                $v = !empty($rw['reward_value_json']) ? json_decode($rw['reward_value_json'], true) : [];
+                return [
+                    'id' => (int)$rw['id'],
+                    'type' => $rw['reward_type'],
+                    'title' => $v['title'] ?? 'Milestone Reward Voucher',
+                    'item_name' => $v['item_name'] ?? 'Complimentary Dish',
+                    'discount_paise' => (int)($v['discount_paise'] ?? 24000),
+                    'discount_rupees' => (float)(($v['discount_paise'] ?? 24000) / 100),
+                    'status' => $rw['status'],
+                    'expires_at' => $rw['expires_at'],
+                    'created_at' => $rw['created_at'],
+                ];
+            }, UserReward::getActiveRewards($userId)),
             'coupons' => $wallet,
             'orders' => $orderHistory,
         ];

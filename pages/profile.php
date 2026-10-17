@@ -266,6 +266,48 @@ require dirname(__DIR__) . '/includes/header.php';
           </div>
         </div>
 
+      <!-- Section: Unlocked Milestone Rewards Wallet -->
+      <div style="margin-bottom: 2.5rem;">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 1rem;">
+          <h2 style="font-family: var(--font-display, 'Playfair Display', serif); font-size: 1.4rem; color: var(--text-espresso, #1A1412); margin: 0; display: flex; align-items: center; gap: 0.5rem;">
+            <span>Unlocked Milestone Rewards</span>
+            <span style="font-size: 0.72rem; background: var(--accent-terracotta, #C96A52); color: #fff; padding: 2px 8px; border-radius: 999px; font-family: sans-serif; font-weight: 700;">★ Claimable</span>
+          </h2>
+          <span style="font-size: 0.85rem; color: rgba(26,20,18,0.6);"><?= count($metrics['rewards'] ?? []) ?> active vouchers</span>
+        </div>
+
+        <?php if (empty($metrics['rewards'])): ?>
+          <div style="background: #ffffff; border-radius: 16px; border: 1px dashed rgba(26,20,18,0.15); padding: 1.75rem; text-align: center; color: rgba(26,20,18,0.6); font-size: 0.9rem;">
+            Complete your 5-visit cycle to unlock complimentary artisanal treats and wood-fired sourdough vouchers!
+          </div>
+        <?php else: ?>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(290px, 1fr)); gap: 1rem;">
+            <?php foreach ($metrics['rewards'] as $rw): ?>
+              <div style="background: linear-gradient(135deg, #FFFDF9 0%, #F5EFEB 100%); border-radius: 16px; border: 1.5px solid rgba(201,106,82,0.3); padding: 1.25rem 1.5rem; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 15px rgba(201,106,82,0.06); position: relative; overflow: hidden;">
+                <div style="position: absolute; right: 10px; top: 10px; font-size: 0.72rem; font-weight: 700; color: #16a34a; background: rgba(22,163,74,0.1); padding: 2px 8px; border-radius: 999px;">
+                  Active Voucher
+                </div>
+                <div>
+                  <span style="font-size: 0.75rem; font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--accent-terracotta, #C96A52); display: block; margin-bottom: 0.25rem;">
+                    Milestone Reward
+                  </span>
+                  <h3 style="font-size: 1.05rem; font-weight: 700; color: var(--text-espresso, #1A1412); margin-bottom: 0.35rem;">
+                    <?= e($rw['title']) ?>
+                  </h3>
+                  <div style="font-size: 0.85rem; color: var(--accent-sky-deep, #4A7A9F); font-weight: 600; margin-bottom: 0.5rem;">
+                    <?= e($rw['item_name']) ?> (Value ₹<?= number_format($rw['discount_rupees']) ?>)
+                  </div>
+                  <p style="font-size: 0.78rem; color: rgba(26,20,18,0.6); margin-bottom: 1rem;">
+                    Valid until <?= !empty($rw['expires_at']) ? date('d M Y', strtotime($rw['expires_at'])) : 'No expiry' ?>
+                  </p>
+                </div>
+                <a href="/menu" style="display: block; text-align: center; text-decoration: none; width: 100%; background: var(--accent-terracotta, #C96A52); color: #ffffff; border-radius: 8px; padding: 0.65rem; font-size: 0.85rem; font-weight: 600; transition: background 0.15s; box-sizing: border-box;">
+                  Claim on Table Order →
+                </a>
+              </div>
+            <?php endforeach; ?>
+          </div>
+        <?php endif; ?>
       </div>
 
       <!-- Section: Personal Coupon Wallet -->

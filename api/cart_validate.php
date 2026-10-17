@@ -20,6 +20,7 @@ use App\Models\MenuItem;
 use App\Models\ItemVariant;
 use App\Models\ItemAddon;
 use App\Models\Coupon;
+use App\Models\UserReward;
 use App\Models\PointsLedger;
 use App\Services\SettingsService;
 
@@ -28,6 +29,7 @@ $input = json_decode($raw, true) ?? $_POST;
 
 $cartItems = (array)($input['items'] ?? []);
 $couponCode = strtoupper(trim((string)($input['coupon_code'] ?? '')));
+$rewardId = !empty($input['reward_id']) ? (int)$input['reward_id'] : null;
 $redeemPoints = max(0, (int)($input['redeem_points'] ?? 0));
 $userId = !empty($input['user_id']) ? (int)$input['user_id'] : ($_SESSION['cielo_user']['id'] ?? null);
 
@@ -129,7 +131,29 @@ try {
         ];
     }
 
-    // 5. Calculate Loyalty Points Discount (after promotional & coupon discounts)
+    // 5. Milestone Reward Voucher Deduction (Free dish / treat voucher)
+    $rewardDiscountPaise = 0;
+    $appliedReward = null;
+
+    if ($rewardId !== null && $userId !== null) {
+        $userReward = UserReward::findActiveById($rewardId, $userId);
+        if ($userReward) {
+            $rVal = !empty($userReward['reward_value_json']) ? json_decode($userReward['reward_value_json'], true) : [];
+            $valPaise = (int)($rVal['discount_paise'] ?? 24000);
+            $subtotalAfterPromos = max(0, $rawSubtotalPaise - $offerDiscountsPaise - $couponDiscountPaise);
+            $rewardDiscountPaise = min($valPaise, $subtotalAfterPromos);
+
+            $appliedReward = [
+                'id' => (int)$userReward['id'],
+                'title' => (string)($rVal['title'] ?? 'Milestone Reward'),
+                'item_name' => (string)($rVal['item_name'] ?? 'Complimentary Dish'),
+                'discount_paise' => $rewardDiscountPaise,
+                'discount_inr' => (float)($rewardDiscountPaise / 100),
+            ];
+        }
+    }
+
+    // 6. Calculate Loyalty Points Discount (after promotional, coupon, and reward discounts)
     $loyaltyDiscountPaise = 0;
     $appliedPoints = 0;
     $loyaltyConfig = SettingsService::getLoyaltyRules();
@@ -143,15 +167,15 @@ try {
             $rawPointsDiscount = $pointsToRedeem * $valuePerPointPaise;
 
             // Cap at configured max % of remaining subtotal (e.g. 50%)
-            $subtotalAfterPromos = max(0, $rawSubtotalPaise - $offerDiscountsPaise - $couponDiscountPaise);
+            $subtotalAfterPromos = max(0, $rawSubtotalPaise - $offerDiscountsPaise - $couponDiscountPaise - $rewardDiscountPaise);
             $maxAllowedDiscount = (int)round(($subtotalAfterPromos * ($loyaltyConfig['max_redeem_percentage'] ?? 50)) / 100);
             $loyaltyDiscountPaise = min($rawPointsDiscount, $maxAllowedDiscount);
             $appliedPoints = (int)ceil($loyaltyDiscountPaise / $valuePerPointPaise);
         }
     }
 
-    // 6. Net Subtotal & Dynamic Taxes
-    $totalDiscountPaise = $offerDiscountsPaise + $couponDiscountPaise + $loyaltyDiscountPaise;
+    // 7. Net Subtotal & Dynamic Taxes
+    $totalDiscountPaise = $offerDiscountsPaise + $couponDiscountPaise + $rewardDiscountPaise + $loyaltyDiscountPaise;
     $taxableSubtotalPaise = max(0, $rawSubtotalPaise - $totalDiscountPaise);
 
     $gstRates = SettingsService::getGstRates();
@@ -172,6 +196,8 @@ try {
             'coupon' => $appliedCoupon,
             'coupon_eval' => $promoEval['coupon'] ?? null,
             'coupon_discount_paise' => $couponDiscountPaise,
+            'applied_reward' => $appliedReward,
+            'reward_discount_paise' => $rewardDiscountPaise,
             'loyalty_points_used' => $appliedPoints,
             'loyalty_discount_paise' => $loyaltyDiscountPaise,
             'total_discount_paise' => $totalDiscountPaise,

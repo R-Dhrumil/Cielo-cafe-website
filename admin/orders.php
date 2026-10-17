@@ -10,6 +10,7 @@ require_once __DIR__ . '/../app/bootstrap.php';
 
 use App\Services\AuthService;
 use App\Services\SettingsService;
+use App\Services\LoyaltyService;
 use App\Models\Order;
 use App\Models\OrderItem;
 use App\Models\Table;
@@ -49,33 +50,29 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     'status' => 'completed',
                 ]);
 
-                // Award Loyalty Points if order has a linked user and wasn't previously settled
-                if (!empty($order['user_id']) && $order['payment_status'] !== 'paid') {
-                    $loyaltyRules = SettingsService::getLoyaltyRules();
-                    $rate = (int)($loyaltyRules['earn_points_per_100_inr'] ?? 10);
-                    $subtotalInr = Money::toRupees((int)$order['subtotal_paise']);
-                    $earnedPoints = (int)floor(($subtotalInr / 100) * $rate);
-
-                    if ($earnedPoints > 0) {
-                        PointsLedger::credit(
-                            (int)$order['user_id'],
-                            $earnedPoints,
-                            "Earned on Order {$order['order_number']}",
-                            $orderId
-                        );
-                    }
-                }
+                // Unified Loyalty Retention Engine: Points, Visit Qualification & Milestone Evaluation
+                $loyaltySummary = LoyaltyService::processOrderCompletion($orderId);
 
                 AuditLog::log($staff['id'], "order_settled_{$payMethod}", 'orders', $orderId);
                 $msg = "Order {$order['order_number']} successfully marked as PAID & COMPLETED!";
+                if (!empty($loyaltySummary['points_awarded'])) {
+                    $msg .= " (+{$loyaltySummary['points_awarded']} loyalty points credited)";
+                }
+                if (!empty($loyaltySummary['rewards_granted'])) {
+                    $msg .= " ★ 5-Visit Milestone Reached: Free treat voucher awarded to patron!";
+                }
             } elseif ($action === 'cancel') {
                 $reason = trim((string)($_POST['reason'] ?? 'Cancelled by Admin'));
                 Order::updateById($orderId, [
                     'status' => 'cancelled',
                     'cancelled_reason' => $reason
                 ]);
+
+                // Reversal Safeguard: Revoke points/visits, restore redeemed points/rewards
+                LoyaltyService::reverseOrderLoyalty($orderId, $reason);
+
                 AuditLog::log($staff['id'], 'order_cancelled', 'orders', $orderId, ['reason' => $reason]);
-                $msg = "Order {$order['order_number']} has been cancelled.";
+                $msg = "Order {$order['order_number']} has been cancelled and loyalty reversals applied.";
             } elseif ($action === 'status') {
                 $newStatus = trim((string)($_POST['new_status'] ?? ''));
                 if (in_array($newStatus, ['placed', 'preparing', 'ready', 'completed'], true)) {

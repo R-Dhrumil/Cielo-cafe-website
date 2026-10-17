@@ -48,6 +48,12 @@ abstract class Model
         return db()->fetchAll($sql, $params);
     }
 
+    public static function first(string $whereSql = '1=1', array $params = [], string $orderBy = ''): ?array
+    {
+        $rows = static::where($whereSql, $params, $orderBy, 1);
+        return $rows[0] ?? null;
+    }
+
     protected static bool $hasCreatedAt = true;
     protected static bool $hasUpdatedAt = true;
 

@@ -15,6 +15,8 @@
     items: [], // Array of { cartItemId, id, name, variantId, variantName, addonIds, addons, note, unitPricePaise, quantity, lineTotalPaise }
     couponCode: '',
     appliedCoupon: null,
+    rewardId: null,
+    appliedReward: null,
     redeemPoints: 0,
     serverFinancials: null,
   };
@@ -28,6 +30,7 @@
         if (Array.isArray(parsed.items)) {
           state.items = parsed.items;
           state.couponCode = parsed.couponCode || '';
+          state.rewardId = parsed.rewardId || null;
           state.redeemPoints = parsed.redeemPoints || 0;
         }
       }
@@ -41,6 +44,7 @@
       localStorage.setItem(STORAGE_KEY, JSON.stringify({
         items: state.items,
         couponCode: state.couponCode,
+        rewardId: state.rewardId,
         redeemPoints: state.redeemPoints,
       }));
     } catch (e) {
@@ -324,6 +328,7 @@
         note: i.note,
       })),
       coupon_code: state.couponCode,
+      reward_id: state.rewardId,
       redeem_points: state.redeemPoints,
     };
 
@@ -338,6 +343,7 @@
       if (result.success) {
         state.serverFinancials = result.data.financials;
         state.appliedCoupon = result.data.financials.coupon;
+        state.appliedReward = result.data.financials.applied_reward;
         updateUI();
       }
     } catch (e) {
@@ -513,6 +519,19 @@
     }
   }
 
+  function applyReward(rewardId) {
+    state.rewardId = parseInt(rewardId, 10) || null;
+    savePersistedCart();
+    serverCartValidation();
+  }
+
+  function removeReward() {
+    state.rewardId = null;
+    state.appliedReward = null;
+    savePersistedCart();
+    serverCartValidation();
+  }
+
   // Global Cart API
   window.CieloCart = {
     quickAdd,
@@ -526,6 +545,8 @@
     closeCartDrawer,
     applyCoupon,
     removeCoupon,
+    applyReward,
+    removeReward,
   };
 
   // Init on DOM ready

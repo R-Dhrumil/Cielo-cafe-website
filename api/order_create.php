@@ -26,9 +26,11 @@ use App\Models\Coupon;
 use App\Models\CouponUsage;
 use App\Models\User;
 use App\Models\Visit;
+use App\Models\UserReward;
 use App\Models\PointsLedger;
 use App\Services\TableSessionService;
 use App\Services\SettingsService;
+use App\Services\LoyaltyService;
 
 $raw = file_get_contents('php://input');
 $input = json_decode($raw, true) ?? $_POST;
@@ -38,6 +40,7 @@ $phone = trim((string)($input['phone'] ?? ''));
 $name = trim((string)($input['name'] ?? ''));
 $paymentMethod = trim((string)($input['payment_method'] ?? 'counter_cash'));
 $couponCode = strtoupper(trim((string)($input['coupon_code'] ?? '')));
+$rewardId = !empty($input['reward_id']) ? (int)$input['reward_id'] : null;
 $redeemPoints = max(0, (int)($input['redeem_points'] ?? 0));
 $kitchenNotes = trim((string)($input['kitchen_notes'] ?? ''));
 
@@ -78,6 +81,7 @@ try {
         $tableId,
         $paymentMethod,
         $couponCode,
+        $rewardId,
         $redeemPoints,
         $kitchenNotes
     ) {
@@ -166,7 +170,20 @@ try {
             }
         }
 
-        // 5. Loyalty Points Discount
+        // 5. Milestone Reward Voucher Deduction
+        $rewardDiscountPaise = 0;
+        $validReward = null;
+        if ($rewardId !== null) {
+            $userReward = UserReward::findActiveById($rewardId, $userId);
+            if ($userReward) {
+                $rVal = !empty($userReward['reward_value_json']) ? json_decode($userReward['reward_value_json'], true) : [];
+                $valPaise = (int)($rVal['discount_paise'] ?? 24000);
+                $rewardDiscountPaise = min($valPaise, max(0, $rawSubtotalPaise - $couponDiscountPaise));
+                $validReward = $userReward;
+            }
+        }
+
+        // 6. Loyalty Points Discount
         $loyaltyDiscountPaise = 0;
         $pointsUsed = 0;
         $loyaltyRules = SettingsService::getLoyaltyRules();
@@ -176,8 +193,8 @@ try {
             if ($pointsToRedeem > 0) {
                 $valuePerPointPaise = (int)($loyaltyRules['redeem_value_per_point_paise'] ?? 100);
                 $rawPointsDiscount = $pointsToRedeem * $valuePerPointPaise;
-                $subtotalAfterCoupon = max(0, $rawSubtotalPaise - $couponDiscountPaise);
-                $maxAllowedDiscount = (int)round(($subtotalAfterCoupon * ($loyaltyRules['max_redeem_percentage'] ?? 50)) / 100);
+                $subtotalAfterPromos = max(0, $rawSubtotalPaise - $couponDiscountPaise - $rewardDiscountPaise);
+                $maxAllowedDiscount = (int)round(($subtotalAfterPromos * ($loyaltyRules['max_redeem_percentage'] ?? 50)) / 100);
                 $loyaltyDiscountPaise = min($rawPointsDiscount, $maxAllowedDiscount);
                 $pointsUsed = (int)ceil($loyaltyDiscountPaise / $valuePerPointPaise);
 
@@ -187,17 +204,17 @@ try {
             }
         }
 
-        $totalDiscountPaise = $couponDiscountPaise + $loyaltyDiscountPaise;
+        $totalDiscountPaise = $couponDiscountPaise + $rewardDiscountPaise + $loyaltyDiscountPaise;
         $taxableSubtotalPaise = max(0, $rawSubtotalPaise - $totalDiscountPaise);
 
-        // 6. Dynamic GST calculation
+        // 7. Dynamic GST calculation
         $gstRates = SettingsService::getGstRates();
         $cgstPaise = Money::calculateTax($taxableSubtotalPaise, $gstRates['cgst_percent']);
         $sgstPaise = Money::calculateTax($taxableSubtotalPaise, $gstRates['sgst_percent']);
         $totalTaxPaise = $cgstPaise + $sgstPaise;
         $grandTotalPaise = $taxableSubtotalPaise + $totalTaxPaise;
 
-        // 7. Create Order Record
+        // 8. Create Order Record
         $orderNumber = Order::generateOrderNumber();
         $orderId = (int)Order::create([
             'order_number' => $orderNumber,
@@ -213,7 +230,7 @@ try {
             'kitchen_notes' => $kitchenNotes !== '' ? $kitchenNotes : null,
         ]);
 
-        // 8. Create Order Item Line Records
+        // 9. Create Order Item Line Records
         foreach ($verifiedLineItems as $line) {
             $displayName = $line['name'] . (!empty($line['variant_name']) ? " ({$line['variant_name']})" : '');
             OrderItem::create([
@@ -229,7 +246,7 @@ try {
             ]);
         }
 
-        // 9. Record Coupon Usage
+        // 10. Record Coupon Usage
         if ($couponId !== null && $couponDiscountPaise > 0) {
             CouponUsage::create([
                 'coupon_id' => $couponId,
@@ -240,8 +257,13 @@ try {
             ]);
         }
 
-        // 10. Record Customer Visit (1 per calendar day anti-misuse rule)
-        Visit::logVisit($userId, $orderId, true);
+        // 11. Redeem Milestone Reward Voucher (if applied)
+        if ($validReward !== null) {
+            LoyaltyService::redeemReward((int)$validReward['id'], $orderId, $userId);
+        }
+
+        // 12. Record Customer Visit via Loyalty Retention Engine
+        LoyaltyService::recordOrderVisit($orderId, $userId);
 
         // Update Session user
         startCieloSession();
