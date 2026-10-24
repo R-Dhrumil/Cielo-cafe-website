@@ -28,9 +28,9 @@ if (!empty($gallery['items']) && is_array($gallery['items'])) {
 
 // Add extra cafe ambience photos to make 3D infinite gallery even richer
 $ambientPhotos = [
-    ['src' => 'assets/images/cafe/hero-table.jpg', 'alt' => 'Cielo Evening Table Spread'],
-    ['src' => 'assets/images/cafe/cielo-night-entrance.jpg', 'alt' => 'Cielo Night Entrance & Patio'],
-    ['src' => 'assets/images/cafe/menu-cover-spaghetti.jpg', 'alt' => 'Cielo Italian Pasta & Ambiance']
+    ['src' => 'assets/images/cafe/hero-table.webp', 'alt' => 'Cielo Evening Table Spread'],
+    ['src' => 'assets/images/cafe/cielo-night-entrance.webp', 'alt' => 'Cielo Night Entrance & Patio'],
+    ['src' => 'assets/images/cafe/menu-cover-spaghetti.webp', 'alt' => 'Cielo Italian Pasta & Ambiance']
 ];
 foreach ($ambientPhotos as $ap) {
     $gallery3dImages[] = $ap;

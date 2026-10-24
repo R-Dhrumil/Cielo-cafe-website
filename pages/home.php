@@ -30,9 +30,9 @@ if (!empty($gallery['items']) && is_array($gallery['items'])) {
     }
 }
 $ambientPhotos = [
-    ['src' => 'assets/images/cafe/hero-table.jpg', 'alt' => 'Cielo Evening Table Spread'],
-    ['src' => 'assets/images/cafe/cielo-night-entrance.jpg', 'alt' => 'Cielo Night Entrance & Patio'],
-    ['src' => 'assets/images/cafe/menu-cover-spaghetti.jpg', 'alt' => 'Cielo Italian Pasta & Ambiance']
+    ['src' => 'assets/images/cafe/hero-table.webp', 'alt' => 'Cielo Evening Table Spread'],
+    ['src' => 'assets/images/cafe/cielo-night-entrance.webp', 'alt' => 'Cielo Night Entrance & Patio'],
+    ['src' => 'assets/images/cafe/menu-cover-spaghetti.webp', 'alt' => 'Cielo Italian Pasta & Ambiance']
 ];
 foreach ($ambientPhotos as $ap) {
     $gallery3dImages[] = $ap;
@@ -144,7 +144,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
 
       <div class="split-col-5">
         <div class="split-image-card image-zoom-container">
-          <img src="assets/images/cafe/interior-atmosphere.jpg" alt="Cielo Cafe Interior and Ambient Dining Vibe">
+          <img src="assets/images/cafe/interior-atmosphere.webp" alt="Cielo Cafe Interior and Ambient Dining Vibe">
          
         </div>
       </div>
@@ -154,7 +154,7 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
     <section class="split-row reverse-desktop">
       <div class="split-col-5">
         <div class="split-image-card aspect-4-5 image-zoom-container">
-          <img src="assets/images/cafe/all-day-spread.jpg" alt="Fresh Gourmet Pizza, Pasta and Sourdough Spread">
+          <img src="assets/images/cafe/all-day-spread.webp" alt="Fresh Gourmet Pizza, Pasta and Sourdough Spread">
           <div class="farm-fresh-tag">Farm Fresh</div>
         </div>
       </div>
@@ -264,17 +264,17 @@ $galleryConfigJson = json_encode($galleryConfig, JSON_UNESCAPED_SLASHES);
         <div class="celebrations-stage">
           <!-- Slide 1: DJ Night -->
           <div class="celebrations-stage-img-wrap is-visible" data-id="dj-night">
-            <img src="assets/images/cafe/cielo-dj-night.jpg" alt="Live DJ Night & Restro Party at Cielo Cafe Vadodara" class="celebrations-stage-img" loading="lazy">
+            <img src="assets/images/cafe/cielo-dj-night.webp" alt="Live DJ Night & Restro Party at Cielo Cafe Vadodara" class="celebrations-stage-img" loading="lazy">
           </div>
 
           <!-- Slide 2: Private Party -->
           <div class="celebrations-stage-img-wrap" data-id="private-party">
-            <img src="assets/images/cafe/cielo-private-party.jpg" alt="Private Birthday Party and Celebration Table at Cielo Cafe" class="celebrations-stage-img" loading="lazy">
+            <img src="assets/images/cafe/cielo-private-party.webp" alt="Private Birthday Party and Celebration Table at Cielo Cafe" class="celebrations-stage-img" loading="lazy">
           </div>
 
           <!-- Slide 3: Gatherings -->
           <div class="celebrations-stage-img-wrap" data-id="gatherings">
-            <img src="assets/images/cafe/cielo-gatherings.jpg" alt="Intimate Gatherings and Kitty Party by Arched Windows at Cielo" class="celebrations-stage-img" loading="lazy">
+            <img src="assets/images/cafe/cielo-gatherings.webp" alt="Intimate Gatherings and Kitty Party by Arched Windows at Cielo" class="celebrations-stage-img" loading="lazy">
           </div>
 
           <div class="celebrations-stage-overlay"></div>

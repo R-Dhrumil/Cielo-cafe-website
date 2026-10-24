@@ -48,7 +48,7 @@ require dirname(__DIR__) . '/includes/header.php';
 
       <div class="split-col-5">
         <div class="split-image-card image-zoom-container">
-          <img src="assets/images/cafe/interior-atmosphere.jpg" alt="Cielo Cafe Interior and Ambient Dining Vibe">
+          <img src="assets/images/cafe/interior-atmosphere.webp" alt="Cielo Cafe Interior and Ambient Dining Vibe">
           
         </div>
       </div>
@@ -106,7 +106,7 @@ require dirname(__DIR__) . '/includes/header.php';
     <section class="split-row reverse-desktop">
       <div class="split-col-5">
         <div class="split-image-card aspect-4-5 image-zoom-container">
-          <img src="assets/images/cafe/all-day-spread.jpg" alt="Fresh Gourmet Pizza, Pasta and Sourdough Spread">
+          <img src="assets/images/cafe/all-day-spread.webp" alt="Fresh Gourmet Pizza, Pasta and Sourdough Spread">
           <div class="farm-fresh-tag">Farm Fresh</div>
         </div>
       </div>

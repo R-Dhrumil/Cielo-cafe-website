@@ -77,7 +77,7 @@ if ($appDebug) {
     ini_set('display_startup_errors', '1');
 } else {
     // In production: hide errors from browser, log to protected storage/logs
-    error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT);
+    error_reporting(E_ALL);
     ini_set('display_errors', '0');
     ini_set('display_startup_errors', '0');
 }

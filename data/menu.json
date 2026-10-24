@@ -37,7 +37,7 @@
       "price": 240,
       "isVeg": true,
       "tag": "Signature",
-      "image": "assets/images/dishes/orange-espresso-tonic.jpg"
+      "image": "assets/images/dishes/orange-espresso-tonic.webp"
     },
     {
       "id": "item-2",
@@ -47,7 +47,7 @@
       "price": 220,
       "isVeg": true,
       "tag": "Bestseller",
-      "image": "assets/images/dishes/sunset-mocktail.jpg"
+      "image": "assets/images/dishes/sunset-mocktail.webp"
     },
     {
       "id": "item-3",
@@ -57,7 +57,7 @@
       "price": 210,
       "isVeg": true,
       "tag": "Barista Pick",
-      "image": "assets/images/cafe/hero-table.jpg"
+      "image": "assets/images/cafe/hero-table.webp"
     },
     {
       "id": "item-4",
@@ -67,7 +67,7 @@
       "price": 230,
       "isVeg": true,
       "tag": "Refreshing",
-      "image": "assets/images/cafe/interior-atmosphere.jpg"
+      "image": "assets/images/cafe/interior-atmosphere.webp"
     },
     {
       "id": "item-5",
@@ -77,7 +77,7 @@
       "price": 220,
       "isVeg": true,
       "tag": "Classic",
-      "image": "assets/images/cafe/all-day-spread.jpg"
+      "image": "assets/images/cafe/all-day-spread.webp"
     },
 
     {
@@ -88,7 +88,7 @@
       "price": 290,
       "isVeg": true,
       "tag": "Must Try",
-      "image": "assets/images/dishes/bruschetta-burrata.jpg"
+      "image": "assets/images/dishes/bruschetta-burrata.webp"
     },
     {
       "id": "item-7",
@@ -98,7 +98,7 @@
       "price": 380,
       "isVeg": true,
       "tag": "Chef Special",
-      "image": "assets/images/dishes/cheese-fondue-platter.jpg"
+      "image": "assets/images/dishes/cheese-fondue-platter.webp"
     },
     {
       "id": "item-8",
@@ -108,7 +108,7 @@
       "price": 210,
       "isVeg": true,
       "tag": "Crowd Favorite",
-      "image": "assets/images/dishes/peri-peri-fries.jpg"
+      "image": "assets/images/dishes/peri-peri-fries.webp"
     },
     {
       "id": "item-9",
@@ -118,7 +118,7 @@
       "price": 260,
       "isVeg": true,
       "tag": "Italian Classic",
-      "image": "assets/images/dishes/bruschetta-carved.jpg"
+      "image": "assets/images/dishes/bruschetta-carved.webp"
     },
     {
       "id": "item-10",
@@ -128,7 +128,7 @@
       "price": 320,
       "isVeg": true,
       "tag": "Tandoor Twist",
-      "image": "assets/images/cafe/hero-table.jpg"
+      "image": "assets/images/cafe/hero-table.webp"
     },
 
     {
@@ -139,7 +139,7 @@
       "price": 420,
       "isVeg": true,
       "tag": "House Specialty",
-      "image": "assets/images/cafe/all-day-spread.jpg"
+      "image": "assets/images/cafe/all-day-spread.webp"
     },
     {
       "id": "item-12",
@@ -149,7 +149,7 @@
       "price": 390,
       "isVeg": true,
       "tag": "Comfort Food",
-      "image": "assets/images/cafe/hero-table.jpg"
+      "image": "assets/images/cafe/hero-table.webp"
     },
     {
       "id": "item-13",
@@ -159,7 +159,7 @@
       "price": 370,
       "isVeg": true,
       "tag": "Gluten-Free",
-      "image": "assets/images/dishes/bruschetta-artisan.jpg"
+      "image": "assets/images/dishes/bruschetta-artisan.webp"
     },
     {
       "id": "item-14",
@@ -169,7 +169,7 @@
       "price": 360,
       "isVeg": true,
       "tag": "All-Day Bowl",
-      "image": "assets/images/dishes/cheese-fondue-platter.jpg"
+      "image": "assets/images/dishes/cheese-fondue-platter.webp"
     },
 
     {
@@ -180,7 +180,7 @@
       "price": 360,
       "isVeg": true,
       "tag": "Signature",
-      "image": "assets/images/cafe/menu-cover-spaghetti.jpg"
+      "image": "assets/images/cafe/menu-cover-spaghetti.webp"
     },
     {
       "id": "item-16",
@@ -190,7 +190,7 @@
       "price": 460,
       "isVeg": true,
       "tag": "Chef Special",
-      "image": "assets/images/dishes/pesto-pizza.jpg"
+      "image": "assets/images/dishes/pesto-pizza.webp"
     },
     {
       "id": "item-17",
@@ -200,7 +200,7 @@
       "price": 490,
       "isVeg": true,
       "tag": "Cheese Lover",
-      "image": "assets/images/cafe/all-day-spread.jpg"
+      "image": "assets/images/cafe/all-day-spread.webp"
     },
     {
       "id": "item-18",
@@ -210,7 +210,7 @@
       "price": 390,
       "isVeg": true,
       "tag": "Bestseller",
-      "image": "assets/images/cafe/hero-table.jpg"
+      "image": "assets/images/cafe/hero-table.webp"
     },
     {
       "id": "item-19",
@@ -220,7 +220,7 @@
       "price": 440,
       "isVeg": true,
       "tag": "Spicy",
-      "image": "assets/images/cafe/all-day-spread.jpg"
+      "image": "assets/images/cafe/all-day-spread.webp"
     },
 
     {
@@ -231,7 +231,7 @@
       "price": 280,
       "isVeg": true,
       "tag": "Signature",
-      "image": "assets/images/cafe/menu-cover-spaghetti.jpg"
+      "image": "assets/images/cafe/menu-cover-spaghetti.webp"
     },
     {
       "id": "item-21",
@@ -241,7 +241,7 @@
       "price": 310,
       "isVeg": true,
       "tag": "Bestseller",
-      "image": "assets/images/cafe/hero-table.jpg"
+      "image": "assets/images/cafe/hero-table.webp"
     },
     {
       "id": "item-22",
@@ -251,7 +251,7 @@
       "price": 290,
       "isVeg": true,
       "tag": "Chef Special",
-      "image": "assets/images/dishes/bruschetta-carved.jpg"
+      "image": "assets/images/dishes/bruschetta-carved.webp"
     },
     {
       "id": "item-23",
@@ -261,7 +261,7 @@
       "price": 210,
       "isVeg": true,
       "tag": "Classic",
-      "image": "assets/images/dishes/orange-espresso-tonic.jpg"
+      "image": "assets/images/dishes/orange-espresso-tonic.webp"
     }
   ]
 }

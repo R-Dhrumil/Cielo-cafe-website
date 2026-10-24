@@ -72,10 +72,10 @@ require dirname(__DIR__) . '/includes/header.php';
         <div class="events-col-right">
           <div class="events-composition">
             <div class="events-img-primary image-zoom-container">
-              <img src="assets/images/cafe/hero-table.jpg" alt="Celebration Table Spread at Cielo Cafe">
+              <img src="assets/images/cafe/hero-table.webp" alt="Celebration Table Spread at Cielo Cafe">
             </div>
             <div class="events-img-secondary image-zoom-container">
-              <img src="assets/images/cafe/menu-cover-spaghetti.jpg" alt="Cielo Cafe Signature Spaghetti Pomodoro and Brand Booklet">
+              <img src="assets/images/cafe/menu-cover-spaghetti.webp" alt="Cielo Cafe Signature Spaghetti Pomodoro and Brand Booklet">
             </div>
             <div class="events-booking-pill">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

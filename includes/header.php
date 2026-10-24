@@ -18,7 +18,7 @@ $schemaData = [
     "@type" => ["Restaurant", "CafeOrCoffeeShop"],
     "name" => $business['name'],
     "description" => $business['description'],
-    "image" => "assets/images/cafe/hero-table.jpg",
+    "image" => "assets/images/cafe/hero-table.webp",
     "telephone" => $business['phone'],
     "email" => $business['email'],
     "url" => "https://cielocafebistro.in",
@@ -62,7 +62,7 @@ $schemaData = [
   <!-- Open Graph -->
   <meta property="og:title" content="<?= e($pageTitle) ?>">
   <meta property="og:description" content="<?= e($pageDesc) ?>">
-  <meta property="og:image" content="assets/images/cafe/hero-table.jpg">
+  <meta property="og:image" content="assets/images/cafe/hero-table.webp">
   <meta property="og:type" content="website">
   <meta property="og:locale" content="en_IN">
 
@@ -70,7 +70,7 @@ $schemaData = [
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="<?= e($pageTitle) ?>">
   <meta name="twitter:description" content="<?= e($pageDesc) ?>">
-  <meta name="twitter:image" content="assets/images/cafe/hero-table.jpg">
+  <meta name="twitter:image" content="assets/images/cafe/hero-table.webp">
 
   <!-- Structured Data JSON-LD -->
   <script type="application/ld+json">

@@ -49,6 +49,24 @@ class Database
                 $this->pdo = new PDO($dsn, $config['username'], $config['password'], $config['options'] ?? []);
             }
         } catch (PDOException $e) {
+            // If in local development and MySQL is unreachable, auto-fallback to SQLite so localhost keeps running
+            $appEnv = getenv('APP_ENV') ?: 'development';
+            if ($this->driver === 'mysql' && $appEnv === 'development') {
+                $sqlitePath = (defined('CIELO_DATABASE') ? CIELO_DATABASE : __DIR__ . '/../../database') . '/cielo.sqlite';
+                if (file_exists($sqlitePath)) {
+                    try {
+                        $this->driver = 'sqlite';
+                        $this->pdo = new PDO("sqlite:{$sqlitePath}", null, null, [
+                            PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION,
+                            PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                        ]);
+                        $this->pdo->exec('PRAGMA foreign_keys = ON;');
+                        return;
+                    } catch (Throwable) {
+                        // ignore and throw original exception below
+                    }
+                }
+            }
             throw new RuntimeException("Database connection failed [{$this->driver}]: " . $e->getMessage(), (int)$e->getCode(), $e);
         }
     }
