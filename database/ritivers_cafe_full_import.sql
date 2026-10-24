@@ -1,6 +1,6 @@
 -- ==============================================================================
 -- CIELO CAFE & RESTRO - COMPLETE DATABASE MIGRATION FOR `ritivers_cafe`
--- Generated on: 2026-10-24 11:30:57
+-- Generated on: 2026-10-24 12:02:01
 -- Target Database: ritivers_cafe (MySQL 8.0+ / MariaDB 10.4+)
 -- All image URLs converted to WebP (.webp) with high compression
 -- ==============================================================================

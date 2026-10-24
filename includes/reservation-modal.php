@@ -44,7 +44,7 @@
           </div>
           <div class="form-field">
             <label class="form-label" for="resPhone">Phone Number *</label>
-            <input type="tel" id="resPhone" class="form-input" required placeholder="+91 98765 43210">
+            <input type="tel" id="resPhone" class="form-input" required placeholder="e.g. +91 98250 12345">
           </div>
         </div>
 

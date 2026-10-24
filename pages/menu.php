@@ -64,7 +64,7 @@ require dirname(__DIR__) . '/includes/header.php';
       <div class="dish-grid">
         <?php foreach ($menu['items'] as $index => $item): ?>
           <?php
-          $dishId = $index + 1;
+          $dishId = (int)$item['id'];
           $initialDisplay = ($item['categoryId'] === $menu['categories'][0]['id']) ? 'flex' : 'none';
           ?>
           <article class="dish-card" data-category="<?= e($item['categoryId']) ?>" style="display: <?= $initialDisplay ?>;">

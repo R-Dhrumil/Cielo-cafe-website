@@ -62,7 +62,7 @@ document.addEventListener('DOMContentLoaded', () => {
       const time = document.getElementById('resTime')?.value || '';
       const occasion = document.getElementById('resOccasion')?.value || 'Casual Dining';
       const notes = document.getElementById('resNotes')?.value || '';
-      const waNumber = form.getAttribute('data-whatsapp') || '919876543210';
+      const waNumber = form.getAttribute('data-whatsapp') || '919081888944';
 
       const message = `Hello Cielo Cafe! I'd like to reserve a table:\n• Name: ${name}\n• Phone: ${phone}\n• Guests: ${guests}\n• Date: ${date}\n• Time: ${time}\n• Occasion: ${occasion}${notes ? `\n• Special Requests: ${notes}` : ''}`;
       const waUrl = `https://wa.me/${waNumber}?text=${encodeURIComponent(message)}`;

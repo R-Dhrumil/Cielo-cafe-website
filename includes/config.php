@@ -27,44 +27,111 @@ $menu = loadJsonData('menu.json');
 $gallery = loadJsonData('gallery.json');
 $reviews = loadJsonData('reviews.json');
 
-// Seamlessly load dynamic CMS overrides from DB if available
+// 2. Seamlessly load live dynamic data from database
 try {
+    // A. Dynamic Settings & Business CMS Overrides
     if (class_exists(\App\Models\Setting::class)) {
-        $dbPhone = \App\Models\Setting::get('cafe_phone');
-        if (!empty($dbPhone)) {
-            $business['contact']['phone'] = (string)$dbPhone;
+        $allSettings = \App\Models\Setting::all();
+        $settingsMap = [];
+        foreach ($allSettings as $s) {
+            $settingsMap[$s['key']] = $s['value'];
         }
-        $dbEmail = \App\Models\Setting::get('cafe_email');
-        if (!empty($dbEmail)) {
-            $business['contact']['email'] = (string)$dbEmail;
-        }
-        $dbAddress = \App\Models\Setting::get('cafe_address');
-        if (!empty($dbAddress)) {
-            $business['contact']['address']['formatted'] = (string)$dbAddress;
-        }
-        $dbHours = \App\Models\Setting::get('cafe_hours');
-        if (!empty($dbHours)) {
-            $business['hours']['display'] = (string)$dbHours;
-        }
-        $dbWhatsapp = \App\Models\Setting::get('cafe_whatsapp');
-        if (!empty($dbWhatsapp)) {
-            $business['contact']['whatsapp'] = (string)$dbWhatsapp;
-        }
-        $storyHeading = \App\Models\Setting::get('cms_story_heading');
-        if (!empty($storyHeading)) {
-            $business['story']['heading'] = (string)$storyHeading;
-        }
-        $storyQuote = \App\Models\Setting::get('cms_story_quote');
-        if (!empty($storyQuote)) {
-            $business['story']['quote'] = (string)$storyQuote;
-        }
-        $cmsHeroName = (string)(\App\Models\Setting::get('cms_hero_name') ?: 'Cielo');
-        $cmsHeroTagline = (string)(\App\Models\Setting::get('cms_hero_tagline') ?: 'Cafe and Restro');
-        $cmsHeroBadge = (string)(\App\Models\Setting::get('cms_hero_badge') ?: 'Vadodara · Italian Sanctuary');
-        $cmsHeroCta = (string)(\App\Models\Setting::get('cms_hero_cta') ?: 'Explore Artisanal Menu');
 
-        if (class_exists(\App\Models\Review::class)) {
-            $approvedReviews = \App\Models\Review::getApprovedWithDetails(6);
+        if (!empty($settingsMap['cafe_name'])) {
+            $business['name'] = (string)$settingsMap['cafe_name'];
+        }
+        if (!empty($settingsMap['cafe_tagline'])) {
+            $business['tagline'] = (string)$settingsMap['cafe_tagline'];
+        }
+        if (!empty($settingsMap['cafe_phone'])) {
+            $phone = (string)$settingsMap['cafe_phone'];
+            $rawPhone = preg_replace('/[^\d+]/', '', $phone);
+            $cleanDigits = ltrim(preg_replace('/[^\d]/', '', $phone), '0');
+            $business['phone'] = $phone;
+            $business['phoneDisplay'] = $phone;
+            $business['phoneRaw'] = $rawPhone;
+            $business['contact']['phone'] = $phone;
+            $business['whatsappNumber'] = $cleanDigits;
+        }
+        if (!empty($settingsMap['cafe_email'])) {
+            $email = (string)$settingsMap['cafe_email'];
+            $business['email'] = $email;
+            $business['contact']['email'] = $email;
+        }
+        if (!empty($settingsMap['cafe_address'])) {
+            $addr = (string)$settingsMap['cafe_address'];
+            $business['address']['full'] = $addr;
+            $business['address']['line1'] = $addr;
+            $business['contact']['address']['formatted'] = $addr;
+        }
+        if (!empty($settingsMap['cafe_hours'])) {
+            $business['hours']['display'] = (string)$settingsMap['cafe_hours'];
+        }
+        if (!empty($settingsMap['cms_story_heading'])) {
+            $business['story']['heading'] = (string)$settingsMap['cms_story_heading'];
+        }
+        if (!empty($settingsMap['cms_story_quote'])) {
+            $business['story']['quote'] = (string)$settingsMap['cms_story_quote'];
+        }
+        $cmsHeroName = (string)($settingsMap['cms_hero_name'] ?? 'Cielo');
+        $cmsHeroTagline = (string)($settingsMap['cms_hero_tagline'] ?? 'Cafe and Restro');
+        $cmsHeroBadge = (string)($settingsMap['cms_hero_badge'] ?? 'Vadodara · Italian Sanctuary');
+        $cmsHeroCta = (string)($settingsMap['cms_hero_cta'] ?? 'Explore Artisanal Menu');
+    }
+
+    // B. Dynamic Menu Categories & Items from Database
+    if (class_exists(\App\Models\MenuCategory::class) && class_exists(\App\Models\MenuItem::class)) {
+        $dbCategories = \App\Models\MenuCategory::where('`is_active` = 1', [], '`sort_order` ASC, `id` ASC');
+        if (!empty($dbCategories)) {
+            $catMap = [];
+            $formattedCategories = [];
+            foreach ($dbCategories as $cat) {
+                $slug = (string)$cat['slug'];
+                $catMap[(int)$cat['id']] = $slug;
+                $formattedCategories[] = [
+                    'id' => $slug,
+                    'db_id' => (int)$cat['id'],
+                    'label' => (string)$cat['name'],
+                    'description' => (string)($cat['description'] ?? '')
+                ];
+            }
+
+            $dbItems = \App\Models\MenuItem::where('`is_available` = 1', [], '`sort_order` ASC, `id` ASC');
+            if (!empty($dbItems)) {
+                $formattedItems = [];
+                foreach ($dbItems as $it) {
+                    $catId = (int)$it['category_id'];
+                    $catSlug = $catMap[$catId] ?? ('category-' . $catId);
+                    $img = (string)($it['image_url'] ?? 'assets/images/cafe/hero-table.webp');
+                    $formattedItems[] = [
+                        'id' => (int)$it['id'],
+                        'slug' => (string)$it['slug'],
+                        'categoryId' => $catSlug,
+                        'category_id' => $catId,
+                        'name' => (string)$it['name'],
+                        'description' => (string)($it['description'] ?? ''),
+                        'price' => (float)(round((int)$it['price_paise'] / 100)),
+                        'price_paise' => (int)$it['price_paise'],
+                        'isVeg' => (bool)$it['is_veg'],
+                        'tag' => (string)($it['tag'] ?? ''),
+                        'image' => $img,
+                        'isAvailable' => (bool)$it['is_available']
+                    ];
+                }
+                $menu['categories'] = $formattedCategories;
+                $menu['items'] = $formattedItems;
+            }
+        }
+    }
+
+    // C. Dynamic Verified Diner Reviews from Database
+    if (class_exists(\App\Models\Review::class)) {
+        $stats = \App\Models\Review::getSummaryStats();
+        if ($stats['total_approved'] > 0) {
+            $reviews['averageRating'] = $stats['average_rating'];
+            $reviews['totalReviewsCount'] = $stats['total_approved'] . '+ verified';
+
+            $approvedReviews = \App\Models\Review::getApprovedWithDetails(10);
             if (!empty($approvedReviews)) {
                 $dbReviewCards = [];
                 foreach ($approvedReviews as $ar) {
@@ -78,12 +145,12 @@ try {
                         'dishMentioned' => $ar['primary_dish'] ?? 'Artisanal Selection',
                     ];
                 }
-                $reviews['reviews'] = array_merge($dbReviewCards, $reviews['reviews'] ?? []);
+                $reviews['reviews'] = $dbReviewCards;
             }
         }
     }
 } catch (\Throwable $e) {
-    // Graceful fallback to static JSON files
+    // Graceful fallback to local JSON files if database connection is unavailable
 }
 
 // Helper to escape HTML safely
