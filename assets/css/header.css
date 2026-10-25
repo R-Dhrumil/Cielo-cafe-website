@@ -587,6 +587,34 @@ body.warm-contrast .cielo-header.theme-light-bg.is-scrolled .cielo-navbar {
   display: flex;
   flex-direction: column;
   gap: 0.85rem;
+  background: transparent !important;
+}
+
+.mobile-drawer-overlay .drawer-footer {
+  background: transparent !important;
+}
+
+.mobile-drawer-overlay .drawer-footer a.btn-outline,
+.drawer-footer .btn-outline {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  border: 1px solid rgba(246, 239, 227, 0.25);
+  border-radius: var(--border-radius-full, 999px);
+  color: var(--bg-cream, #F6EFE3);
+  text-decoration: none;
+  font-weight: 600;
+  font-size: 0.9rem;
+  transition: all 0.2s ease;
+  background: transparent;
+}
+
+.mobile-drawer-overlay .drawer-footer a.btn-outline:hover,
+.drawer-footer .btn-outline:hover {
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(246, 239, 227, 0.5);
+  color: #FFFFFF;
 }
 
 @media (min-width: 640px) {
