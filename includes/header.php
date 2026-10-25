@@ -77,18 +77,18 @@ $schemaData = [
     <?= json_encode($schemaData, JSON_UNESCAPED_SLASHES | JSON_PRETTY_PRINT) ?>
   </script>
 
-  <!-- Core Base & Component CSS -->
-  <link rel="stylesheet" href="assets/css/base.css">
-  <link rel="stylesheet" href="assets/css/header.css">
-  <link rel="stylesheet" href="assets/css/footer.css">
-  <link rel="stylesheet" href="assets/css/modal.css">
-  <link rel="stylesheet" href="assets/css/cart-drawer.css">
+  <!-- Core Base & Component CSS (with Cache Busting) -->
+  <link rel="stylesheet" href="<?= e(cielo_asset('css/base.css')) ?>">
+  <link rel="stylesheet" href="<?= e(cielo_asset('css/header.css')) ?>">
+  <link rel="stylesheet" href="<?= e(cielo_asset('css/footer.css')) ?>">
+  <link rel="stylesheet" href="<?= e(cielo_asset('css/modal.css')) ?>">
+  <link rel="stylesheet" href="<?= e(cielo_asset('css/cart-drawer.css')) ?>">
 
-  <!-- Page-Specific CSS Files -->
+  <!-- Page-Specific CSS Files (with Cache Busting) -->
   <?php if (!empty($pageCss) && is_array($pageCss)): ?>
     <?php foreach ($pageCss as $cssFile): ?>
       <?php if ($cssFile === 'cart-drawer.css') continue; // Already loaded globally ?>
-      <link rel="stylesheet" href="assets/css/<?= e($cssFile) ?>">
+      <link rel="stylesheet" href="<?= e(cielo_asset('css/' . $cssFile)) ?>">
     <?php endforeach; ?>
   <?php endif; ?>
 </head>

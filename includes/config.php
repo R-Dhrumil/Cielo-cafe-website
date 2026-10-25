@@ -168,6 +168,16 @@ function asset_url(?string $path): string {
     return 'assets/' . $cleanPath;
 }
 
+// Versioned asset URL for CSS/JS cache-busting (busts 30-day Apache cache on updates)
+function cielo_asset(?string $path): string {
+    if (!$path) return '';
+    $cleanPath = ltrim($path, '/');
+    $relative = str_starts_with($cleanPath, 'assets/') ? $cleanPath : 'assets/' . $cleanPath;
+    $fullPath = dirname(__DIR__) . '/' . $relative;
+    $v = file_exists($fullPath) ? (string)filemtime($fullPath) : '2.0';
+    return $relative . '?v=' . $v;
+}
+
 // Backward-compatible alias
 function asset(string $path): string {
     return asset_url($path);

@@ -91,20 +91,20 @@
   <?php require __DIR__ . '/lightbox-modal.php'; ?>
   <?php require __DIR__ . '/accessibility-widget.php'; ?>
 
-  <!-- Core JavaScript Bundles -->
-  <script src="assets/js/main.js"></script>
-  <script src="assets/js/cart-drawer.js"></script>
-  <script src="assets/js/reservation.js"></script>
-  <script src="assets/js/accessibility.js"></script>
+  <!-- Core JavaScript Bundles (with Cache Busting) -->
+  <script src="<?= e(cielo_asset('js/main.js')) ?>"></script>
+  <script src="<?= e(cielo_asset('js/cart-drawer.js')) ?>"></script>
+  <script src="<?= e(cielo_asset('js/reservation.js')) ?>"></script>
+  <script src="<?= e(cielo_asset('js/accessibility.js')) ?>"></script>
 
-  <!-- Page-Specific JavaScript Files -->
+  <!-- Page-Specific JavaScript Files (with Cache Busting) -->
   <?php if (!empty($pageJs) && is_array($pageJs)): ?>
     <?php foreach ($pageJs as $jsFile): ?>
       <?php if ($jsFile === 'cart-drawer.js') continue; // Already loaded globally ?>
       <?php if (str_starts_with($jsFile, 'http://') || str_starts_with($jsFile, 'https://') || str_starts_with($jsFile, '//')): ?>
         <script src="<?= e($jsFile) ?>"></script>
       <?php else: ?>
-        <script src="assets/js/<?= e($jsFile) ?>"></script>
+        <script src="<?= e(cielo_asset('js/' . $jsFile)) ?>"></script>
       <?php endif; ?>
     <?php endforeach; ?>
   <?php endif; ?>
