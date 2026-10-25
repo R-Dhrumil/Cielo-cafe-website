@@ -61,9 +61,30 @@ if (!preg_match('/^[6-9]\d{9}$/', $cleanPhone)) {
     exit;
 }
 
-// Check Table Session
+// Strict Anti-Tampering: Table identity is resolved AUTHORITATIVELY from verified cryptographic session/cookie only
+// Any table_id sent in input payload or query string is strictly rejected/ignored.
 $activeTable = TableSessionService::getActiveTable();
-$tableId = !empty($activeTable['id']) ? (int)$activeTable['id'] : 1; // Default to Table 1 if counter order
+
+if (!$activeTable) {
+    // Check if staff member is authenticated or order is explicitly counter order
+    $isStaff = \App\Services\AuthService::check();
+    $orderType = trim((string)($input['order_type'] ?? 'table'));
+
+    if ($isStaff || $orderType === 'counter') {
+        $counterTable = Table::findBy('table_number', 'Counter');
+        if ($counterTable) {
+            $tableId = (int)$counterTable['id'];
+        } else {
+            $firstTable = Table::first('`is_active` = 1');
+            $tableId = !empty($firstTable['id']) ? (int)$firstTable['id'] : 1;
+        }
+    } else {
+        Response::json(false, [], 'No active table session found. Please scan the QR code on your dining table to place your order.', 403);
+        exit;
+    }
+} else {
+    $tableId = (int)$activeTable['id'];
+}
 
 // Allowed payment methods for V1
 $allowedMethods = ['counter_cash', 'counter_upi', 'razorpay', 'cashfree'];
@@ -100,8 +121,8 @@ try {
         foreach ($cartItems as $ci) {
             $itemId = (int)($ci['id'] ?? 0);
             $variantId = !empty($ci['variant_id']) ? (int)$ci['variant_id'] : null;
-            $addonIds = (array)($ci['addon_ids'] ?? []);
-            $qty = max(1, (int)($ci['quantity'] ?? 1));
+            $addonIds = array_unique((array)($ci['addon_ids'] ?? []));
+            $qty = max(1, min(50, (int)($ci['quantity'] ?? 1)));
             $note = trim((string)($ci['note'] ?? ''));
 
             $item = MenuItem::find($itemId);

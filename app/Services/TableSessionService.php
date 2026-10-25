@@ -21,14 +21,14 @@ class TableSessionService
     public static function startSession(string $token): ?array
     {
         $cleanToken = trim($token);
-        if ($cleanToken === '') {
+        if ($cleanToken === '' || str_starts_with($cleanToken, 'disabled_')) {
             return null;
         }
 
         // Look up table by QR token
         $table = Table::findByToken($cleanToken);
 
-        if (!$table || (int)($table['is_active'] ?? 0) !== 1) {
+        if (!$table || (int)($table['is_active'] ?? 0) !== 1 || !Table::hasActiveQr($table)) {
             return null;
         }
 
@@ -48,7 +48,7 @@ class TableSessionService
 
         $_SESSION[self::SESSION_KEY] = $sessionData;
 
-        // Set persistent cookie for duration of the dining visit
+        // Set persistent cookie for duration of the dining visit (6 hours)
         if (!headers_sent()) {
             $isSecure = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ||
                         (isset($_SERVER['SERVER_PORT']) && (int)$_SERVER['SERVER_PORT'] === 443);
@@ -67,7 +67,7 @@ class TableSessionService
     }
 
     /**
-     * Get active table session
+     * Get active table session with authoritative database verification
      */
     public static function getActiveTable(): ?array
     {
@@ -77,15 +77,46 @@ class TableSessionService
 
         // 1. Check active session
         if (!empty($_SESSION[self::SESSION_KEY])) {
-            return $_SESSION[self::SESSION_KEY];
+            $sess = $_SESSION[self::SESSION_KEY];
+            $tableId = (int)($sess['id'] ?? 0);
+
+            try {
+                $dbTable = Table::find($tableId);
+                // Ensure table is still active, QR code has not been removed, and token matches
+                if (
+                    !$dbTable ||
+                    (int)($dbTable['is_active'] ?? 0) !== 1 ||
+                    !Table::hasActiveQr($dbTable) ||
+                    (string)$dbTable['qr_token'] !== (string)($sess['qr_token'] ?? '')
+                ) {
+                    self::clearSession();
+                    return null;
+                }
+
+                // Keep session updated if admin renames table or floor
+                if ($sess['table_number'] !== (string)$dbTable['table_number']) {
+                    $_SESSION[self::SESSION_KEY]['table_number'] = (string)$dbTable['table_number'];
+                    $_SESSION[self::SESSION_KEY]['floor'] = (string)($dbTable['floor'] ?? 'Ground Floor');
+                    return $_SESSION[self::SESSION_KEY];
+                }
+
+                return $sess;
+            } catch (\Throwable $e) {
+                // If DB check fails intermittently, maintain active session
+                return $sess;
+            }
         }
 
-        // 2. Check cookie if session expired or lost
-        $cookieToken = $_COOKIE[self::COOKIE_KEY] ?? '';
-        if ($cookieToken !== '') {
-            $table = Table::findByToken($cookieToken);
-            if ($table && (int)($table['is_active'] ?? 0) === 1) {
-                return self::startSession($cookieToken);
+        // 2. Cookie Fallback (Resilient Session Recovery on Tab Sleep/Reload)
+        $cookieToken = trim((string)($_COOKIE[self::COOKIE_KEY] ?? ''));
+        if ($cookieToken !== '' && !str_starts_with($cookieToken, 'disabled_')) {
+            try {
+                $table = Table::findByToken($cookieToken);
+                if ($table && (int)($table['is_active'] ?? 0) === 1 && Table::hasActiveQr($table)) {
+                    return self::startSession($cookieToken);
+                }
+            } catch (\Throwable $e) {
+                // Ignore DB error
             }
         }
 

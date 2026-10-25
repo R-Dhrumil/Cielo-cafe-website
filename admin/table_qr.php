@@ -20,15 +20,15 @@ $id = (int)($_GET['id'] ?? 0);
 
 if ($token === '' && $id > 0) {
     $table = Table::find($id);
-    if ($table) {
+    if ($table && Table::hasActiveQr($table)) {
         $token = (string)$table['qr_token'];
     }
 }
 
-if ($token === '') {
-    http_response_code(400);
+if ($token === '' || str_starts_with($token, 'disabled_')) {
+    http_response_code(404);
     header('Content-Type: text/plain');
-    echo 'Missing table token or ID.';
+    echo 'QR Code is removed or inactive for this table.';
     exit;
 }
 

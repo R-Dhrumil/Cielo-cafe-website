@@ -44,7 +44,8 @@ CREATE INDEX IF NOT EXISTS `idx_users_phone` ON `users` (`phone`);
 CREATE TABLE IF NOT EXISTS `tables` (
   `id` INTEGER PRIMARY KEY AUTOINCREMENT,
   `table_number` TEXT NOT NULL UNIQUE,
-  `qr_token` TEXT NOT NULL UNIQUE,
+  `qr_token` TEXT NULL UNIQUE,
+  `floor` TEXT NULL DEFAULT 'Ground Floor',
   `capacity` INTEGER NOT NULL DEFAULT 4,
   `is_active` INTEGER NOT NULL DEFAULT 1,
   `created_at` TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,

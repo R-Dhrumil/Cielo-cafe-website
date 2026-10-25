@@ -16,6 +16,7 @@ $activeNav = $activeNav ?? match ($currentScript) {
     'reviews.php' => 'reviews',
     'cms.php' => 'cms',
     'staff.php' => 'staff',
+    'tables.php' => 'tables',
     'tables_print.php' => 'tables',
     default => 'orders'
 };
@@ -239,8 +240,8 @@ $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff M
         </div>
       </a>
 
-      <!-- Table QR Stands & Printouts -->
-      <a href="/admin/tables_print.php" target="_blank" class="sidebar-link <?= $activeNav === 'tables' ? 'active' : '' ?>">
+      <!-- Table QR Studio & Standees -->
+      <a href="/admin/tables.php" class="sidebar-link <?= $activeNav === 'tables' ? 'active' : '' ?>">
         <div class="sidebar-link-left">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <rect x="3" y="3" width="7" height="7"/>
@@ -248,9 +249,8 @@ $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff M
             <rect x="14" y="14" width="7" height="7"/>
             <rect x="3" y="14" width="7" height="7"/>
           </svg>
-          <span>Table QR Standees</span>
+          <span>Table & QR Studio</span>
         </div>
-        <span class="sidebar-link-external">↗</span>
       </a>
 
       <!-- Public Site Preview -->

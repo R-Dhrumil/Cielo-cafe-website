@@ -17,9 +17,10 @@ $filterId = isset($_GET['id']) ? (int)$_GET['id'] : null;
 
 if ($filterId) {
     $table = Table::find($filterId);
-    $tables = $table ? [$table] : [];
+    $tables = ($table && Table::hasActiveQr($table)) ? [$table] : [];
 } else {
-    $tables = Table::where('`is_active` = 1', [], 'CAST(table_number AS UNSIGNED) ASC, table_number ASC');
+    $all = Table::where('`is_active` = 1', [], 'CAST(table_number AS UNSIGNED) ASC, table_number ASC');
+    $tables = array_values(array_filter($all, fn($t) => Table::hasActiveQr($t)));
 }
 ?>
 <!DOCTYPE html>
@@ -232,6 +233,9 @@ if ($filterId) {
       </p>
     </div>
     <div class="studio-actions">
+      <a href="/admin/tables.php" class="btn-print" style="background: #FFFFFF; color: var(--text-espresso); border: 1px solid var(--border-warm); text-decoration: none; box-shadow: none;">
+        <span>← Back to Table Studio</span>
+      </a>
       <button type="button" class="btn-print" onclick="window.print()">
         <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect width="12" height="8" x="6" y="14"/></svg>
         <span>Print Standees</span>
@@ -258,8 +262,8 @@ if ($filterId) {
         </div>
 
         <div>
-          <h3 class="table-headline">TABLE <?= e($t['table_number']) ?></h3>
-          <span class="table-location"><?= e($t['floor'] ?? ((int)$t['table_number'] > 6 ? 'Upper Patio' : 'Ground Floor')) ?> · Capacity <?= (int)$t['capacity'] ?></span>
+          <h3 class="table-headline"><?= str_starts_with(strtolower($t['table_number']), 'table') ? strtoupper(e($t['table_number'])) : 'TABLE ' . e($t['table_number']) ?></h3>
+          <span class="table-location"><?= e($t['floor'] ?? 'Ground Floor') ?> · Capacity <?= (int)$t['capacity'] ?></span>
           <p class="instruction-text">
             Point your phone camera at the QR code to explore the artisanal menu, order directly & earn loyalty points.
           </p>
