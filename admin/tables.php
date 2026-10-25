@@ -200,8 +200,8 @@ $activeNav = 'tables';
 
     /* Admin Layout */
     .admin-main {
-      margin-left: 280px;
-      width: calc(100% - 280px);
+      margin-left: 260px;
+      width: calc(100% - 260px);
       padding: 2.25rem 2.5rem;
       min-height: 100vh;
     }

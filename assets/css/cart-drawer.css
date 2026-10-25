@@ -102,7 +102,7 @@
 .cielo-drawer-overlay.is-open .cielo-drawer {
   transform: translateX(0);
 }
-.drawer-header {
+.cielo-drawer .drawer-header {
   padding: 1.25rem 1.5rem;
   border-bottom: 1px solid var(--cielo-border);
   display: flex;
@@ -519,15 +519,15 @@
     border-radius: 0;
   }
 
-  .drawer-header {
+  .cielo-drawer .drawer-header {
     padding: 1rem 1.25rem;
   }
 
-  .drawer-body {
+  .cielo-drawer .drawer-body {
     padding: 1rem 1.25rem;
   }
 
-  .drawer-footer {
+  .cielo-drawer .drawer-footer {
     padding: 1rem 1.25rem;
     padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
   }

@@ -25,10 +25,74 @@ $activeOrdersCount = count(Order::where('`status` IN ("placed", "preparing", "re
 $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff Member', 'role' => 'staff']);
 ?>
 <style>
-/* Universal Responsive Admin Sidebar & Mobile Topbar Styles */
+/* Universal Self-Contained Admin Sidebar & Responsive Mobile Topbar Styles */
 .admin-sidebar {
+  width: 260px;
+  height: 100vh;
+  position: fixed;
+  top: 0;
+  left: 0;
+  background: #1A1412;
+  color: #F7F4EE;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  border-right: 1px solid rgba(247, 244, 238, 0.08);
+  z-index: 1000;
+  box-shadow: 4px 0 20px rgba(0, 0, 0, 0.08);
   scrollbar-width: thin;
   scrollbar-color: rgba(247, 244, 238, 0.2) transparent;
+  font-family: 'Plus Jakarta Sans', sans-serif;
+}
+
+.sidebar-header {
+  padding: 1.75rem 1.5rem 1.25rem;
+  border-bottom: 1px solid rgba(247, 244, 238, 0.06);
+}
+
+.sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+  text-decoration: none;
+  color: #F7F4EE;
+}
+
+.sidebar-logo-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  background: rgba(201, 106, 82, 0.15);
+  border: 1px solid rgba(201, 106, 82, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #C96A52;
+}
+
+.sidebar-title {
+  font-family: 'Fraunces', serif;
+  font-size: 1.45rem;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  display: block;
+  line-height: 1;
+}
+
+.sidebar-sub {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.12em;
+  color: #6B9AC4;
+  font-weight: 600;
+  margin-top: 0.25rem;
+  display: block;
+}
+
+.sidebar-nav-container {
+  padding: 1.5rem 1rem;
+  flex: 1;
+  overflow-y: auto;
 }
 .sidebar-nav-container::-webkit-scrollbar {
   width: 5px;
@@ -43,6 +107,142 @@ $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff M
 .sidebar-nav-container::-webkit-scrollbar-thumb:hover {
   background: rgba(247, 244, 238, 0.4);
 }
+
+.sidebar-section-label {
+  font-size: 0.65rem;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+  color: rgba(247, 244, 238, 0.4);
+  font-weight: 700;
+  padding: 0 0.75rem;
+  margin-bottom: 0.6rem;
+}
+
+.sidebar-nav {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 0.85rem;
+  border-radius: 12px;
+  text-decoration: none;
+  color: rgba(247, 244, 238, 0.75);
+  font-size: 0.88rem;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+.sidebar-link:hover {
+  color: #F7F4EE;
+  background: rgba(247, 244, 238, 0.08);
+}
+
+.sidebar-link.active {
+  color: #FFFFFF;
+  background: #C96A52;
+  box-shadow: 0 4px 15px rgba(201, 106, 82, 0.35);
+}
+
+.sidebar-link-left {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+.sidebar-badge-pulse {
+  background: #C96A52;
+  color: #FFFFFF;
+  font-size: 0.72rem;
+  font-weight: 700;
+  padding: 0.15rem 0.55rem;
+  border-radius: 9999px;
+}
+
+.sidebar-link-external {
+  font-size: 0.85rem;
+  opacity: 0.6;
+}
+
+.sidebar-footer {
+  padding: 1.25rem;
+  border-top: 1px solid rgba(247, 244, 238, 0.06);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.staff-card {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  overflow: hidden;
+}
+
+.staff-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  background: rgba(201, 106, 82, 0.2);
+  color: #C96A52;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 0.85rem;
+  flex-shrink: 0;
+}
+
+.staff-name {
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: #F7F4EE;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.staff-role-badge {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.65rem;
+  color: #6B9AC4;
+  text-transform: capitalize;
+}
+
+.role-indicator {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #10B981;
+}
+
+.btn-sidebar-signout {
+  background: rgba(247, 244, 238, 0.08);
+  color: rgba(247, 244, 238, 0.7);
+  border: none;
+  border-radius: 8px;
+  padding: 0.45rem 0.65rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+
+.btn-sidebar-signout:hover {
+  background: rgba(247, 244, 238, 0.15);
+  color: #FFFFFF;
+}
+
 @media (max-width: 900px) {
   .admin-mobile-topbar {
     display: flex !important;
