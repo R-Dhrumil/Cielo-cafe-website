@@ -20,6 +20,15 @@ desktop.ini
 *.key
 *.cert
 
+# Database & SQLite files (Prevent live server sync conflicts)
+*.sqlite
+*.sqlite3
+*.db
+database/*.sqlite
+database/*.sqlite-journal
+database/*.sqlite-wal
+database/*.sqlite-shm
+
 # PHP & Web Server Logs & Storage
 vendor/
 composer.phar
