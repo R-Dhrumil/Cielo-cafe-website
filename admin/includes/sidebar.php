@@ -25,6 +25,23 @@ $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff M
 ?>
 <style>
 /* Universal Responsive Admin Sidebar & Mobile Topbar Styles */
+.admin-sidebar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(247, 244, 238, 0.2) transparent;
+}
+.sidebar-nav-container::-webkit-scrollbar {
+  width: 5px;
+}
+.sidebar-nav-container::-webkit-scrollbar-track {
+  background: transparent;
+}
+.sidebar-nav-container::-webkit-scrollbar-thumb {
+  background: rgba(247, 244, 238, 0.2);
+  border-radius: 999px;
+}
+.sidebar-nav-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(247, 244, 238, 0.4);
+}
 @media (max-width: 900px) {
   .admin-mobile-topbar {
     display: flex !important;
@@ -275,6 +292,7 @@ $staffUser = $staff ?? (\App\Services\AuthService::user() ?? ['name' => 'Staff M
       </svg>
       <span>Sign Out</span>
     </a>
+  </div>
 </aside>
 
 <script>

@@ -26,7 +26,25 @@ $staff = AuthService::requireRole(['owner', 'admin'], '/admin/login.php');
 $msg = '';
 $err = '';
 
-// Handle Actions (Settle Bill, Status Change, Cancel)
+// Human-friendly order age formatter
+function formatOrderAge(string $datetime): string {
+    $ts = strtotime($datetime);
+    if (!$ts) return 'Unknown';
+    $diff = max(0, time() - $ts);
+    if ($diff < 45) return 'Just now';
+    if ($diff < 3600) return floor($diff / 60) . 'm ago';
+    if ($diff < 86400) {
+        $h = (int)floor($diff / 3600);
+        $m = (int)floor(($diff % 3600) / 60);
+        return "{$h}h" . ($m > 0 ? " {$m}m" : '') . " ago";
+    }
+    $d = (int)floor($diff / 86400);
+    if ($d === 1) return 'Yesterday · ' . date('h:i A', $ts);
+    if ($d < 7) return "{$d}d ago (" . date('d M', $ts) . ')';
+    return date('d M Y, h:i A', $ts);
+}
+
+// Handle Actions (Settle Bill, Status Change, Cancel, Clear Stale)
 if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
     $action = trim((string)($_POST['action'] ?? ''));
     $orderId = (int)($_POST['order_id'] ?? 0);
@@ -34,6 +52,17 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
 
     if (!Security::verifyCsrfToken($csrf)) {
         $err = 'Security session expired. Please refresh and try again.';
+    } elseif ($action === 'clear_stale_test_orders') {
+        // Bulk clear legacy test orders older than today
+        $cutoff = date('Y-m-d 00:00:00');
+        $cancelledCount = db()->execute(
+            "UPDATE `orders` SET `status` = 'cancelled', `cancelled_reason` = 'Bulk cleared stale test order' 
+             WHERE `status` IN ('placed', 'preparing', 'ready') 
+             AND (`order_number` LIKE 'TEST-%' OR `order_number` LIKE 'M9-%' OR `created_at` < :cutoff)",
+            ['cutoff' => $cutoff]
+        );
+        AuditLog::log($staff['id'], 'bulk_clear_test_orders', 'orders', 0, ['count' => $cancelledCount]);
+        $msg = "Purged {$cancelledCount} stale/test orders from live queue!";
     } else {
         $order = Order::find($orderId);
         if (!$order) {
@@ -54,7 +83,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 $loyaltySummary = LoyaltyService::processOrderCompletion($orderId);
 
                 AuditLog::log($staff['id'], "order_settled_{$payMethod}", 'orders', $orderId);
-                $msg = "Order {$order['order_number']} successfully marked as PAID & COMPLETED!";
+                $msg = "Order #{$order['order_number']} marked as PAID & COMPLETED!";
                 if (!empty($loyaltySummary['points_awarded'])) {
                     $msg .= " (+{$loyaltySummary['points_awarded']} loyalty points credited)";
                 }
@@ -62,7 +91,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     $msg .= " ★ 5-Visit Milestone Reached: Free treat voucher awarded to patron!";
                 }
             } elseif ($action === 'cancel') {
-                $reason = trim((string)($_POST['reason'] ?? 'Cancelled by Admin'));
+                $reason = trim((string)($_POST['reason'] ?? 'Cancelled by Staff'));
                 Order::updateById($orderId, [
                     'status' => 'cancelled',
                     'cancelled_reason' => $reason
@@ -72,25 +101,44 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 LoyaltyService::reverseOrderLoyalty($orderId, $reason);
 
                 AuditLog::log($staff['id'], 'order_cancelled', 'orders', $orderId, ['reason' => $reason]);
-                $msg = "Order {$order['order_number']} has been cancelled and loyalty reversals applied.";
+                $msg = "Order #{$order['order_number']} has been cancelled.";
             } elseif ($action === 'status') {
                 $newStatus = trim((string)($_POST['new_status'] ?? ''));
                 if (in_array($newStatus, ['placed', 'preparing', 'ready', 'completed'], true)) {
-                    Order::updateById($orderId, ['status' => $newStatus]);
-                    AuditLog::log($staff['id'], "order_status_to_{$newStatus}", 'orders', $orderId);
-                    $msg = "Order {$order['order_number']} status changed to " . strtoupper($newStatus);
+                    if ($newStatus === 'completed') {
+                        $updates = ['status' => 'completed'];
+                        if ($order['payment_status'] !== 'paid') {
+                            $updates['payment_status'] = 'paid';
+                            $updates['payment_method'] = $order['payment_method'] ?: 'counter_cash';
+                        }
+                        Order::updateById($orderId, $updates);
+                        LoyaltyService::processOrderCompletion($orderId);
+                        AuditLog::log($staff['id'], "order_completed", 'orders', $orderId);
+                        $msg = "Order #{$order['order_number']} served & marked COMPLETED!";
+                    } else {
+                        Order::updateById($orderId, ['status' => $newStatus]);
+                        AuditLog::log($staff['id'], "order_status_to_{$newStatus}", 'orders', $orderId);
+                        $msg = "Order #{$order['order_number']} status changed to " . strtoupper($newStatus);
+                    }
                 }
             }
         }
     }
 }
 
+// Compute Real-Time Dashboard KPI Metrics (Today)
+$todayStart = date('Y-m-d 00:00:00');
+$todayEnd = date('Y-m-d 23:59:59');
+
 // Fetch Orders with Filter
 $statusFilter = trim((string)($_GET['filter'] ?? 'active'));
 $queryWhere = '1=1';
 $params = [];
 
-if ($statusFilter === 'active') {
+if ($statusFilter === 'today') {
+    $queryWhere = '`created_at` BETWEEN :ts AND :te';
+    $params = ['ts' => $todayStart, 'te' => $todayEnd];
+} elseif ($statusFilter === 'active') {
     $queryWhere = '`status` IN ("placed", "preparing", "ready")';
 } elseif ($statusFilter === 'completed') {
     $queryWhere = '`status` = "completed"';
@@ -98,12 +146,9 @@ if ($statusFilter === 'active') {
     $queryWhere = '`status` = "cancelled"';
 }
 
-$orders = Order::where($queryWhere, $params, '`created_at` DESC', 100);
+$orders = Order::where($queryWhere, $params, '`created_at` DESC', 120);
 
-// Compute Real-Time Dashboard KPI Metrics (Today)
-$todayStart = date('Y-m-d 00:00:00');
-$todayEnd = date('Y-m-d 23:59:59');
-
+// Today KPI Aggregations
 $todayPaidOrders = Order::where('`created_at` BETWEEN :ts AND :te AND `payment_status` = "paid"', ['ts' => $todayStart, 'te' => $todayEnd]);
 $todayRevenuePaise = 0;
 foreach ($todayPaidOrders as $o) {
@@ -113,8 +158,17 @@ foreach ($todayPaidOrders as $o) {
 $activeOrdersAll = Order::where('`status` IN ("placed", "preparing", "ready")');
 $activeCount = count($activeOrdersAll);
 
+$todayAllOrders = Order::where('`created_at` BETWEEN :ts AND :te', ['ts' => $todayStart, 'te' => $todayEnd]);
+$todayAllCount = count($todayAllOrders);
+
 $completedTodayOrders = Order::where('`created_at` BETWEEN :ts AND :te AND `status` = "completed"', ['ts' => $todayStart, 'te' => $todayEnd]);
 $completedTodayCount = count($completedTodayOrders);
+
+// Check for Stale Test/Old Orders created before today still in placed/preparing/ready
+$staleTestCount = (int)db()->fetchColumn(
+    "SELECT COUNT(*) FROM `orders` WHERE `status` IN ('placed', 'preparing', 'ready') AND (`order_number` LIKE 'TEST-%' OR `order_number` LIKE 'M9-%' OR `created_at` < :cutoff)",
+    ['cutoff' => $todayStart]
+);
 
 // Points issued today
 $todayPointsSum = db()->fetchColumn(
@@ -625,8 +679,8 @@ $activeNav = 'orders';
     /* Orders Grid */
     .orders-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(460px, 1fr));
-      gap: 1.5rem;
+      grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+      gap: 1.25rem;
     }
 
     .order-card {
@@ -983,6 +1037,141 @@ $activeNav = 'orders';
       border-color: rgba(26, 20, 18, 0.2);
     }
 
+    .btn-clean-stale {
+      background: rgba(201, 106, 82, 0.12);
+      border: 1px solid rgba(201, 106, 82, 0.3);
+      color: var(--accent-terracotta);
+      padding: 0.5rem 0.95rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.4rem;
+      font-family: inherit;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-clean-stale:hover {
+      background: var(--accent-terracotta);
+      color: #FFFFFF;
+      box-shadow: 0 4px 12px rgba(201, 106, 82, 0.25);
+    }
+
+    .btn-copy-order {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      cursor: pointer;
+      padding: 3px 5px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn-copy-order:hover {
+      color: var(--text-espresso);
+      background: rgba(26, 20, 18, 0.08);
+    }
+
+    .empty-items-row {
+      padding: 0.65rem 0.85rem;
+      background: var(--bg-cream);
+      border: 1px dashed var(--border-warm);
+      border-radius: 8px;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+    }
+
+    .settled-badge-box {
+      background: rgba(45, 106, 79, 0.08);
+      border: 1px dashed rgba(45, 106, 79, 0.3);
+      border-radius: 8px;
+      padding: 0.5rem 0.75rem;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #2D6A4F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.4rem;
+      margin-bottom: 0.5rem;
+    }
+
+    .btn-cancel-trigger:hover {
+      background: rgba(201, 106, 82, 0.1) !important;
+      border-color: rgba(201, 106, 82, 0.3) !important;
+      color: var(--accent-terracotta) !important;
+    }
+
+    /* Modal Dialog for Order Cancellation */
+    .cancel-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(26, 20, 18, 0.65);
+      backdrop-filter: blur(4px);
+      -webkit-backdrop-filter: blur(4px);
+      z-index: 10000;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 1.25rem;
+    }
+
+    .cancel-modal-box {
+      background: #FFFFFF;
+      border-radius: var(--radius-lg);
+      padding: 1.75rem;
+      width: 100%;
+      max-width: 440px;
+      box-shadow: 0 15px 50px rgba(0,0,0,0.25);
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { opacity: 0; transform: scale(0.96); }
+      to { opacity: 1; transform: scale(1); }
+    }
+
+    .cancel-modal-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      border-bottom: 1px solid var(--border-warm);
+      padding-bottom: 0.85rem;
+      margin-bottom: 1rem;
+    }
+
+    /* Elegant Custom Scrollbar */
+    html {
+      scrollbar-width: thin;
+      scrollbar-color: rgba(26, 20, 18, 0.25) #F4F1EA;
+    }
+
+    ::-webkit-scrollbar {
+      width: 7px;
+      height: 7px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: #F4F1EA;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(26, 20, 18, 0.2);
+      border-radius: 999px;
+    }
+
+    ::-webkit-scrollbar-thumb:hover {
+      background: rgba(26, 20, 18, 0.35);
+    }
+
     .empty-state {
       grid-column: 1 / -1;
       background: #FFFFFF;
@@ -1045,7 +1234,7 @@ $activeNav = 'orders';
       <div class="topbar-right-tools">
         <div class="search-box">
           <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" id="orderSearch" class="search-input" placeholder="Search order #, table, phone..." oninput="filterCards()">
+          <input type="text" id="orderSearch" class="search-input" placeholder="Search order #, table, customer, dish..." oninput="filterCards()">
         </div>
 
         <div class="live-clock-pill">
@@ -1053,9 +1242,20 @@ $activeNav = 'orders';
           <span id="liveClock"><?= date('H:i:s') ?> IST</span>
         </div>
 
-        <button class="btn-refresh-pill" onclick="window.location.reload()">
+        <?php if ($staleTestCount > 0): ?>
+          <form method="POST" style="margin:0;" onsubmit="return confirm('Clear <?= $staleTestCount ?> stale/test orders created before today from live queue?');">
+            <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+            <input type="hidden" name="action" value="clear_stale_test_orders">
+            <button type="submit" class="btn-clean-stale" title="Purge legacy test orders from active queue">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+              <span>Purge <?= $staleTestCount ?> Test Orders</span>
+            </button>
+          </form>
+        <?php endif; ?>
+
+        <button class="btn-refresh-pill" onclick="window.location.reload()" title="Click to refresh immediately">
           <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
-          <span>Refresh</span>
+          <span>Refresh (<span id="refreshCountdown">20s</span>)</span>
         </button>
       </div>
     </header>
@@ -1065,7 +1265,7 @@ $activeNav = 'orders';
 
       <!-- Action Message Banner -->
       <?php if ($msg !== ''): ?>
-        <div class="toast-alert">
+        <div class="toast-alert" id="statusToast">
           <div style="display:flex; align-items:center; gap:0.6rem;">
             <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#2D6A4F" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
             <span><?= e($msg) ?></span>
@@ -1073,7 +1273,7 @@ $activeNav = 'orders';
           <button onclick="this.parentElement.style.display='none'" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color:var(--text-muted);">&times;</button>
         </div>
       <?php elseif ($err !== ''): ?>
-        <div class="toast-alert error">
+        <div class="toast-alert error" id="statusToast">
           <span><?= e($err) ?></span>
           <button onclick="this.parentElement.style.display='none'" style="background:none; border:none; cursor:pointer; font-size:1.2rem; color:var(--accent-terracotta);">&times;</button>
         </div>
@@ -1116,7 +1316,7 @@ $activeNav = 'orders';
           </div>
           <div>
             <h2 class="kpi-value" style="color:#2D6A4F;"><?= $completedTodayCount ?></h2>
-            <div class="kpi-sub">Satisfied diners served today</div>
+            <div class="kpi-sub"><?= $todayAllCount ?> orders logged today</div>
           </div>
         </div>
 
@@ -1140,14 +1340,17 @@ $activeNav = 'orders';
           <a href="?filter=active" class="filter-pill <?= $statusFilter === 'active' ? 'active' : '' ?>">
             Active Queue (<?= $activeCount ?>)
           </a>
-          <a href="?filter=all" class="filter-pill <?= $statusFilter === 'all' ? 'active' : '' ?>">
-            All Orders
+          <a href="?filter=today" class="filter-pill <?= $statusFilter === 'today' ? 'active' : '' ?>">
+            Today's Orders (<?= $todayAllCount ?>)
           </a>
           <a href="?filter=completed" class="filter-pill <?= $statusFilter === 'completed' ? 'active' : '' ?>">
-            Completed
+            Completed (<?= $completedTodayCount ?>)
           </a>
           <a href="?filter=cancelled" class="filter-pill <?= $statusFilter === 'cancelled' ? 'active' : '' ?>">
             Cancelled
+          </a>
+          <a href="?filter=all" class="filter-pill <?= $statusFilter === 'all' ? 'active' : '' ?>">
+            All History
           </a>
         </div>
       </section>
@@ -1172,12 +1375,15 @@ $activeNav = 'orders';
               $items = OrderItem::where('`order_id` = :oid', ['oid' => (int)$order['id']]);
               $isPaid = ($order['payment_status'] === 'paid');
               $statusClass = 'status-' . htmlspecialchars((string)$order['status']);
-              $orderAgeMin = max(0, (int)floor((time() - strtotime((string)$order['created_at'])) / 60));
+              $ageText = formatOrderAge((string)$order['created_at']);
+              $itemNamesList = implode(', ', array_map(fn($it) => $it['item_name'] ?? '', $items));
             ?>
             <div class="order-card" 
                  data-order-num="<?= e($order['order_number']) ?>" 
                  data-table="<?= e($table['table_number'] ?? '00') ?>" 
-                 data-phone="<?= e($user['phone'] ?? '') ?>">
+                 data-phone="<?= e((string)($user['phone'] ?? '')) ?>"
+                 data-name="<?= e($user['name'] ?? 'Guest Diner') ?>"
+                 data-items="<?= e($itemNamesList) ?>">
               
               <!-- Card Header -->
               <div class="order-card-header">
@@ -1189,9 +1395,12 @@ $activeNav = 'orders';
                   <div class="order-identity">
                     <span class="order-num-text">
                       #<?= e($order['order_number']) ?>
+                      <button type="button" class="btn-copy-order" onclick="copyOrderNum('<?= e($order['order_number']) ?>', this)" title="Copy Order Number">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+                      </button>
                     </span>
                     <span class="order-time-text">
-                      <?= date('h:i A', strtotime((string)$order['created_at'])) ?> · <strong><?= $orderAgeMin ?>m ago</strong>
+                      <?= date('h:i A', strtotime((string)$order['created_at'])) ?> · <strong><?= $ageText ?></strong>
                     </span>
                   </div>
                 </div>
@@ -1205,6 +1414,8 @@ $activeNav = 'orders';
                     🔔 Ready to Serve
                   <?php elseif ($order['status'] === 'completed'): ?>
                     ✔ Completed
+                  <?php elseif ($order['status'] === 'cancelled'): ?>
+                    ✕ Cancelled
                   <?php else: ?>
                     <?= ucfirst((string)$order['status']) ?>
                   <?php endif; ?>
@@ -1219,8 +1430,8 @@ $activeNav = 'orders';
                     <span><?= e($user['name'] ?? 'Guest Diner') ?></span>
                   </div>
                   <?php if (!empty($user['phone'])): ?>
-                    <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', $user['phone']) ?>" target="_blank" class="patron-phone" title="Chat on WhatsApp">
-                      +91 <?= e($user['phone']) ?> ↗
+                    <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', (string)$user['phone']) ?>" target="_blank" class="patron-phone" title="Chat on WhatsApp">
+                      +91 <?= e((string)$user['phone']) ?> ↗
                     </a>
                   <?php else: ?>
                     <span style="color:var(--text-muted); font-size:0.75rem;">Walk-in</span>
@@ -1228,30 +1439,39 @@ $activeNav = 'orders';
                 </div>
 
                 <!-- Items Breakdown -->
-                <div class="items-container">
-                  <?php foreach ($items as $it): ?>
-                    <?php 
-                      $addons = !empty($it['addons_json']) ? json_decode((string)$it['addons_json'], true) : [];
-                    ?>
-                    <div class="item-row">
-                      <div class="item-left">
-                        <span class="item-qty-tag"><?= (int)$it['quantity'] ?>x</span>
-                        <div class="item-title-wrap">
-                          <span class="item-title"><?= e($it['item_name']) ?></span>
-                          <?php if (!empty($addons)): ?>
-                            <div class="item-addon-tag">
-                              + <?= implode(', ', array_map(fn($a) => e($a['name'] ?? ''), $addons)) ?>
-                            </div>
-                          <?php endif; ?>
-                          <?php if (!empty($it['item_note'])): ?>
-                            <div class="item-note-text"><?= e($it['item_note']) ?></div>
-                          <?php endif; ?>
+                <?php if (!empty($items)): ?>
+                  <div class="items-container">
+                    <?php foreach ($items as $it): ?>
+                      <?php 
+                        $addons = !empty($it['addons_json']) ? json_decode((string)$it['addons_json'], true) : [];
+                      ?>
+                      <div class="item-row">
+                        <div class="item-left">
+                          <span class="item-qty-tag"><?= (int)$it['quantity'] ?>x</span>
+                          <div class="item-title-wrap">
+                            <span class="item-title"><?= e($it['item_name']) ?></span>
+                            <?php if (!empty($addons)): ?>
+                              <div class="item-addon-tag">
+                                + <?= implode(', ', array_map(fn($a) => e($a['name'] ?? ''), $addons)) ?>
+                              </div>
+                            <?php endif; ?>
+                            <?php if (!empty($it['item_note'])): ?>
+                              <div class="item-note-text"><?= e($it['item_note']) ?></div>
+                            <?php endif; ?>
+                          </div>
                         </div>
+                        <span class="item-price"><?= Money::format((int)$it['total_price_paise']) ?></span>
                       </div>
-                      <span class="item-price"><?= Money::format((int)$it['total_price_paise']) ?></span>
+                    <?php endforeach; ?>
+                  </div>
+                <?php else: ?>
+                  <div class="items-container">
+                    <div class="empty-items-row">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+                      <span>Direct Charge Order (<?= Money::format((int)$order['total_paise']) ?>)</span>
                     </div>
-                  <?php endforeach; ?>
-                </div>
+                  </div>
+                <?php endif; ?>
 
                 <!-- Kitchen Special Instructions -->
                 <?php if (!empty($order['kitchen_notes'])): ?>
@@ -1274,7 +1494,7 @@ $activeNav = 'orders';
                   </div>
                 </div>
 
-                <!-- Quick Settlement Buttons (If not yet paid) -->
+                <!-- Quick Settlement Buttons (If not yet paid and not cancelled) -->
                 <?php if (!$isPaid && $order['status'] !== 'cancelled'): ?>
                   <div class="actions-grid">
                     <form method="POST" style="margin:0;">
@@ -1299,13 +1519,18 @@ $activeNav = 'orders';
                       </button>
                     </form>
                   </div>
+                <?php elseif ($isPaid): ?>
+                  <div class="settled-badge-box">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Bill Settled (<?= strtoupper(str_replace('_', ' ', (string)$order['payment_method'])) ?>)</span>
+                  </div>
                 <?php endif; ?>
 
                 <!-- Print & Status Transitions -->
                 <div class="secondary-actions">
                   <a href="/admin/print_bill.php?order_id=<?= (int)$order['id'] ?>&autoprint=1" target="_blank" class="btn-print-action" title="Print Customer Tax Bill">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                    <span>Bill Receipt</span>
+                    <span>Receipt</span>
                   </a>
 
                   <a href="/kitchen/print_kot.php?order_id=<?= (int)$order['id'] ?>&autoprint=1" target="_blank" class="btn-print-action" title="Print Kitchen Order Ticket">
@@ -1328,8 +1553,17 @@ $activeNav = 'orders';
                         <button type="submit" class="btn-print-action" style="width:100%; color:#9E6B08;">
                           Mark Ready 🔔
                         </button>
+                      <?php elseif ($order['status'] === 'ready'): ?>
+                        <input type="hidden" name="new_status" value="completed">
+                        <button type="submit" class="btn-print-action" style="width:100%; color:#2D6A4F; font-weight:700;">
+                          Served ✔
+                        </button>
                       <?php endif; ?>
                     </form>
+
+                    <button type="button" class="btn-print-action btn-cancel-trigger" style="color:var(--accent-terracotta);" onclick="promptCancelOrder(<?= (int)$order['id'] ?>, '<?= e($order['order_number']) ?>')" title="Cancel this order">
+                      ✕
+                    </button>
                   <?php endif; ?>
                 </div>
 
@@ -1344,7 +1578,43 @@ $activeNav = 'orders';
 
   </div>
 
+  <!-- Cancel Order Modal Dialog -->
+  <div id="cancelOrderModal" class="cancel-modal-overlay" style="display:none;" onclick="if(event.target===this) closeCancelModal()">
+    <div class="cancel-modal-box">
+      <div class="cancel-modal-header">
+        <h3 style="margin:0; font-family:'Fraunces',serif; font-size:1.25rem;">Cancel Order</h3>
+        <button type="button" onclick="closeCancelModal()" style="background:none; border:none; font-size:1.4rem; cursor:pointer; color:var(--text-muted);">&times;</button>
+      </div>
+      <form method="POST" id="cancelOrderForm" style="margin:0;">
+        <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+        <input type="hidden" name="action" value="cancel">
+        <input type="hidden" name="order_id" id="cancelOrderId" value="">
+        <p style="font-size:0.88rem; color:var(--text-muted); margin:0 0 1rem;">
+          Are you sure you want to cancel order <strong id="cancelOrderNumText" style="color:var(--text-espresso);"></strong>? This will void the order and restore loyalty balances.
+        </p>
+        <label style="display:block; font-size:0.8rem; font-weight:700; margin-bottom:0.35rem; color:var(--text-espresso);">Reason for Cancellation</label>
+        <input type="text" name="reason" id="cancelReasonInput" class="search-input" style="width:100%; border-radius:8px; margin-bottom:1.25rem; box-sizing:border-box;" value="Cancelled by Staff" placeholder="e.g. Diner changed mind, entered in error...">
+        <div style="display:flex; justify-content:flex-end; gap:0.6rem;">
+          <button type="button" onclick="closeCancelModal()" class="btn-action" style="background:#FAFAFA; border:1px solid var(--border-warm); color:var(--text-espresso);">Keep Order</button>
+          <button type="submit" class="btn-action" style="background:var(--accent-terracotta); color:#FFF;">Confirm Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
   <script>
+    // Preserve scroll position across reloads
+    window.addEventListener('beforeunload', () => {
+      sessionStorage.setItem('cielo_orders_scroll', window.scrollY.toString());
+    });
+    window.addEventListener('load', () => {
+      const scrollPos = sessionStorage.getItem('cielo_orders_scroll');
+      if (scrollPos !== null) {
+        window.scrollTo({ top: parseInt(scrollPos, 10), behavior: 'instant' });
+        sessionStorage.removeItem('cielo_orders_scroll');
+      }
+    });
+
     // Live Digital Clock (IST)
     setInterval(() => {
       const now = new Date();
@@ -1355,7 +1625,7 @@ $activeNav = 'orders';
       }
     }, 1000);
 
-    // Instant Filter / Search
+    // Instant Filter / Search across order #, table, customer name, phone, dishes
     function filterCards() {
       const query = (document.getElementById('orderSearch').value || '').toLowerCase().trim();
       const cards = document.querySelectorAll('.order-card');
@@ -1364,8 +1634,10 @@ $activeNav = 'orders';
         const orderNum = (card.getAttribute('data-order-num') || '').toLowerCase();
         const table = (card.getAttribute('data-table') || '').toLowerCase();
         const phone = (card.getAttribute('data-phone') || '').toLowerCase();
+        const name = (card.getAttribute('data-name') || '').toLowerCase();
+        const items = (card.getAttribute('data-items') || '').toLowerCase();
         
-        if (!query || orderNum.includes(query) || table.includes(query) || phone.includes(query)) {
+        if (!query || orderNum.includes(query) || table.includes(query) || phone.includes(query) || name.includes(query) || items.includes(query)) {
           card.style.display = 'flex';
         } else {
           card.style.display = 'none';
@@ -1373,18 +1645,55 @@ $activeNav = 'orders';
       });
     }
 
-    // Auto-refresh every 15s to keep active kitchen queue sync
-    let secondsLeft = 15;
+    // Auto-refresh timer with pause on interaction
+    let secondsLeft = 20;
+    let isPaused = false;
+    const searchEl = document.getElementById('orderSearch');
+    const countdownEl = document.getElementById('refreshCountdown');
+
+    if (searchEl) {
+      searchEl.addEventListener('focus', () => { isPaused = true; });
+      searchEl.addEventListener('blur', () => { if (!searchEl.value.trim()) isPaused = false; });
+    }
+
     setInterval(() => {
+      const modal = document.getElementById('cancelOrderModal');
+      const modalOpen = (modal && modal.style.display !== 'none');
+      if (isPaused || modalOpen || (searchEl && searchEl.value.trim() !== '')) {
+        if (countdownEl) countdownEl.textContent = 'Paused';
+        return;
+      }
       secondsLeft--;
+      if (countdownEl) countdownEl.textContent = secondsLeft + 's';
       if (secondsLeft <= 0) {
-        const searchVal = document.getElementById('orderSearch').value;
-        if (!searchVal) {
-          window.location.reload();
-        }
-        secondsLeft = 15;
+        window.location.reload();
       }
     }, 1000);
+
+    // Copy Order Number Helper
+    function copyOrderNum(num, btn) {
+      navigator.clipboard.writeText(num).then(() => {
+        const origSvg = btn.innerHTML;
+        btn.innerHTML = '✔';
+        btn.style.color = '#2D6A4F';
+        setTimeout(() => {
+          btn.innerHTML = origSvg;
+          btn.style.color = '';
+        }, 1200);
+      });
+    }
+
+    // Cancel Order Modal Handlers
+    function promptCancelOrder(orderId, orderNum) {
+      const modal = document.getElementById('cancelOrderModal');
+      document.getElementById('cancelOrderId').value = orderId;
+      document.getElementById('cancelOrderNumText').textContent = '#' + orderNum;
+      if (modal) modal.style.display = 'flex';
+    }
+    function closeCancelModal() {
+      const modal = document.getElementById('cancelOrderModal');
+      if (modal) modal.style.display = 'none';
+    }
   </script>
 
 </body>
