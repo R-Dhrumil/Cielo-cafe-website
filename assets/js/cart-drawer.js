@@ -408,8 +408,25 @@
     const totalCount = state.items.reduce((sum, i) => sum + i.quantity, 0);
     const rawSubtotalPaise = state.items.reduce((sum, i) => sum + i.lineTotalPaise, 0);
 
-    // 1. Floating Cart Bar
+    // 1. Floating Cart Bar & Badges
     const bar = document.getElementById('cieloFloatingCartBar');
+    const headerCartBadge = document.getElementById('headerCartBadge');
+    const mobileNavCartBadge = document.getElementById('mobileNavCartBadge');
+
+    if (totalCount > 0) {
+      if (headerCartBadge) {
+        headerCartBadge.textContent = String(totalCount);
+        headerCartBadge.style.display = 'flex';
+      }
+      if (mobileNavCartBadge) {
+        mobileNavCartBadge.textContent = String(totalCount);
+        mobileNavCartBadge.style.display = 'flex';
+      }
+    } else {
+      if (headerCartBadge) headerCartBadge.style.display = 'none';
+      if (mobileNavCartBadge) mobileNavCartBadge.style.display = 'none';
+    }
+
     if (bar) {
       if (totalCount > 0) {
         bar.classList.add('is-visible');

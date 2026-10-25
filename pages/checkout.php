@@ -16,169 +16,206 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
 
 $pageTitle = "Checkout | Cielo Cafe and Restro";
 $pageDesc = "Review and confirm your artisanal dining order at Cielo Cafe Vadodara.";
-$pageCss = ['menu.css', 'cart-drawer.css'];
+$pageCss = ['checkout.css'];
 
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
-<main id="main-content" style="padding-top: 5.5rem; min-height: 80vh; background-color: var(--bg-cream, #F7F4EE);">
-  <div class="container" style="max-width: 960px; margin: 0 auto; padding: 2rem 1rem;">
+<main id="main-content" style="padding-top: 5rem; min-height: 80vh; background-color: var(--bg-cream, #F7F4EE);">
+  <div class="checkout-container">
 
     <!-- Breadcrumb & Table Info -->
-    <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 2rem; flex-wrap: wrap; gap: 1rem;">
+    <div class="checkout-header-row">
       <div>
-        <a href="/menu" style="color: var(--accent-sky, #6B9AC4); font-size: 0.85rem; font-weight: 600; text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem;">
-          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+        <a href="/menu" class="checkout-back-link">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
           Back to Menu
         </a>
-        <h1 style="font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 700; color: var(--text-espresso, #1A1412); margin: 0.5rem 0 0;">
+        <h1 class="checkout-page-title">
           Review & Place Order
         </h1>
       </div>
 
-      <div style="background: #FFFFFF; border: 1px solid rgba(26,20,18,0.12); padding: 0.6rem 1.25rem; border-radius: 999px; display: inline-flex; align-items: center; gap: 0.5rem; box-shadow: 0 4px 12px rgba(26,20,18,0.04);">
-        <span style="width: 8px; height: 8px; background: #2E7D32; border-radius: 50%; display: inline-block;"></span>
-        <span style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 0.95rem; color: var(--text-espresso, #1A1412);">
+      <div class="checkout-dining-chip">
+        <span class="dining-chip-dot" aria-hidden="true"></span>
+        <span class="dining-chip-label">
           <?= $activeTable ? "Table " . e($activeTable['table_number']) : "Counter / Takeaway" ?>
         </span>
-        <span style="font-size: 0.75rem; color: var(--text-muted, #6E6259); text-transform: uppercase;">
+        <span class="dining-chip-type">
           <?= $activeTable ? e($activeTable['floor']) : "Guest" ?>
         </span>
       </div>
     </div>
 
     <!-- Empty Cart Notice (if navigated directly) -->
-    <div id="checkoutEmptyWarning" style="display: none; background: #FFFFFF; padding: 3rem 2rem; border-radius: 20px; text-align: center; border: 1px solid rgba(26,20,18,0.1);">
-      <h2 style="font-family: 'Fraunces', serif; font-size: 1.5rem; color: var(--text-espresso, #1A1412); margin: 0 0 0.75rem;">Your Cart is Empty</h2>
-      <p style="color: var(--text-muted, #6E6259); margin: 0 0 1.5rem;">Please select delicious items from our menu before proceeding to checkout.</p>
-      <a href="/menu" class="btn-primary" style="display: inline-block; padding: 0.85rem 1.75rem; border-radius: 999px; text-decoration: none; font-weight: 600;">
-        Browse Menu
+    <div id="checkoutEmptyWarning" style="display: none; background: #FFFFFF; padding: 3.5rem 1.5rem; border-radius: 20px; text-align: center; border: 1px solid rgba(26,20,18,0.1); box-shadow: 0 4px 20px rgba(0,0,0,0.04);">
+      <h2 style="font-family: 'Fraunces', serif; font-size: 1.6rem; color: var(--text-espresso, #1A1412); margin: 0 0 0.75rem;">Your Cart is Empty</h2>
+      <p style="color: var(--text-muted, #6E6259); margin: 0 0 1.5rem; font-size: 0.95rem; max-width: 24rem; margin-left: auto; margin-right: auto; line-height: 1.5;">Please select delicious handcrafted plates or specialty estate coffee from our menu before proceeding.</p>
+      <a href="/menu" class="btn-primary" style="display: inline-flex; padding: 0.9rem 2rem; border-radius: 999px; text-decoration: none; font-weight: 700;">
+        Browse Menu Catalog
       </a>
     </div>
 
-    <!-- Main Checkout Grid -->
-    <div id="checkoutContentGrid" style="display: grid; grid-template-columns: 1fr; gap: 2rem;">
-      <form id="checkoutForm" onsubmit="handlePlaceOrder(event)" style="display: grid; grid-template-columns: 1fr 380px; gap: 2rem; align-items: start;">
+    <!-- Main Checkout Grid / Flex Form -->
+    <div id="checkoutContentGrid">
+      <form id="checkoutForm" class="checkout-form-grid" onsubmit="handlePlaceOrder(event)">
 
         <!-- Left: Customer Details & Payment Options -->
-        <div style="display: flex; flex-direction: column; gap: 1.75rem;">
+        <div class="checkout-col-left">
 
           <!-- Section 1: Customer Contact -->
-          <div style="background: #FFFFFF; border-radius: 18px; padding: 1.75rem; border: 1px solid rgba(26,20,18,0.12); box-shadow: 0 4px 15px rgba(26,20,18,0.03);">
-            <h3 style="font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 700; color: var(--text-espresso, #1A1412); margin: 0 0 1.25rem;">
+          <div class="checkout-card">
+            <h3 class="checkout-section-title">
               1. Your Contact Details
             </h3>
+            <p class="checkout-section-subtitle">
+              We send live WhatsApp & SMS preparation updates and credit your loyalty reward points to this number.
+            </p>
 
             <div style="display: flex; flex-direction: column; gap: 1rem;">
-              <div>
-                <label for="custPhone" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-espresso, #1A1412); margin-bottom: 0.35rem;">
+              <div class="checkout-input-group">
+                <label for="custPhone" class="checkout-input-label">
                   Mobile Number <span style="color: var(--accent-terracotta, #C96A52);">*</span>
                 </label>
-                <div style="display: flex; align-items: center; border: 1px solid rgba(26,20,18,0.15); border-radius: 10px; overflow: hidden; background: #FAFAFA;">
-                  <span style="padding: 0.75rem 0.9rem; background: rgba(26,20,18,0.05); font-weight: 600; font-size: 0.9rem; color: var(--text-espresso, #1A1412); border-right: 1px solid rgba(26,20,18,0.15);">+91</span>
-                  <input type="tel" id="custPhone" name="phone" value="<?= e($activeUser['phone'] ?? '') ?>" placeholder="98765 43210" maxlength="10" required pattern="[6-9][0-9]{9}" style="width: 100%; border: none; padding: 0.75rem; outline: none; font-size: 0.95rem; font-family: inherit; background: transparent;">
+                <div class="checkout-phone-wrapper">
+                  <span class="checkout-phone-prefix">+91</span>
+                  <input type="tel" id="custPhone" name="phone" value="<?= e($activeUser['phone'] ?? '') ?>" placeholder="98765 43210" maxlength="10" required pattern="[6-9][0-9]{9}" inputmode="numeric" class="checkout-phone-input">
                 </div>
-                <span style="font-size: 0.75rem; color: var(--text-muted, #6E6259); margin-top: 0.35rem; display: block;">Used for kitchen order status and loyalty rewards point collection.</span>
+                <span class="checkout-input-hint">Enter 10-digit Indian mobile number</span>
               </div>
 
-              <div>
-                <label for="custName" style="display: block; font-size: 0.82rem; font-weight: 600; color: var(--text-espresso, #1A1412); margin-bottom: 0.35rem;">
+              <div class="checkout-input-group">
+                <label for="custName" class="checkout-input-label">
                   Your Name <span style="font-weight: 400; color: var(--text-muted, #6E6259);">(Optional)</span>
                 </label>
-                <input type="text" id="custName" name="name" value="<?= e($activeUser['name'] ?? '') ?>" placeholder="E.g. Dhrumil" style="width: 100%; box-sizing: border-box; border: 1px solid rgba(26,20,18,0.15); border-radius: 10px; padding: 0.75rem 0.9rem; outline: none; font-size: 0.95rem; font-family: inherit; background: #FAFAFA;">
+                <input type="text" id="custName" name="name" value="<?= e($activeUser['name'] ?? '') ?>" placeholder="E.g. Dhrumil" class="checkout-text-input">
               </div>
             </div>
           </div>
 
           <!-- Section 2: Payment Method -->
-          <div style="background: #FFFFFF; border-radius: 18px; padding: 1.75rem; border: 1px solid rgba(26,20,18,0.12); box-shadow: 0 4px 15px rgba(26,20,18,0.03);">
-            <h3 style="font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 700; color: var(--text-espresso, #1A1412); margin: 0 0 1.25rem;">
+          <div class="checkout-card">
+            <h3 class="checkout-section-title">
               2. Select Payment Method
             </h3>
+            <p class="checkout-section-subtitle">
+              Choose how you wish to settle the bill upon order completion.
+            </p>
 
-            <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+            <div class="payment-options-list">
               <!-- Option A: Pay at Counter (Cash) -->
-              <label style="display: flex; align-items: flex-start; gap: 0.85rem; padding: 1rem; border: 2px solid var(--text-espresso, #1A1412); border-radius: 12px; cursor: pointer; background: rgba(26,20,18,0.02);">
-                <input type="radio" name="payment_method" value="counter_cash" checked style="margin-top: 0.25rem;">
-                <div>
-                  <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-espresso, #1A1412);">Pay at Counter (Cash)</div>
-                  <div style="font-size: 0.82rem; color: var(--text-muted, #6E6259); margin-top: 0.2rem;">Settle bill with the cashier via cash when order is served.</div>
+              <label class="payment-option-label">
+                <input type="radio" name="payment_method" value="counter_cash" checked>
+                <svg class="payment-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="12" x="2" y="6" rx="2"/>
+                  <circle cx="12" cy="12" r="2"/>
+                  <path d="M6 12h.01M18 12h.01"/>
+                </svg>
+                <div style="flex: 1; min-width: 0;">
+                  <div class="payment-option-title">Pay at Counter (Cash)</div>
+                  <div class="payment-option-desc">Settle bill directly with the host/cashier via cash once served.</div>
                 </div>
               </label>
 
               <!-- Option B: Pay at Counter (UPI QR) -->
-              <label style="display: flex; align-items: flex-start; gap: 0.85rem; padding: 1rem; border: 1px solid rgba(26,20,18,0.15); border-radius: 12px; cursor: pointer;">
-                <input type="radio" name="payment_method" value="counter_upi" style="margin-top: 0.25rem;">
-                <div>
-                  <div style="font-weight: 700; font-size: 0.95rem; color: var(--text-espresso, #1A1412);">Pay via Counter UPI QR Code</div>
-                  <div style="font-size: 0.82rem; color: var(--text-muted, #6E6259); margin-top: 0.2rem;">Scan our counter QR using GPay, PhonePe, Paytm, or CRED.</div>
+              <label class="payment-option-label">
+                <input type="radio" name="payment_method" value="counter_upi">
+                <svg class="payment-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="18" height="18" x="3" y="3" rx="2"/>
+                  <path d="M7 7h.01M17 7h.01M7 17h.01M17 17h.01"/>
+                </svg>
+                <div style="flex: 1; min-width: 0;">
+                  <div class="payment-option-title">Pay via Counter UPI QR Code</div>
+                  <div class="payment-option-desc">Instant digital scan using GPay, PhonePe, Paytm, or CRED.</div>
                 </div>
               </label>
 
               <!-- Option C: Online Razorpay (Coming Soon) -->
-              <div style="display: flex; align-items: flex-start; gap: 0.85rem; padding: 1rem; border: 1px solid rgba(26,20,18,0.08); border-radius: 12px; opacity: 0.5; background: #FAFAFA;">
-                <input type="radio" disabled style="margin-top: 0.25rem;">
-                <div>
-                  <div style="font-weight: 600; font-size: 0.95rem; color: var(--text-muted, #6E6259);">
-                    Online Cards / NetBanking / Razorpay <span style="font-size: 0.7rem; background: var(--accent-terracotta, #C96A52); color:#FFF; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.4rem;">Coming Soon</span>
+              <div class="payment-option-disabled">
+                <input type="radio" disabled style="margin-top: 0.2rem;">
+                <svg class="payment-option-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect width="20" height="14" x="2" y="5" rx="2"/>
+                  <line x1="2" x2="22" y1="10" y2="10"/>
+                </svg>
+                <div style="flex: 1; min-width: 0;">
+                  <div class="payment-option-title" style="color: var(--text-muted, #6E6259);">
+                    Online Cards / NetBanking
+                    <span style="font-size: 0.68rem; background: var(--accent-terracotta, #C96A52); color:#FFF; padding: 0.15rem 0.5rem; border-radius: 4px; margin-left: 0.35rem; font-weight: 600;">Coming Soon</span>
                   </div>
-                  <div style="font-size: 0.8rem; color: var(--text-muted, #6E6259); margin-top: 0.2rem;">Integrated payment gateway for instant online settlement.</div>
+                  <div class="payment-option-desc">Direct in-app payment gateway settlement.</div>
                 </div>
               </div>
             </div>
           </div>
 
           <!-- Section 3: Kitchen Notes -->
-          <div style="background: #FFFFFF; border-radius: 18px; padding: 1.75rem; border: 1px solid rgba(26,20,18,0.12); box-shadow: 0 4px 15px rgba(26,20,18,0.03);">
-            <h3 style="font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 700; color: var(--text-espresso, #1A1412); margin: 0 0 0.5rem;">
+          <div class="checkout-card">
+            <h3 class="checkout-section-title">
               3. Special Kitchen Instructions
             </h3>
-            <p style="font-size: 0.82rem; color: var(--text-muted, #6E6259); margin: 0 0 1rem;">Allergies, spice adjustments, or preparation notes for our kitchen team.</p>
-            <textarea id="checkoutNotes" rows="2" placeholder="E.g. Table prefers all starters served together, please make marinara mild..." style="width: 100%; box-sizing: border-box; border: 1px solid rgba(26,20,18,0.15); border-radius: 10px; padding: 0.75rem 0.9rem; font-family: inherit; font-size: 0.9rem; resize: vertical;"></textarea>
+            <p class="checkout-section-subtitle">
+              Allergies, spice levels, ice preferences, or dining notes for our barista and chefs.
+            </p>
+            <textarea id="checkoutNotes" rows="2" placeholder="E.g. Table prefers starters served first, please make marinara pasta mild..." class="checkout-text-input" style="resize: vertical;"></textarea>
           </div>
         </div>
 
-        <!-- Right: Order Summary & Checkout CTA -->
-        <div style="position: sticky; top: 90px; background: #FFFFFF; border-radius: 18px; padding: 1.75rem; border: 1px solid rgba(26,20,18,0.12); box-shadow: 0 10px 30px rgba(26,20,18,0.06); display: flex; flex-direction: column; gap: 1.25rem;">
-          <h3 style="font-family: 'Fraunces', serif; font-size: 1.25rem; font-weight: 700; color: var(--text-espresso, #1A1412); margin: 0; border-bottom: 1px solid rgba(26,20,18,0.08); padding-bottom: 0.75rem;">
-            Order Summary
-          </h3>
+        <!-- Right / Bottom: Order Summary & Checkout CTA -->
+        <div class="checkout-summary-card">
+          <div class="summary-card-header">
+            <h3 class="summary-card-title">Order Summary</h3>
+            <a href="/menu" class="summary-modify-link">+ Add Items</a>
+          </div>
 
           <!-- Items List Snapshot -->
-          <div id="checkoutItemsList" style="display: flex; flex-direction: column; gap: 0.75rem; max-height: 240px; overflow-y: auto; padding-right: 0.25rem;"></div>
+          <div id="checkoutItemsList" class="checkout-items-list"></div>
 
           <!-- Financial Breakdown -->
-          <div style="border-top: 1px solid rgba(26,20,18,0.08); padding-top: 1rem; display: flex; flex-direction: column; gap: 0.6rem; font-size: 0.88rem;">
-            <div style="display: flex; justify-content: space-between; color: var(--text-muted, #6E6259);">
+          <div class="checkout-breakdown">
+            <div class="breakdown-row">
               <span>Subtotal</span>
               <span id="chkSubtotal" style="font-weight: 600; color: var(--text-espresso, #1A1412);">₹ 0.00</span>
             </div>
 
-            <div id="chkDiscountRow" style="display: none; justify-content: space-between; color: #2E7D32; font-weight: 600;">
+            <div id="chkDiscountRow" class="breakdown-row discount" style="display: none;">
               <span>Promo Discount</span>
               <span id="chkDiscount">- ₹ 0.00</span>
             </div>
 
-            <div id="chkRewardRow" style="display: none; justify-content: space-between; color: var(--accent-terracotta, #C96A52); font-weight: 600;">
+            <div id="chkRewardRow" class="breakdown-row reward" style="display: none;">
               <span id="chkRewardLabel">Milestone Reward</span>
               <span id="chkRewardVal">- ₹ 0.00</span>
             </div>
 
-            <div style="display: flex; justify-content: space-between; color: var(--text-muted, #6E6259);">
+            <div class="breakdown-row">
               <span>Restaurant GST (5%)</span>
               <span id="chkTax" style="font-weight: 600; color: var(--text-espresso, #1A1412);">₹ 0.00</span>
             </div>
 
-            <div style="display: flex; justify-content: space-between; font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: var(--text-espresso, #1A1412); border-top: 1px solid rgba(26,20,18,0.12); padding-top: 0.75rem;">
+            <div class="breakdown-row total">
               <span>Total Amount</span>
               <span id="chkGrandTotal">₹ 0.00</span>
             </div>
           </div>
 
-          <div id="checkoutErrMsg" style="display: none; background: rgba(201,106,82,0.1); border: 1px solid rgba(201,106,82,0.25); color: #C96A52; padding: 0.75rem; border-radius: 8px; font-size: 0.85rem; text-align: center;"></div>
+          <div id="checkoutErrMsg" class="checkout-error-banner" style="display: none;"></div>
 
-          <button type="submit" id="btnPlaceOrder" style="background: var(--text-espresso, #1A1412); color: #FFFFFF; border: none; padding: 1.1rem; border-radius: 12px; font-weight: 700; font-size: 1rem; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 0.5rem; transition: background 0.15s ease; box-shadow: 0 4px 14px rgba(26,20,18,0.2);">
+          <!-- Desktop Place Order Button -->
+          <button type="submit" id="btnPlaceOrder" class="btn-place-order-desktop">
             <span>Confirm & Place Order</span>
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+          </button>
+        </div>
+
+        <!-- Mobile Sticky Bottom Place Order Dock (< 900px) -->
+        <div class="checkout-mobile-sticky-dock" id="checkoutMobileDock">
+          <div class="mobile-dock-info">
+            <span class="mobile-dock-label">Total to pay</span>
+            <span id="chkDockGrandTotal" class="mobile-dock-total">₹ 0.00</span>
+          </div>
+
+          <button type="submit" id="btnPlaceOrderMobile" class="btn-place-order-mobile">
+            <span>Place Order</span>
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
           </button>
         </div>
@@ -196,6 +233,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   if (!cart || !Array.isArray(cart.items) || cart.items.length === 0) {
     document.getElementById('checkoutContentGrid').style.display = 'none';
+    const mobileDock = document.getElementById('checkoutMobileDock');
+    if (mobileDock) mobileDock.style.display = 'none';
     document.getElementById('checkoutEmptyWarning').style.display = 'block';
     return;
   }
@@ -239,18 +278,21 @@ function renderCheckoutSummary(lineItems, fin) {
     const price = (item.line_total_paise / 100).toFixed(2);
 
     return `
-      <div style="display:flex; justify-content:space-between; align-items:flex-start; font-size:0.85rem; border-bottom:1px dashed rgba(26,20,18,0.06); padding-bottom:0.5rem;">
-        <div>
-          <div style="font-weight:600; color:var(--text-espresso, #1A1412);">${item.quantity}x ${item.name}</div>
-          ${customs.length > 0 ? `<div style="font-size:0.75rem; color:var(--text-muted, #6E6259);">${customs.join(' · ')}</div>` : ''}
-          ${item.note ? `<div style="font-size:0.72rem; color:var(--accent-terracotta, #C96A52); font-style:italic;">"${item.note}"</div>` : ''}
+      <div class="checkout-item-row">
+        <div style="flex: 1; min-width: 0;">
+          <div class="checkout-item-name">${item.quantity}x ${item.name}</div>
+          ${customs.length > 0 ? `<div class="checkout-item-customs">${customs.join(' · ')}</div>` : ''}
+          ${item.note ? `<div style="font-size:0.72rem; color:var(--accent-terracotta, #C96A52); font-style:italic; margin-top:0.2rem;">"${item.note}"</div>` : ''}
         </div>
-        <div style="font-family:'Fraunces', serif; font-weight:700; color:var(--text-espresso, #1A1412);">₹ ${price}</div>
+        <div class="checkout-item-price">₹ ${price}</div>
       </div>
     `;
   }).join('');
 
-  document.getElementById('chkSubtotal').textContent = `₹ ${fin.subtotal_inr.toFixed(2)}`;
+  const subtotalStr = `₹ ${fin.subtotal_inr.toFixed(2)}`;
+  const grandTotalStr = `₹ ${fin.grand_total_inr.toFixed(2)}`;
+
+  document.getElementById('chkSubtotal').textContent = subtotalStr;
 
   if (fin.total_discount_paise > 0) {
     document.getElementById('chkDiscountRow').style.display = 'flex';
@@ -266,7 +308,11 @@ function renderCheckoutSummary(lineItems, fin) {
   }
 
   document.getElementById('chkTax').textContent = `₹ ${(fin.total_tax_paise / 100).toFixed(2)}`;
-  document.getElementById('chkGrandTotal').textContent = `₹ ${fin.grand_total_inr.toFixed(2)}`;
+  document.getElementById('chkGrandTotal').textContent = grandTotalStr;
+
+  // Sync mobile bottom dock grand total
+  const dockTotal = document.getElementById('chkDockGrandTotal');
+  if (dockTotal) dockTotal.textContent = grandTotalStr;
 }
 
 async function handlePlaceOrder(event) {
@@ -286,10 +332,22 @@ async function handlePlaceOrder(event) {
     return;
   }
 
-  const btn = document.getElementById('btnPlaceOrder');
+  const btnDesktop = document.getElementById('btnPlaceOrder');
+  const btnMobile = document.getElementById('btnPlaceOrderMobile');
   const errEl = document.getElementById('checkoutErrMsg');
-  btn.disabled = true;
-  btn.innerHTML = 'Placing Order...';
+
+  const setButtonsLoading = (isLoading) => {
+    if (btnDesktop) {
+      btnDesktop.disabled = isLoading;
+      btnDesktop.innerHTML = isLoading ? 'Placing Order...' : '<span>Confirm & Place Order</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    }
+    if (btnMobile) {
+      btnMobile.disabled = isLoading;
+      btnMobile.innerHTML = isLoading ? 'Placing Order...' : '<span>Place Order</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+    }
+  };
+
+  setButtonsLoading(true);
   errEl.style.display = 'none';
 
   try {
@@ -323,14 +381,13 @@ async function handlePlaceOrder(event) {
     } else {
       errEl.textContent = result.message || 'Failed to place order. Please try again.';
       errEl.style.display = 'block';
-      btn.disabled = false;
-      btn.innerHTML = '<span>Confirm & Place Order</span><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>';
+      setButtonsLoading(false);
+      errEl.scrollIntoView({ behavior: 'smooth', block: 'center' });
     }
   } catch (err) {
     errEl.textContent = 'Network error while placing order. Please check connection.';
     errEl.style.display = 'block';
-    btn.disabled = false;
-    btn.innerHTML = '<span>Confirm & Place Order</span>';
+    setButtonsLoading(false);
   }
 }
 </script>

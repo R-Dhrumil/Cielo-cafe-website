@@ -9,6 +9,11 @@ declare(strict_types=1);
 
 use App\Services\TableSessionService;
 
+if (defined('CIELO_CART_DRAWER_LOADED')) {
+    return;
+}
+define('CIELO_CART_DRAWER_LOADED', true);
+
 $activeTable = TableSessionService::getActiveTable();
 ?>
 

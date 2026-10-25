@@ -75,14 +75,26 @@ require dirname(__DIR__) . '/includes/header.php';
           </div>
         </div>
 
-        <!-- 4-Step Visual Progress Stepper -->
-        <div style="margin: 2rem 0; padding: 1.5rem 1rem; background: rgba(247,244,238,0.7); border-radius: 16px; border: 1px solid rgba(26,20,18,0.06);">
-          <div id="statusTrackerGrid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 0.5rem; text-align: center; position: relative;">
+        <!-- 4-Step Visual Progress Stepper with Connected Line -->
+        <div class="status-tracker-card">
+          <div id="statusTrackerGrid" class="status-tracker-grid">
+            <!-- Connecting background line -->
+            <div class="tracker-track-line" aria-hidden="true">
+              <?php
+                $progressPercent = match($status) {
+                  'preparing' => '40%',
+                  'ready' => '72%',
+                  'completed' => '100%',
+                  default => '10%'
+                };
+              ?>
+              <div id="trackerProgressFill" class="tracker-progress-fill" style="width: <?= $progressPercent ?>;"></div>
+            </div>
 
             <!-- Step 1: Placed -->
             <div class="step-node" data-step="1">
               <div class="step-circle is-active">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
               </div>
               <div class="step-label">Received</div>
             </div>
@@ -90,35 +102,35 @@ require dirname(__DIR__) . '/includes/header.php';
             <!-- Step 2: Preparing -->
             <div class="step-node" data-step="2">
               <div class="step-circle <?= in_array($status, ['preparing', 'ready', 'completed']) ? 'is-active' : '' ?>">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c2 3 5 4 5 8a5 5 0 0 1-10 0c0-4 3-5 5-8Z"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2c2 3 5 4 5 8a5 5 0 0 1-10 0c0-4 3-5 5-8Z"/><path d="M12 18v4"/><path d="M8 22h8"/></svg>
               </div>
-              <div class="step-label">Kitchen Preparing</div>
+              <div class="step-label">Cooking</div>
             </div>
 
             <!-- Step 3: Ready -->
             <div class="step-node" data-step="3">
               <div class="step-circle <?= in_array($status, ['ready', 'completed']) ? 'is-active' : '' ?>">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
               </div>
-              <div class="step-label">Ready to Serve</div>
+              <div class="step-label">Ready</div>
             </div>
 
             <!-- Step 4: Completed -->
             <div class="step-node" data-step="4">
               <div class="step-circle <?= ($status === 'completed') ? 'is-active' : '' ?>">
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
               </div>
-              <div class="step-label">Completed</div>
+              <div class="step-label">Served</div>
             </div>
           </div>
 
-          <div id="liveStatusBanner" style="text-align: center; margin-top: 1.5rem; font-size: 0.95rem; font-weight: 600; color: var(--text-espresso, #1A1412);">
+          <div id="liveStatusBanner" class="live-status-banner">
             <span class="live-pulse-dot"></span>
             <span id="liveStatusText">
               <?php if ($status === 'placed'): ?>
                 Kitchen received your order. Preparing fresh ingredients...
               <?php elseif ($status === 'preparing'): ?>
-                Chef is cooking your dishes in the kitchen!
+                Chef is cooking your artisanal dishes in the kitchen!
               <?php elseif ($status === 'ready'): ?>
                 Your order is freshly plated and on its way to your table!
               <?php elseif ($status === 'completed'): ?>
@@ -235,10 +247,51 @@ require dirname(__DIR__) . '/includes/header.php';
 </main>
 
 <style>
+  .status-tracker-card {
+    margin: 1.5rem 0;
+    padding: 1.25rem 0.75rem;
+    background: rgba(247,244,238,0.7);
+    border-radius: 18px;
+    border: 1px solid rgba(26,20,18,0.06);
+  }
+  @media (min-width: 640px) {
+    .status-tracker-card {
+      margin: 2rem 0;
+      padding: 1.75rem 1.25rem;
+    }
+  }
+  .status-tracker-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0.25rem;
+    text-align: center;
+    position: relative;
+  }
+  .tracker-track-line {
+    position: absolute;
+    top: 19px;
+    left: 12%;
+    right: 12%;
+    height: 3px;
+    background: rgba(26,20,18,0.12);
+    border-radius: 999px;
+    z-index: 1;
+    overflow: hidden;
+  }
+  .tracker-progress-fill {
+    height: 100%;
+    background: linear-gradient(90deg, #1A1412, #2E7D32);
+    border-radius: 999px;
+    transition: width 0.4s ease;
+  }
+  .step-node {
+    position: relative;
+    z-index: 2;
+  }
   .step-circle {
-    width: 44px;
-    height: 44px;
-    margin: 0 auto 0.5rem;
+    width: 38px;
+    height: 38px;
+    margin: 0 auto 0.45rem;
     border-radius: 50%;
     background: #FFFFFF;
     border: 2px solid rgba(26,20,18,0.15);
@@ -248,6 +301,15 @@ require dirname(__DIR__) . '/includes/header.php';
     color: var(--text-muted, #6E6259);
     transition: all 0.3s ease;
   }
+  @media (min-width: 640px) {
+    .step-circle {
+      width: 44px;
+      height: 44px;
+    }
+    .tracker-track-line {
+      top: 22px;
+    }
+  }
   .step-circle.is-active {
     background: var(--text-espresso, #1A1412);
     border-color: var(--text-espresso, #1A1412);
@@ -255,13 +317,25 @@ require dirname(__DIR__) . '/includes/header.php';
     box-shadow: 0 4px 12px rgba(26,20,18,0.2);
   }
   .step-label {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     font-weight: 600;
     color: var(--text-muted, #6E6259);
+    letter-spacing: 0.02em;
   }
   .step-node:has(.step-circle.is-active) .step-label {
     color: var(--text-espresso, #1A1412);
     font-weight: 700;
+  }
+  .live-status-banner {
+    text-align: center;
+    margin-top: 1.25rem;
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--text-espresso, #1A1412);
+    background: rgba(255, 255, 255, 0.7);
+    padding: 0.65rem 0.85rem;
+    border-radius: 12px;
+    border: 1px solid rgba(26,20,18,0.06);
   }
   .live-pulse-dot {
     display: inline-block;
@@ -307,6 +381,14 @@ function updateLiveStatusUI(orderData) {
       circle.classList.remove('is-active');
     }
   });
+
+  const fillEl = document.getElementById('trackerProgressFill');
+  if (fillEl) {
+    if (stepIdx === 1) fillEl.style.width = '10%';
+    else if (stepIdx === 2) fillEl.style.width = '40%';
+    else if (stepIdx === 3) fillEl.style.width = '72%';
+    else if (stepIdx >= 4) fillEl.style.width = '100%';
+  }
 
   const txtEl = document.getElementById('liveStatusText');
   if (txtEl) {

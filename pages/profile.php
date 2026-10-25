@@ -23,66 +23,153 @@ $metrics = $user ? CustomerAuthService::getProfileMetrics((int)$user['id']) : nu
 require dirname(__DIR__) . '/includes/header.php';
 ?>
 
-<main id="main-content" style="padding-top: 5.5rem; min-height: 85vh; background: var(--bg-cream, #F7F4EE);">
-  <div class="container" style="max-width: 1040px; margin: 0 auto; padding: 2rem 1.25rem 5rem;">
+<style>
+  .profile-container {
+    max-width: 1040px;
+    margin: 0 auto;
+    padding: 1.25rem 1rem 5rem;
+  }
+  @media (min-width: 640px) {
+    .profile-container {
+      padding: 2rem 1.25rem 5rem;
+    }
+  }
+  .profile-split-card {
+    background: #ffffff;
+    border-radius: 24px;
+    border: 1px solid rgba(26,20,18,0.08);
+    box-shadow: 0 15px 40px rgba(26,20,18,0.05);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+  }
+  @media (min-width: 820px) {
+    .profile-split-card {
+      display: grid;
+      grid-template-columns: 1.05fr 1fr;
+    }
+  }
+  .profile-otp-col {
+    order: 1;
+    padding: 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  @media (min-width: 820px) {
+    .profile-otp-col {
+      order: 2;
+      padding: 3.5rem 2.5rem;
+    }
+  }
+  .profile-perks-col {
+    order: 2;
+    background: linear-gradient(135deg, #1A1412 0%, #2A221F 100%);
+    color: #F7F4EE;
+    padding: 2rem 1.25rem;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+  @media (min-width: 820px) {
+    .profile-perks-col {
+      order: 1;
+      padding: 3.5rem 2.5rem;
+    }
+  }
+  .profile-header-card {
+    background: #ffffff;
+    border-radius: 20px;
+    border: 1px solid rgba(26,20,18,0.08);
+    padding: 1.25rem 1rem;
+    margin-bottom: 1.5rem;
+    box-shadow: 0 10px 30px rgba(26,20,18,0.03);
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+  }
+  @media (min-width: 640px) {
+    .profile-header-card {
+      padding: 1.75rem 2rem;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+    }
+  }
+  .profile-pillars-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1.25rem;
+    margin-bottom: 2rem;
+  }
+  @media (min-width: 768px) {
+    .profile-pillars-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 1.5rem;
+    }
+  }
+</style>
+
+<main id="main-content" style="padding-top: 5rem; min-height: 85vh; background: var(--bg-cream, #F7F4EE);">
+  <div class="profile-container">
 
     <?php if (!$user): ?>
       <!-- ============================================================== -->
       <!-- GUEST / LOGGED-OUT: MOBILE OTP AUTHENTICATION SPLIT CARD       -->
       <!-- ============================================================== -->
-      <div style="background: #ffffff; border-radius: 24px; border: 1px solid rgba(26,20,18,0.08); box-shadow: 0 15px 40px rgba(26,20,18,0.05); overflow: hidden; display: grid; grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));">
+      <div class="profile-split-card">
         
-        <!-- Left: Luxury Perks Pitch -->
-        <div style="background: linear-gradient(135deg, #1A1412 0%, #2A221F 100%); color: #F7F4EE; padding: 3.5rem 2.5rem; display: flex; flex-direction: column; justify-content: space-between;">
+        <!-- Luxury Perks Pitch (Desktop Left, Mobile Bottom) -->
+        <div class="profile-perks-col">
           <div>
-            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(201,106,82,0.2); color: var(--accent-terracotta, #C96A52); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.5rem;">
+            <div style="display: inline-flex; align-items: center; gap: 0.5rem; background: rgba(201,106,82,0.2); color: var(--accent-terracotta, #C96A52); padding: 0.35rem 0.85rem; border-radius: 9999px; font-size: 0.8rem; font-weight: 700; letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 1.25rem;">
               <span>✦</span> Cielo Patron Club
             </div>
-            <h1 style="font-family: var(--font-display, 'Playfair Display', serif); font-size: 2.25rem; line-height: 1.2; margin-bottom: 1rem; color: #ffffff;">
+            <h1 style="font-family: var(--font-display, 'Playfair Display', serif); font-size: clamp(1.75rem, 4vw, 2.25rem); line-height: 1.2; margin-bottom: 0.75rem; color: #ffffff;">
               Your Table.<br>Your Sky Rewards.
             </h1>
-            <p style="color: rgba(247,244,238,0.75); font-size: 0.95rem; line-height: 1.6; margin-bottom: 2.5rem;">
+            <p style="color: rgba(247,244,238,0.75); font-size: 0.9rem; line-height: 1.6; margin-bottom: 1.75rem;">
               Log in with your phone number to unlock automated cashbacks, visit milestone rewards, and instant coupon vouchers.
             </p>
 
-            <div style="display: flex; flex-direction: column; gap: 1.25rem;">
-              <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(212,175,55,0.15); color: #D4AF37; display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">★</div>
+            <div style="display: flex; flex-direction: column; gap: 1rem;">
+              <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(212,175,55,0.15); color: #D4AF37; display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">★</div>
                 <div>
-                  <h2 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; color: #ffffff;">10 Points per ₹100 Spent</h2>
-                  <p style="font-size: 0.85rem; color: rgba(247,244,238,0.65); margin: 0;">Automatically added to your immutable ledger on every order.</p>
+                  <h2 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.15rem; color: #ffffff;">10 Points per ₹100 Spent</h2>
+                  <p style="font-size: 0.8rem; color: rgba(247,244,238,0.65); margin: 0;">Automatically added to your immutable ledger on every order.</p>
                 </div>
               </div>
 
-              <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(107,154,196,0.15); color: var(--accent-sky, #6B9AC4); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">◈</div>
+              <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(107,154,196,0.15); color: var(--accent-sky, #6B9AC4); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">◈</div>
                 <div>
-                  <h2 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; color: #ffffff;">5-Visit Milestone Gift</h2>
-                  <p style="font-size: 0.85rem; color: rgba(247,244,238,0.65); margin: 0;">Complimentary artisanal beverage or chef dessert every 5 visits.</p>
+                  <h2 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.15rem; color: #ffffff;">5-Visit Milestone Gift</h2>
+                  <p style="font-size: 0.8rem; color: rgba(247,244,238,0.65); margin: 0;">Complimentary artisanal beverage or chef dessert every 5 visits.</p>
                 </div>
               </div>
 
-              <div style="display: flex; align-items: flex-start; gap: 1rem;">
-                <div style="width: 38px; height: 38px; border-radius: 50%; background: rgba(201,106,82,0.15); color: var(--accent-terracotta, #C96A52); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0;">♥</div>
+              <div style="display: flex; align-items: flex-start; gap: 0.85rem;">
+                <div style="width: 36px; height: 36px; border-radius: 50%; background: rgba(201,106,82,0.15); color: var(--accent-terracotta, #C96A52); display: flex; align-items: center; justify-content: center; font-size: 1rem; flex-shrink: 0;">♥</div>
                 <div>
-                  <h2 style="font-size: 0.95rem; font-weight: 600; margin-bottom: 0.2rem; color: #ffffff;">One-Tap Guest Order Merge</h2>
-                  <p style="font-size: 0.85rem; color: rgba(247,244,238,0.65); margin: 0;">Past orders from this phone number automatically sync to your account.</p>
+                  <h2 style="font-size: 0.9rem; font-weight: 600; margin-bottom: 0.15rem; color: #ffffff;">One-Tap Guest Order Merge</h2>
+                  <p style="font-size: 0.8rem; color: rgba(247,244,238,0.65); margin: 0;">Past orders from this phone number automatically sync to your account.</p>
                 </div>
               </div>
             </div>
           </div>
 
-          <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid rgba(247,244,238,0.1); font-size: 0.8rem; color: rgba(247,244,238,0.5);">
+          <div style="margin-top: 1.75rem; padding-top: 1.25rem; border-top: 1px solid rgba(247,244,238,0.1); font-size: 0.78rem; color: rgba(247,244,238,0.5);">
             No passwords needed • Secure 6-digit SMS OTP
           </div>
         </div>
 
-        <!-- Right: Frictionless OTP Form -->
-        <div style="padding: 3.5rem 2.5rem; display: flex; flex-direction: column; justify-content: center;">
+        <!-- Frictionless OTP Form (Desktop Right, Mobile Top) -->
+        <div class="profile-otp-col">
           
           <!-- STEP 1: PHONE INPUT -->
           <div id="otpStepPhone">
-            <h2 style="font-family: var(--font-display, 'Playfair Display', serif); font-size: 1.75rem; color: var(--text-espresso, #1A1412); margin-bottom: 0.5rem;">
+            <h2 style="font-family: var(--font-display, 'Playfair Display', serif); font-size: 1.6rem; color: var(--text-espresso, #1A1412); margin-bottom: 0.4rem;">
               Mobile Number Login
             </h2>
             <p style="color: rgba(26,20,18,0.65); font-size: 0.9rem; margin-bottom: 2rem;">

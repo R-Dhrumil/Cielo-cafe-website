@@ -103,15 +103,15 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
   /* Cielo Floating Table & Loyalty Styling */
   .cielo-table-widget {
     position: sticky;
-    top: 70px;
+    top: var(--cielo-header-height, 70px);
     z-index: 90;
     width: 100%;
-    background: rgba(247, 244, 238, 0.95);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
+    background: rgba(247, 244, 238, 0.96);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     border-bottom: 1px solid rgba(26, 20, 18, 0.08);
     padding: 0.5rem 1rem;
-    box-shadow: 0 4px 20px rgba(26, 20, 18, 0.03);
+    box-shadow: 0 4px 16px rgba(26, 20, 18, 0.03);
     font-family: 'Plus Jakarta Sans', sans-serif;
   }
   .table-widget-container {
@@ -150,12 +150,12 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
   }
   .table-title {
     font-family: 'Fraunces', serif;
-    font-size: 1rem;
+    font-size: 0.98rem;
     font-weight: 700;
     color: var(--text-espresso, #1A1412);
   }
   .table-floor {
-    font-size: 0.75rem;
+    font-size: 0.72rem;
     color: var(--text-muted, #6E6259);
     background: rgba(26, 20, 18, 0.05);
     padding: 0.15rem 0.5rem;
@@ -174,9 +174,9 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     gap: 0.4rem;
     background: rgba(201, 106, 82, 0.1);
     color: var(--accent-terracotta, #C96A52);
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     font-weight: 600;
-    padding: 0.3rem 0.75rem;
+    padding: 0.28rem 0.7rem;
     border-radius: 999px;
     border: 1px solid rgba(201, 106, 82, 0.2);
   }
@@ -195,9 +195,9 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     background: var(--text-espresso, #1A1412);
     color: #FFFFFF;
     border: none;
-    font-size: 0.8rem;
+    font-size: 0.78rem;
     font-weight: 600;
-    padding: 0.35rem 0.85rem;
+    padding: 0.35rem 0.8rem;
     border-radius: 999px;
     cursor: pointer;
     transition: transform 0.15s ease, background 0.15s ease;
@@ -210,10 +210,11 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     display: flex;
     align-items: center;
     gap: 0.5rem;
-    font-size: 0.82rem;
+    font-size: 0.8rem;
     color: var(--text-muted, #6E6259);
     width: 100%;
     justify-content: center;
+    text-align: center;
   }
   .qr-hint-icon {
     color: var(--accent-sky, #6B9AC4);
@@ -227,7 +228,7 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(26, 20, 18, 0.6);
+    background: rgba(26, 20, 18, 0.65);
     backdrop-filter: blur(4px);
     -webkit-backdrop-filter: blur(4px);
     z-index: 9999;
@@ -243,12 +244,12 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     width: 100%;
     padding: 2rem 1.75rem;
     position: relative;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
     border: 1px solid rgba(26, 20, 18, 0.1);
     animation: modalIn 0.25s cubic-bezier(0.16, 1, 0.3, 1);
   }
   @keyframes modalIn {
-    from { opacity: 0; transform: scale(0.95) translateY(10px); }
+    from { opacity: 0; transform: scale(0.96) translateY(10px); }
     to { opacity: 1; transform: scale(1) translateY(0); }
   }
   .modal-close-btn {
@@ -261,10 +262,11 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     line-height: 1;
     color: var(--text-muted, #6E6259);
     cursor: pointer;
+    padding: 0.5rem;
   }
   .modal-header {
     text-align: center;
-    margin-bottom: 1.5rem;
+    margin-bottom: 1.25rem;
   }
   .modal-star-icon {
     width: 48px;
@@ -279,13 +281,13 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
   }
   .modal-title {
     font-family: 'Fraunces', serif;
-    font-size: 1.35rem;
+    font-size: 1.3rem;
     font-weight: 700;
     color: var(--text-espresso, #1A1412);
     margin: 0 0 0.4rem;
   }
   .modal-subtitle {
-    font-size: 0.85rem;
+    font-size: 0.82rem;
     color: var(--text-muted, #6E6259);
     line-height: 1.45;
     margin: 0;
@@ -293,7 +295,7 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
   .loyalty-form {
     display: flex;
     flex-direction: column;
-    gap: 1rem;
+    gap: 0.9rem;
   }
   .input-group {
     display: flex;
@@ -314,31 +316,31 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     display: flex;
     align-items: center;
     border: 1px solid rgba(26, 20, 18, 0.16);
-    border-radius: 10px;
+    border-radius: 12px;
     overflow: hidden;
     background: #FAFAFA;
   }
   .phone-prefix {
-    padding: 0.65rem 0.85rem;
+    padding: 0.75rem 0.85rem;
     background: rgba(26, 20, 18, 0.05);
     font-weight: 600;
-    font-size: 0.9rem;
+    font-size: 0.95rem;
     color: var(--text-espresso, #1A1412);
     border-right: 1px solid rgba(26, 20, 18, 0.16);
   }
   .phone-input-wrapper input, .input-group input[type="text"] {
     width: 100%;
-    padding: 0.65rem 0.85rem;
+    padding: 0.75rem 0.85rem;
     border: none;
     outline: none;
-    font-size: 0.95rem;
+    font-size: 16px; /* Prevents auto-zoom on iOS */
     font-family: inherit;
     color: var(--text-espresso, #1A1412);
     background: transparent;
   }
   .input-group input[type="text"] {
     border: 1px solid rgba(26, 20, 18, 0.16);
-    border-radius: 10px;
+    border-radius: 12px;
     background: #FAFAFA;
   }
   .phone-input-wrapper:focus-within, .input-group input[type="text"]:focus {
@@ -350,12 +352,16 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     color: #FFFFFF;
     border: none;
     padding: 0.85rem;
-    border-radius: 10px;
-    font-size: 0.92rem;
+    border-radius: 12px;
+    font-size: 0.95rem;
     font-weight: 600;
     cursor: pointer;
     transition: background 0.15s ease;
-    margin-top: 0.5rem;
+    margin-top: 0.25rem;
+    min-height: 48px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
   .btn-modal-submit:hover {
     background: #2C221F;
@@ -367,7 +373,8 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     font-size: 0.82rem;
     cursor: pointer;
     text-decoration: underline;
-    padding: 0.25rem;
+    padding: 0.5rem;
+    min-height: 44px;
   }
   .status-msg {
     padding: 0.6rem 0.8rem;
@@ -384,6 +391,38 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
     background: rgba(46, 125, 50, 0.1);
     color: #2E7D32;
     border: 1px solid rgba(46, 125, 50, 0.2);
+  }
+
+  @media (max-width: 639px) {
+    .cielo-table-widget {
+      top: 56px;
+      padding: 0.4rem 0.75rem;
+    }
+    .table-title {
+      font-size: 0.88rem;
+    }
+    .table-floor {
+      font-size: 0.68rem;
+      padding: 0.1rem 0.35rem;
+    }
+    .table-badge-guest {
+      font-size: 0.72rem;
+      line-height: 1.35;
+    }
+    .loyalty-modal-overlay {
+      align-items: flex-end;
+      padding: 0;
+    }
+    .loyalty-modal-content {
+      border-radius: 20px 20px 0 0;
+      max-width: 100%;
+      padding: 1.75rem 1.25rem calc(1.5rem + env(safe-area-inset-bottom, 0px));
+      animation: modalSlideUp 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    @keyframes modalSlideUp {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
   }
 </style>
 

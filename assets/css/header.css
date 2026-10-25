@@ -211,6 +211,95 @@
   transform: translateY(-1px);
 }
 
+/* Active Table Chip (Mobile & Desktop) */
+.header-table-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  height: 2.15rem;
+  padding: 0 0.75rem;
+  border-radius: var(--border-radius-full);
+  border: 1px solid rgba(46, 125, 50, 0.4);
+  background: rgba(46, 125, 50, 0.12);
+  color: #2E7D32;
+  font-family: var(--font-sans);
+  font-size: 0.78rem;
+  font-weight: 700;
+  text-decoration: none;
+  white-space: nowrap;
+  transition: all 200ms ease;
+}
+
+.header-table-chip:hover {
+  background: rgba(46, 125, 50, 0.2);
+  transform: translateY(-1px);
+}
+
+.chip-pulse-dot {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #2E7D32;
+  box-shadow: 0 0 6px #2E7D32;
+  animation: pulseChip 2s infinite;
+}
+
+@keyframes pulseChip {
+  0% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0.4); }
+  70% { box-shadow: 0 0 0 5px rgba(46, 125, 50, 0); }
+  100% { box-shadow: 0 0 0 0 rgba(46, 125, 50, 0); }
+}
+
+/* Quick Cart Icon Button in Header */
+.header-cart-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  background: transparent;
+  border: none;
+  color: #FFFFFF;
+  cursor: pointer;
+  padding: 0;
+  transition: opacity 200ms ease, transform 150ms ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.header-cart-icon-btn:hover {
+  opacity: 0.85;
+  transform: scale(1.05);
+}
+
+.header-cart-svg {
+  width: 20px;
+  height: 20px;
+}
+
+.header-cart-badge {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  background-color: var(--accent-terracotta, #B5623B);
+  color: #FFFFFF;
+  font-size: 0.625rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid #000000;
+}
+
 /* 3. Minimalist Menu Button */
 .header-menu-btn {
   display: inline-flex;
@@ -291,6 +380,14 @@
 .cielo-header.theme-light-bg .header-menu-btn {
   color: var(--text-espresso, #000000);
   text-shadow: none;
+}
+
+.cielo-header.theme-light-bg .header-cart-icon-btn {
+  color: var(--text-espresso, #000000);
+}
+
+.cielo-header.theme-light-bg .header-cart-badge {
+  border-color: #FFFFFF;
 }
 
 .cielo-header.theme-light-bg.is-scrolled .cielo-navbar {
@@ -635,3 +732,172 @@ body.warm-contrast .cielo-header.theme-light-bg.is-scrolled .cielo-navbar {
     transition: opacity 300ms ease !important;
   }
 }
+
+/* ==========================================================================
+   CIELO CAFE AND RESTRO - MOBILE BOTTOM NAVIGATION (NATIVE THUMB DOCK)
+   Visible only on mobile devices & tablets (< 768px)
+   ========================================================================== */
+
+.cielo-mobile-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 998;
+  display: block;
+  background: rgba(255, 255, 255, 0.94);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border-top: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 -4px 24px rgba(0, 0, 0, 0.07);
+  padding: 0.35rem 0.5rem;
+  padding-bottom: max(0.4rem, env(safe-area-inset-bottom, 0px));
+  transition: transform 300ms cubic-bezier(0.16, 1, 0.3, 1), background 250ms ease;
+  user-select: none;
+}
+
+@media (min-width: 768px) {
+  .cielo-mobile-bottom-nav {
+    display: none !important;
+  }
+}
+
+.mobile-nav-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  width: 100%;
+  max-width: 520px;
+  margin: 0 auto;
+}
+
+.mobile-nav-item {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  min-height: 48px;
+  padding: 0.3rem 0;
+  background: transparent;
+  border: none;
+  text-decoration: none;
+  color: rgba(26, 20, 18, 0.6);
+  cursor: pointer;
+  transition: all 180ms ease;
+  position: relative;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-nav-item:hover,
+.mobile-nav-item:active {
+  color: var(--text-espresso, #000000);
+}
+
+.mobile-nav-item.is-active {
+  color: var(--accent-terracotta, #B5623B) !important;
+}
+
+.mobile-nav-item.is-active .mobile-nav-label {
+  font-weight: 700;
+}
+
+.mobile-nav-item.is-seated {
+  color: #2E7D32 !important;
+}
+
+.mobile-nav-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+}
+
+.mobile-nav-icon {
+  width: 22px;
+  height: 22px;
+  transition: transform 200ms ease;
+}
+
+.mobile-nav-item:active .mobile-nav-icon {
+  transform: scale(0.92);
+}
+
+.mobile-nav-label {
+  font-family: var(--font-sans);
+  font-size: 0.65rem;
+  letter-spacing: 0.02em;
+  line-height: 1.1;
+  font-weight: 500;
+  transition: color 180ms ease;
+}
+
+.mobile-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  min-width: 17px;
+  height: 17px;
+  border-radius: 999px;
+  background-color: var(--accent-terracotta, #B5623B);
+  color: #FFFFFF;
+  font-size: 0.625rem;
+  font-weight: 800;
+  font-family: var(--font-sans);
+  line-height: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 4px;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.25);
+  border: 1.5px solid #FFFFFF;
+  animation: badgePop 300ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes badgePop {
+  0% { transform: scale(0.5); }
+  70% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+
+.table-nav-pulse-dot {
+  position: absolute;
+  top: 1px;
+  right: 1px;
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background-color: #2E7D32;
+  box-shadow: 0 0 6px #2E7D32;
+  animation: pulseChip 2s infinite;
+}
+
+.profile-logged-star {
+  font-size: 1.15rem;
+  line-height: 1;
+  color: var(--accent-terracotta, #B5623B);
+}
+
+/* Warm contrast mode for bottom nav */
+body.warm-contrast .cielo-mobile-bottom-nav {
+  background: rgba(246, 239, 227, 0.96);
+  border-top-color: rgba(27, 21, 17, 0.1);
+  box-shadow: 0 -4px 20px rgba(27, 21, 17, 0.08);
+}
+
+body.warm-contrast .mobile-nav-item {
+  color: rgba(27, 21, 17, 0.65);
+}
+
+body.warm-contrast .mobile-nav-item:hover,
+body.warm-contrast .mobile-nav-item:active {
+  color: var(--text-espresso, #1B1511);
+}
+
+body.warm-contrast .mobile-nav-badge {
+  border-color: #F6EFE3;
+}
+

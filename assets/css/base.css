@@ -346,6 +346,14 @@ input,
 select,
 textarea {
   touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+}
+
+/* Mobile-first Body Padding for Bottom Nav Bar */
+@media (max-width: 767px) {
+  body {
+    padding-bottom: calc(4.25rem + env(safe-area-inset-bottom, 0px));
+  }
 }
 
 /* iOS Safari Auto-Zoom Prevention */
@@ -366,7 +374,9 @@ textarea {
 .menu-tabs-nav,
 .mobile-drawer-overlay,
 .reservation-modal-window,
-.gallery3d__grid {
+.gallery3d__grid,
+.cielo-drawer,
+.cielo-custom-modal-body {
   -webkit-overflow-scrolling: touch;
 }
 

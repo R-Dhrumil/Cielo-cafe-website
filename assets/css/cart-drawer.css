@@ -492,3 +492,89 @@
 .btn-add-custom-cart:hover {
   background: #2C221F;
 }
+
+/* ==========================================================================
+   MOBILE-FIRST ENHANCEMENTS FOR CART & CUSTOMIZER (< 768px and < 640px)
+   ========================================================================== */
+
+@media (max-width: 767px) {
+  /* Dock floating cart bar seamlessly above the bottom navigation dock */
+  .cielo-floating-cart-bar {
+    bottom: calc(4.75rem + env(safe-area-inset-bottom, 0px));
+    width: calc(100% - 1.5rem);
+    max-width: 440px;
+    padding: 0.75rem 1.15rem;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(0, 0, 0, 0.35);
+  }
+}
+
+@media (max-width: 639px) {
+  /* Full-width native feeling cart drawer on phones */
+  .cielo-drawer {
+    width: 100%;
+    max-width: 100%;
+    height: 100%;
+    height: 100dvh;
+    border-radius: 0;
+  }
+
+  .drawer-header {
+    padding: 1rem 1.25rem;
+  }
+
+  .drawer-body {
+    padding: 1rem 1.25rem;
+  }
+
+  .drawer-footer {
+    padding: 1rem 1.25rem;
+    padding-bottom: max(1rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  /* Native Mobile Bottom Sheet presentation for product customization */
+  .cielo-custom-modal-overlay {
+    align-items: flex-end;
+    padding: 0;
+  }
+
+  .cielo-custom-modal {
+    max-width: 100%;
+    width: 100%;
+    max-height: 88vh;
+    max-height: 88dvh;
+    border-radius: 22px 22px 0 0;
+    animation: modalSlideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  @keyframes modalSlideUp {
+    from { transform: translateY(100%); }
+    to { transform: translateY(0); }
+  }
+
+  .custom-modal-hero {
+    height: 140px;
+  }
+
+  .custom-modal-body {
+    padding: 1.15rem 1.25rem;
+    gap: 1rem;
+  }
+
+  .custom-option-row {
+    padding: 0.75rem 0.9rem;
+    min-height: 48px;
+  }
+
+  .custom-modal-footer {
+    padding: 1rem 1.25rem;
+    padding-bottom: max(1.15rem, env(safe-area-inset-bottom, 0px));
+  }
+
+  .btn-add-custom-cart {
+    padding: 0.95rem 1.25rem;
+    font-size: 1rem;
+    min-height: 52px;
+  }
+}
+

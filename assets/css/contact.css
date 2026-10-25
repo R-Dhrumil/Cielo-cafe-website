@@ -95,10 +95,6 @@
     padding: 1.5rem;
   }
 }
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
 
 .address-row {
   display: flex;
@@ -325,6 +321,20 @@
   align-items: center;
   gap: 0.85rem;
   padding-top: 0.25rem;
+}
+
+@media (max-width: 480px) {
+  .location-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+  .location-actions a {
+    width: 100%;
+    justify-content: center;
+    min-height: 48px;
+    display: inline-flex;
+    align-items: center;
+  }
 }
 
 /* Google Map Viewport */

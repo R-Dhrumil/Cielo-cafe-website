@@ -82,10 +82,12 @@ $schemaData = [
   <link rel="stylesheet" href="assets/css/header.css">
   <link rel="stylesheet" href="assets/css/footer.css">
   <link rel="stylesheet" href="assets/css/modal.css">
+  <link rel="stylesheet" href="assets/css/cart-drawer.css">
 
   <!-- Page-Specific CSS Files -->
   <?php if (!empty($pageCss) && is_array($pageCss)): ?>
     <?php foreach ($pageCss as $cssFile): ?>
+      <?php if ($cssFile === 'cart-drawer.css') continue; // Already loaded globally ?>
       <link rel="stylesheet" href="assets/css/<?= e($cssFile) ?>">
     <?php endforeach; ?>
   <?php endif; ?>
@@ -135,32 +137,42 @@ $schemaData = [
             <span id="headerThemeText" class="theme-text-label">Night</span>
           </button>
 
-          <!-- Active Table Indicator Pill -->
+          <!-- Active Table Indicator Pill (Mobile & Desktop) -->
           <?php
           $headerActiveTable = class_exists(\App\Services\TableSessionService::class)
               ? \App\Services\TableSessionService::getActiveTable()
               : null;
           ?>
           <?php if ($headerActiveTable): ?>
-            <a href="/menu" class="header-pill-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; border-color: #2E7D32; color: #2E7D32; background: rgba(46,125,50,0.1); font-weight: 700;" title="Active Table <?= e($headerActiveTable['table_number']) ?> Session">
-              <span style="display:inline-block; width:6px; height:6px; border-radius:50%; background:#2E7D32;"></span>
+            <a href="/menu" class="header-table-chip" title="Active Table <?= e($headerActiveTable['table_number']) ?> Session">
+              <span class="chip-pulse-dot" aria-hidden="true"></span>
               <span>T-<?= e($headerActiveTable['table_number']) ?></span>
             </a>
           <?php endif; ?>
 
-          <!-- Patron Club Pill Button -->
+          <!-- Patron Club Pill Button (Desktop / Tablet) -->
           <?php
           $patronUser = class_exists(\App\Services\CustomerAuthService::class) 
               ? \App\Services\CustomerAuthService::getCurrentUser() 
               : null;
           ?>
-          <a href="/profile" class="header-pill-btn" style="text-decoration: none; display: inline-flex; align-items: center; gap: 0.35rem; <?= $patronUser ? 'border-color: var(--accent-terracotta); color: var(--accent-terracotta); background: rgba(201,106,82,0.1);' : '' ?>">
+          <a href="/profile" class="header-pill-btn header-pill-patron" style="text-decoration: none; align-items: center; gap: 0.35rem; <?= $patronUser ? 'border-color: var(--accent-terracotta); color: var(--accent-terracotta); background: rgba(201,106,82,0.1);' : '' ?>">
             <span><?= $patronUser ? ('★ ' . e(explode(' ', $patronUser['name'] ?: 'Patron')[0])) : 'Patron Club' ?></span>
           </a>
 
-          <!-- Reserve a Table Pill Button -->
+          <!-- Reserve a Table Pill Button (Desktop) -->
           <button type="button" class="header-pill-btn btn-open-reservation">
             Reserve a table
+          </button>
+
+          <!-- Quick Cart Trigger Button (Mobile & Desktop) -->
+          <button type="button" id="headerCartBtn" class="header-cart-icon-btn" onclick="window.CieloCart ? window.CieloCart.openCartDrawer() : (window.location.href='/menu')" aria-label="Open shopping cart" title="View Order">
+            <svg class="header-cart-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4Z"/>
+              <path d="M3 6h18"/>
+              <path d="M16 10a4 4 0 0 1-8 0"/>
+            </svg>
+            <span id="headerCartBadge" class="header-cart-badge" style="display: none;">0</span>
           </button>
 
           <!-- Minimalist Menu Trigger -->
