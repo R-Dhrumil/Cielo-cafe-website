@@ -129,15 +129,6 @@ require dirname(__DIR__) . '/includes/header.php';
               Sent to <strong id="displayTargetPhone" style="color: var(--text-espresso, #1A1412);">+91 98765 43210</strong>
             </p>
 
-            <!-- Dev mode auto-fill alert -->
-            <div id="devOtpBox" style="display: none; background: rgba(212,175,55,0.12); border: 1px solid rgba(212,175,55,0.3); border-radius: 10px; padding: 0.75rem 1rem; margin-bottom: 1.5rem; font-size: 0.85rem; color: #8A6D15;">
-              <div style="font-weight: 700; margin-bottom: 0.2rem;">⚡ Test Mode OTP Code:</div>
-              <div style="display: flex; align-items: center; justify-content: space-between;">
-                <code id="mockOtpCode" style="font-size: 1.1rem; font-weight: 700; letter-spacing: 0.15em; color: var(--text-espresso, #1A1412);">123456</code>
-                <button type="button" onclick="autoFillMockOtp()" style="background: #1A1412; color: #fff; border: none; border-radius: 6px; padding: 0.25rem 0.65rem; font-size: 0.75rem; font-weight: 600; cursor: pointer;">Auto-Fill</button>
-              </div>
-            </div>
-
             <form id="formVerifyOtp" onsubmit="handleVerifyOtp(event)">
               <div style="margin-bottom: 1.5rem;">
                 <label for="inputOtp" style="display: block; font-size: 0.85rem; font-weight: 600; color: var(--text-espresso, #1A1412); margin-bottom: 0.5rem;">
@@ -568,11 +559,6 @@ async function handleSendOtp(e) {
       document.getElementById('otpStepVerify').style.display = 'block';
       document.getElementById('displayTargetPhone').textContent = '+91 ' + currentPhone;
 
-      if (data.data && data.data.mock_otp) {
-        document.getElementById('devOtpBox').style.display = 'block';
-        document.getElementById('mockOtpCode').textContent = data.data.mock_otp;
-      }
-
       startResendCountdown(30);
       document.getElementById('inputOtp').focus();
     } else {
@@ -588,11 +574,6 @@ async function handleSendOtp(e) {
   }
 }
 
-function autoFillMockOtp() {
-  const code = document.getElementById('mockOtpCode').textContent.trim();
-  document.getElementById('inputOtp').value = code;
-  document.getElementById('formVerifyOtp').requestSubmit();
-}
 
 async function handleVerifyOtp(e) {
   e.preventDefault();
@@ -667,9 +648,6 @@ async function resendOtp() {
     });
     const data = await res.json();
     if (data.success) {
-      if (data.data && data.data.mock_otp) {
-        document.getElementById('mockOtpCode').textContent = data.data.mock_otp;
-      }
       startResendCountdown(30);
     }
   } catch (err) {

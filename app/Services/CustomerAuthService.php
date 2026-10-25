@@ -80,13 +80,8 @@ class CustomerAuthService
             'created_at' => date('Y-m-d H:i:s'),
         ]);
 
-        // 4. Log OTP dispatch
-        if (function_exists('cielo_log')) {
-            cielo_log("OTP generated for +91 {$cleanPhone} (IP: {$ip})", 'info');
-        }
-
-        $provider = getenv('OTP_PROVIDER') ?: 'mock';
-        $isDev = (getenv('APP_ENV') ?: 'development') === 'development';
+        // 4. Dispatch via SMS gateway
+        SmsService::sendOtp($cleanPhone, $otp);
 
         $response = [
             'success' => true,
@@ -94,12 +89,6 @@ class CustomerAuthService
             'phone' => $cleanPhone,
             'expires_in' => 300,
         ];
-
-        // In dev / test / mock mode: provide mock_otp for automated testing and UI pre-fill
-        if ($isDev || $provider === 'mock') {
-            $response['mock_otp'] = $otp;
-            $response['mode'] = 'dev_mock';
-        }
 
         return $response;
     }
