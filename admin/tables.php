@@ -39,7 +39,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
         if ($action === 'add_table') {
             $name = trim((string)($_POST['table_number'] ?? ''));
             $capacity = max(1, (int)($_POST['capacity'] ?? 4));
-            $floor = trim((string)($_POST['floor'] ?? 'Ground Floor'));
+            $floor = '';
             $generateQr = !empty($_POST['generate_qr']);
 
             if ($name === '') {
@@ -54,7 +54,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     AuditLog::log((int)$staff['id'], 'table_created', 'tables', (int)$newId, [
                         'name' => $name,
                         'capacity' => $capacity,
-                        'floor' => $floor,
                         'qr_generated' => $generateQr,
                     ]);
                     $msg = "Table '{$name}' created successfully" . ($generateQr ? ' with an active QR code.' : '.');
@@ -64,7 +63,7 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $tableId = (int)($_POST['table_id'] ?? 0);
             $name = trim((string)($_POST['table_number'] ?? ''));
             $capacity = max(1, (int)($_POST['capacity'] ?? 4));
-            $floor = trim((string)($_POST['floor'] ?? 'Ground Floor'));
+            $floor = '';
             $isActive = isset($_POST['is_active']) ? (int)$_POST['is_active'] : 1;
 
             if ($tableId <= 0) {
@@ -81,7 +80,6 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                     AuditLog::log((int)$staff['id'], 'table_updated', 'tables', $tableId, [
                         'name' => $name,
                         'capacity' => $capacity,
-                        'floor' => $floor,
                         'is_active' => $isActive,
                     ]);
                     $msg = "Table '{$name}' updated successfully.";
@@ -747,7 +745,7 @@ $activeNav = 'tables';
     <div class="toolbar-row">
       <div class="search-box">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-        <input type="text" id="tableSearch" placeholder="Search table name, number or floor..." onkeyup="filterTables()">
+        <input type="text" id="tableSearch" placeholder="Search table name or number..." onkeyup="filterTables()">
       </div>
 
       <div class="filter-pills">
@@ -763,7 +761,6 @@ $activeNav = 'tables';
         <?php
           $tblId = (int)$tbl['id'];
           $name = (string)$tbl['table_number'];
-          $floor = (string)($tbl['floor'] ?? 'Ground Floor');
           $capacity = (int)($tbl['capacity'] ?? 4);
           $isActive = (int)($tbl['is_active'] ?? 0) === 1;
           $hasQr = Table::hasActiveQr($tbl);
@@ -773,7 +770,7 @@ $activeNav = 'tables';
 
           $statusClass = $hasQr && $isActive ? 'active-qr' : 'no-qr';
         ?>
-        <div class="table-card" data-table-name="<?= strtolower(e($name)) ?>" data-table-floor="<?= strtolower(e($floor)) ?>" data-status="<?= $statusClass ?>">
+        <div class="table-card" data-table-name="<?= strtolower(e($name)) ?>" data-status="<?= $statusClass ?>">
           
           <!-- Top Row -->
           <div>
@@ -782,7 +779,6 @@ $activeNav = 'tables';
                 <h3 class="table-title">
                   <?= e($name) ?>
                 </h3>
-                <span class="table-floor-tag"><?= e($floor) ?></span>
               </div>
 
               <div>
@@ -848,7 +844,7 @@ $activeNav = 'tables';
           <div class="table-card-actions">
             
             <!-- Edit / Rename Table -->
-            <button type="button" class="btn btn-outline btn-sm" onclick="openEditModal(<?= $tblId ?>, '<?= e(addslashes($name)) ?>', '<?= e(addslashes($floor)) ?>', <?= $capacity ?>, <?= $isActive ? 1 : 0 ?>)">
+            <button type="button" class="btn btn-outline btn-sm" onclick="openEditModal(<?= $tblId ?>, '<?= e(addslashes($name)) ?>', <?= $capacity ?>, <?= $isActive ? 1 : 0 ?>)">
               <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
               <span>Rename / Edit</span>
             </button>
@@ -912,7 +908,7 @@ $activeNav = 'tables';
   <div class="modal-overlay" id="addTableModal" onclick="closeModalOnBackdrop(event, this)">
     <div class="modal-dialog">
       <h2 class="modal-title">Add Dining Table</h2>
-      <p class="modal-subtitle">Give the table any custom name, designate floor, and issue an active QR code.</p>
+      <p class="modal-subtitle">Give the table a name or number, set seating capacity, and issue an active QR code.</p>
 
       <form method="POST" action="/admin/tables.php">
         <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
@@ -920,18 +916,12 @@ $activeNav = 'tables';
 
         <div class="form-group">
           <label class="form-label" for="addTableName">Table Name or Number *</label>
-          <input type="text" id="addTableName" name="table_number" class="form-input" placeholder="E.g. Table 11, Rooftop VIP, Balcony 2, Cabana A" required>
+          <input type="text" id="addTableName" name="table_number" class="form-input" placeholder="E.g. Table 11, Table A, Booth 3..." required>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="addTableFloor">Floor / Section</label>
-            <input type="text" id="addTableFloor" name="floor" class="form-input" placeholder="Ground Floor, Rooftop, Patio..." value="Ground Floor">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="addTableCapacity">Seating Capacity</label>
-            <input type="number" id="addTableCapacity" name="capacity" class="form-input" min="1" max="50" value="4">
-          </div>
+        <div class="form-group">
+          <label class="form-label" for="addTableCapacity">Seating Capacity</label>
+          <input type="number" id="addTableCapacity" name="capacity" class="form-input" min="1" max="50" value="4">
         </div>
 
         <div class="form-group">
@@ -953,7 +943,7 @@ $activeNav = 'tables';
   <div class="modal-overlay" id="editTableModal" onclick="closeModalOnBackdrop(event, this)">
     <div class="modal-dialog">
       <h2 class="modal-title">Rename & Edit Table</h2>
-      <p class="modal-subtitle">Update table name, floor section, capacity, and active status.</p>
+      <p class="modal-subtitle">Update table name, seating capacity, and active status.</p>
 
       <form method="POST" action="/admin/tables.php">
         <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
@@ -965,15 +955,9 @@ $activeNav = 'tables';
           <input type="text" id="editTableName" name="table_number" class="form-input" required>
         </div>
 
-        <div class="form-row">
-          <div class="form-group">
-            <label class="form-label" for="editTableFloor">Floor / Section</label>
-            <input type="text" id="editTableFloor" name="floor" class="form-input">
-          </div>
-          <div class="form-group">
-            <label class="form-label" for="editTableCapacity">Seating Capacity</label>
-            <input type="number" id="editTableCapacity" name="capacity" class="form-input" min="1" max="50">
-          </div>
+        <div class="form-group">
+          <label class="form-label" for="editTableCapacity">Seating Capacity</label>
+          <input type="number" id="editTableCapacity" name="capacity" class="form-input" min="1" max="50">
         </div>
 
         <div class="form-group">
@@ -1001,10 +985,9 @@ $activeNav = 'tables';
     function closeAddTableModal() {
       document.getElementById('addTableModal').classList.remove('open');
     }
-    function openEditModal(id, name, floor, capacity, isActive) {
+    function openEditModal(id, name, capacity, isActive) {
       document.getElementById('editTableId').value = id;
       document.getElementById('editTableName').value = name;
-      document.getElementById('editTableFloor').value = floor;
       document.getElementById('editTableCapacity').value = capacity;
       document.getElementById('editTableStatus').value = isActive ? '1' : '0';
       document.getElementById('editTableModal').classList.add('open');
@@ -1035,10 +1018,9 @@ $activeNav = 'tables';
 
       cards.forEach(card => {
         const name = card.getAttribute('data-table-name') || '';
-        const floor = card.getAttribute('data-table-floor') || '';
         const status = card.getAttribute('data-status') || '';
 
-        const matchesQuery = name.includes(q) || floor.includes(q);
+        const matchesQuery = name.includes(q);
         const matchesFilter = (currentFilter === 'all') || (status === currentFilter);
 
         if (matchesQuery && matchesFilter) {

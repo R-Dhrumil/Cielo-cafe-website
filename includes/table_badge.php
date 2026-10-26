@@ -27,7 +27,7 @@ $activeUser = $_SESSION['cielo_user'] ?? null;
             <line x1="18" x2="18" y1="16" y2="20"/>
           </svg>
           <span class="table-title">Table <?= e($activeTable['table_number']) ?></span>
-          <span class="table-floor"><?= e($activeTable['floor']) ?></span>
+          <span class="table-floor">Dine-In</span>
         </div>
 
         <!-- Loyalty Customer Tag -->

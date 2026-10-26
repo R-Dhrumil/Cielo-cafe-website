@@ -42,7 +42,7 @@ require dirname(__DIR__) . '/includes/header.php';
           <?= $activeTable ? "Table " . e($activeTable['table_number']) : "Counter / Takeaway" ?>
         </span>
         <span class="dining-chip-type">
-          <?= $activeTable ? e($activeTable['floor']) : "Guest" ?>
+          <?= $activeTable ? "Dine-In" : "Guest" ?>
         </span>
       </div>
     </div>

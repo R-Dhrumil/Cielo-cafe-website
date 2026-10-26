@@ -116,7 +116,7 @@ try {
             'order_number' => (string)$order['order_number'],
             'status' => (string)$order['status'],
             'table_number' => (string)($table['table_number'] ?? 'Counter'),
-            'floor' => (string)($table['floor'] ?? 'Ground Floor'),
+            'floor' => '',
             'created_at' => (string)$order['created_at'],
             'created_time' => date('h:i A', $createdTimestamp),
             'elapsed_minutes' => $elapsedMinutes,

@@ -40,7 +40,7 @@ class TableSessionService
         $sessionData = [
             'id' => (int)$table['id'],
             'table_number' => (string)$table['table_number'],
-            'floor' => (string)($table['floor'] ?? 'Ground Floor'),
+            'floor' => (string)($table['floor'] ?? ''),
             'capacity' => (int)($table['capacity'] ?? 4),
             'qr_token' => (string)$table['qr_token'],
             'verified_at' => time(),
@@ -96,7 +96,7 @@ class TableSessionService
                 // Keep session updated if admin renames table or floor
                 if ($sess['table_number'] !== (string)$dbTable['table_number']) {
                     $_SESSION[self::SESSION_KEY]['table_number'] = (string)$dbTable['table_number'];
-                    $_SESSION[self::SESSION_KEY]['floor'] = (string)($dbTable['floor'] ?? 'Ground Floor');
+                    $_SESSION[self::SESSION_KEY]['floor'] = (string)($dbTable['floor'] ?? '');
                     return $_SESSION[self::SESSION_KEY];
                 }
 

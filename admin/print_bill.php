@@ -168,7 +168,7 @@ $upiQrSvg = QrCodeGenerator::generateSvg($upiUri, 140, '#000000', '#FFFFFF', 1);
   </div>
   <div class="meta-row">
     <span><strong>Date:</strong> <?= date('d-M-y h:i A', strtotime($order['created_at'])) ?></span>
-    <span><?= e($table['floor'] ?? '') ?></span>
+    <span>Dine-In</span>
   </div>
   <?php if ($user): ?>
     <div class="meta-row">

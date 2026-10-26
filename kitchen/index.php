@@ -329,7 +329,7 @@ $staff = AuthService::requireRole(['kitchen', 'admin', 'owner'], '/admin/login.p
             <div class="ticket-header">
               <div>
                 <h3 class="table-callout">TABLE ${t.table_number}</h3>
-                <div class="table-floor">${t.floor} · ${t.order_number}</div>
+                <div class="table-floor">Order #${t.order_number}</div>
               </div>
               <div class="ticket-meta">
                 <span class="timer-badge ${timerClass}">${t.elapsed_minutes}m ago</span>

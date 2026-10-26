@@ -44,7 +44,7 @@ class Table extends Model
     public static function createTable(
         string $name,
         int $capacity = 4,
-        string $floor = 'Ground Floor',
+        string $floor = '',
         bool $generateQr = true
     ): int|string {
         $cleanName = trim($name);

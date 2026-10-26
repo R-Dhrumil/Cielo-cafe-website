@@ -70,7 +70,7 @@ require dirname(__DIR__) . '/includes/header.php';
 
           <div style="text-align: right;">
             <span style="display: inline-flex; align-items: center; gap: 0.4rem; background: rgba(26,20,18,0.05); padding: 0.35rem 0.85rem; border-radius: 999px; font-size: 0.82rem; font-weight: 600; color: var(--text-espresso, #1A1412);">
-              Table <?= e($table['table_number'] ?? 'Counter') ?> · <?= e($table['floor'] ?? 'Ground Floor') ?>
+              Table <?= e($table['table_number'] ?? 'Counter') ?>
             </span>
           </div>
         </div>

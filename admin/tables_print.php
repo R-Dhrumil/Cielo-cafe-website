@@ -263,7 +263,7 @@ if ($filterId) {
 
         <div>
           <h3 class="table-headline"><?= str_starts_with(strtolower($t['table_number']), 'table') ? strtoupper(e($t['table_number'])) : 'TABLE ' . e($t['table_number']) ?></h3>
-          <span class="table-location"><?= e($t['floor'] ?? 'Ground Floor') ?> · Capacity <?= (int)$t['capacity'] ?></span>
+          <span class="table-location">Dine-In Seating · Capacity <?= (int)$t['capacity'] ?></span>
           <p class="instruction-text">
             Point your phone camera at the QR code to explore the artisanal menu, order directly & earn loyalty points.
           </p>

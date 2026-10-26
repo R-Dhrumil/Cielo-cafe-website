@@ -37,7 +37,7 @@ $activeTable = TableSessionService::getActiveTable();
         <h3>Your Order</h3>
         <span class="drawer-table-tag">
           <?php if ($activeTable): ?>
-            Table <?= e($activeTable['table_number']) ?> · <?= e($activeTable['floor']) ?>
+            Table <?= e($activeTable['table_number']) ?>
           <?php else: ?>
             Guest / Counter Order
           <?php endif; ?>

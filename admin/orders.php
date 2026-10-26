@@ -700,77 +700,106 @@ $activeNav = 'orders';
       border-color: rgba(107, 154, 196, 0.4);
     }
 
-    /* Order Card Header */
+    /* Order Card Header (2-Row Zero-Collision Layout) */
     .order-card-header {
-      padding: 1.25rem 1.5rem;
+      padding: 0.95rem 1.25rem;
       background: #FAFAFA;
       border-bottom: 1px solid var(--border-warm);
       display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 1rem;
+      flex-direction: column;
+      gap: 0.55rem;
     }
 
-    .order-header-left {
+    .header-primary-row {
       display: flex;
+      justify-content: space-between;
       align-items: center;
       gap: 0.75rem;
     }
 
-    .table-badge {
+    .header-left-meta {
+      display: flex;
+      align-items: center;
+      gap: 0.65rem;
+      min-width: 0;
+    }
+
+    .pos-table-badge {
       background: var(--text-espresso);
       color: #F7F4EE;
-      font-family: 'Fraunces', serif;
-      font-size: 1.15rem;
-      font-weight: 700;
-      padding: 0.4rem 0.85rem;
-      border-radius: 10px;
+      padding: 0.35rem 0.65rem;
+      border-radius: 8px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      min-width: 44px;
+      flex-shrink: 0;
+      box-shadow: 0 2px 6px rgba(26, 20, 18, 0.12);
+    }
+
+    .table-badge-lbl {
+      font-size: 0.52rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: rgba(247, 244, 238, 0.65);
+      font-weight: 700;
       line-height: 1;
     }
 
-    .table-sub {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      font-size: 0.55rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-      color: rgba(247, 244, 238, 0.65);
-      margin-top: 2px;
-    }
-
-    .order-identity {
-      display: flex;
-      flex-direction: column;
-    }
-
-    .order-num-text {
-      font-size: 0.95rem;
+    .table-badge-num {
+      font-family: 'Fraunces', serif;
+      font-size: 1.18rem;
       font-weight: 700;
-      color: var(--text-espresso);
+      line-height: 1.1;
+      color: #FFFFFF;
+    }
+
+    .order-token-wrap {
       display: flex;
       align-items: center;
       gap: 0.35rem;
+      min-width: 0;
     }
 
-    .order-time-text {
-      font-size: 0.75rem;
+    .order-token {
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: var(--text-espresso);
+      letter-spacing: -0.01em;
+      font-family: 'Plus Jakarta Sans', monospace, sans-serif;
+      white-space: nowrap;
+    }
+
+    .btn-copy-token {
+      background: none;
+      border: none;
       color: var(--text-muted);
-      margin-top: 2px;
+      cursor: pointer;
+      padding: 2px 4px;
+      border-radius: 4px;
+      display: inline-flex;
+      align-items: center;
+      transition: all 0.15s ease;
+    }
+
+    .btn-copy-token:hover {
+      color: var(--text-espresso);
+      background: rgba(26, 20, 18, 0.08);
     }
 
     /* Status Badges */
     .status-badge {
-      font-size: 0.75rem;
+      font-size: 0.72rem;
       font-weight: 700;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      padding: 0.35rem 0.75rem;
+      padding: 0.32rem 0.7rem;
       border-radius: 999px;
       display: inline-flex;
       align-items: center;
       gap: 0.35rem;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .status-placed {
@@ -786,15 +815,15 @@ $activeNav = 'orders';
     }
 
     .status-preparing {
-      background: rgba(107, 154, 196, 0.14);
+      background: rgba(107, 154, 196, 0.15);
       color: var(--accent-sky-deep);
-      border: 1px solid rgba(107, 154, 196, 0.3);
+      border: 1px solid rgba(107, 154, 196, 0.35);
     }
 
     .status-ready {
-      background: rgba(206, 152, 60, 0.14);
+      background: rgba(206, 152, 60, 0.15);
       color: #9E6B08;
-      border: 1px solid rgba(206, 152, 60, 0.3);
+      border: 1px solid rgba(206, 152, 60, 0.35);
     }
 
     .status-completed {
@@ -808,34 +837,99 @@ $activeNav = 'orders';
       color: #777777;
     }
 
+    /* Header Timing Row (Dedicated line, 0% chance of overlap) */
+    .header-time-row {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+      border-top: 1px dashed rgba(26, 20, 18, 0.07);
+      padding-top: 0.45rem;
+      width: 100%;
+    }
+
+    .time-placed {
+      color: var(--text-muted);
+      font-weight: 500;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+    }
+
+    .time-sep {
+      opacity: 0.4;
+    }
+
+    .badge-delayed {
+      background: rgba(201, 106, 82, 0.12);
+      color: #C96A52;
+      font-weight: 700;
+      padding: 0.12rem 0.45rem;
+      border-radius: 4px;
+      border: 1px solid rgba(201, 106, 82, 0.25);
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      font-size: 0.72rem;
+    }
+
+    .badge-ontime {
+      color: var(--text-muted);
+      font-weight: 600;
+    }
+
     /* Card Body */
     .order-card-body {
-      padding: 1.25rem 1.5rem;
+      padding: 1.15rem 1.35rem;
       flex: 1;
     }
 
-    .patron-row {
+    .patron-strip {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding-bottom: 0.85rem;
-      margin-bottom: 0.85rem;
-      border-bottom: 1px dashed var(--border-warm);
-      font-size: 0.82rem;
+      gap: 0.65rem;
+      padding: 0.45rem 0.75rem;
+      background: rgba(107, 154, 196, 0.08);
+      border: 1px solid rgba(107, 154, 196, 0.2);
+      border-radius: 8px;
+      margin-bottom: 0.95rem;
+      font-size: 0.78rem;
     }
 
     .patron-name {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-espresso);
       display: flex;
       align-items: center;
-      gap: 0.35rem;
+      gap: 0.4rem;
+      min-width: 0;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      flex: 1;
     }
 
-    .patron-phone {
-      color: var(--accent-sky-deep);
+    .patron-wa-link {
+      color: #2D6A4F;
       text-decoration: none;
-      font-weight: 500;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.25rem;
+      background: #FFFFFF;
+      padding: 0.18rem 0.5rem;
+      border-radius: 5px;
+      border: 1px solid rgba(45, 106, 79, 0.25);
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .patron-wa-link:hover {
+      background: #2D6A4F;
+      color: #FFFFFF;
     }
 
     /* Items List */
@@ -843,7 +937,9 @@ $activeNav = 'orders';
       display: flex;
       flex-direction: column;
       gap: 0.65rem;
-      margin-bottom: 1rem;
+      margin-bottom: 0.5rem;
+      max-height: 220px;
+      overflow-y: auto;
     }
 
     .item-row {
@@ -851,23 +947,26 @@ $activeNav = 'orders';
       justify-content: space-between;
       align-items: flex-start;
       font-size: 0.88rem;
+      gap: 0.5rem;
     }
 
     .item-left {
       display: flex;
       align-items: flex-start;
       gap: 0.5rem;
+      flex: 1;
     }
 
     .item-qty-tag {
-      background: var(--bg-cream);
-      border: 1px solid var(--border-warm);
-      color: var(--text-espresso);
+      background: var(--text-espresso);
+      color: #FFFFFF;
       font-weight: 700;
-      font-size: 0.75rem;
-      padding: 0.1rem 0.4rem;
+      font-size: 0.72rem;
+      padding: 0.15rem 0.42rem;
       border-radius: 6px;
-      margin-top: 1px;
+      line-height: 1;
+      margin-top: 2px;
+      flex-shrink: 0;
     }
 
     .item-title-wrap {
@@ -878,6 +977,7 @@ $activeNav = 'orders';
     .item-title {
       font-weight: 600;
       color: var(--text-espresso);
+      line-height: 1.25;
     }
 
     .item-addon-tag {
@@ -895,20 +995,33 @@ $activeNav = 'orders';
     }
 
     .item-price {
-      font-weight: 600;
+      font-weight: 700;
       color: var(--text-espresso);
       font-size: 0.88rem;
+      white-space: nowrap;
+    }
+
+    .direct-charge-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 0.65rem 0.85rem;
+      background: var(--bg-cream);
+      border-radius: 8px;
+      border: 1px solid var(--border-warm);
+      font-size: 0.84rem;
     }
 
     /* Kitchen Special Instructions */
     .kitchen-callout {
-      background: var(--accent-terracotta-soft);
+      background: #FEF3EE;
+      border: 1px solid rgba(201, 106, 82, 0.25);
       border-left: 3px solid var(--accent-terracotta);
-      border-radius: 6px;
-      padding: 0.55rem 0.85rem;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
       margin-top: 0.75rem;
       font-size: 0.78rem;
-      color: #963D27;
+      color: #8C2C16;
       display: flex;
       align-items: center;
       gap: 0.45rem;
@@ -916,115 +1029,207 @@ $activeNav = 'orders';
 
     /* Card Footer: Financials & Action Buttons */
     .order-card-footer {
-      padding: 1.25rem 1.5rem;
+      padding: 1.15rem 1.35rem;
       background: #FAFAFA;
       border-top: 1px solid var(--border-warm);
+      display: flex;
+      flex-direction: column;
+      gap: 0.65rem;
     }
 
     .financials-row {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 1rem;
+      padding-bottom: 0.6rem;
+      border-bottom: 1px solid var(--border-warm);
     }
 
-    .payment-tag {
-      font-size: 0.75rem;
+    .payment-pill {
+      font-size: 0.72rem;
       font-weight: 700;
-      padding: 0.25rem 0.65rem;
+      padding: 0.25rem 0.6rem;
       border-radius: 6px;
       text-transform: uppercase;
+      letter-spacing: 0.04em;
+      display: inline-flex;
+      align-items: center;
+      gap: 0.35rem;
     }
 
-    .payment-unpaid {
-      background: rgba(201, 106, 82, 0.15);
+    .payment-pill.unpaid {
+      background: rgba(201, 106, 82, 0.12);
       color: var(--accent-terracotta);
+      border: 1px solid rgba(201, 106, 82, 0.25);
     }
 
-    .payment-paid {
-      background: rgba(45, 106, 79, 0.15);
+    .payment-pill.paid {
+      background: rgba(45, 106, 79, 0.12);
       color: #2D6A4F;
+      border: 1px solid rgba(45, 106, 79, 0.25);
     }
 
     .grand-total-wrap {
-      text-align: right;
+      display: flex;
+      align-items: baseline;
+      gap: 0.4rem;
     }
 
     .total-label {
       font-size: 0.7rem;
       text-transform: uppercase;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.06em;
       color: var(--text-muted);
+      font-weight: 600;
     }
 
     .total-amount {
       font-family: 'Fraunces', serif;
-      font-size: 1.45rem;
+      font-size: 1.35rem;
       font-weight: 700;
       color: var(--text-espresso);
-      line-height: 1.1;
+      line-height: 1;
     }
 
-    /* Action Buttons */
-    .actions-grid {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 0.5rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .btn-action {
-      padding: 0.65rem 0.85rem;
+    /* Primary Flow Action (Top Priority Kitchen Step) */
+    .btn-primary-flow {
+      width: 100%;
+      padding: 0.68rem 1rem;
       border-radius: 10px;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
       font-family: inherit;
       cursor: pointer;
       display: flex;
       align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      border: 1px solid transparent;
-      transition: all 0.15s ease;
-      text-decoration: none;
+      justify-content: space-between;
+      border: none;
+      transition: all 0.18s ease;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     }
 
-    .btn-settle-cash {
-      background: var(--text-espresso);
+    .btn-primary-flow:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 4px 14px rgba(0,0,0,0.12);
+    }
+
+    .btn-flow-prep {
+      background: #4A7A9F;
       color: #FFFFFF;
     }
 
-    .btn-settle-cash:hover {
-      background: #2C221F;
-      transform: translateY(-1px);
+    .btn-flow-prep:hover {
+      background: #3B6787;
     }
 
-    .btn-settle-upi {
+    .btn-flow-ready {
+      background: #B8860B;
+      color: #FFFFFF;
+    }
+
+    .btn-flow-ready:hover {
+      background: #996F07;
+    }
+
+    .btn-flow-served {
       background: #2D6A4F;
       color: #FFFFFF;
     }
 
-    .btn-settle-upi:hover {
+    .btn-flow-served:hover {
+      background: #23543E;
+    }
+
+    .flow-arrow {
+      font-size: 1rem;
+      line-height: 1;
+    }
+
+    .completed-flow-banner {
+      background: rgba(45, 106, 79, 0.08);
+      border: 1px dashed rgba(45, 106, 79, 0.3);
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #2D6A4F;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.45rem;
+    }
+
+    .cancelled-flow-banner {
+      background: #F3F3F3;
+      border: 1px dashed #CCCCCC;
+      border-radius: 8px;
+      padding: 0.55rem 0.75rem;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #777777;
+      text-align: center;
+    }
+
+    /* Fast Settle Row (When Unpaid) */
+    .settle-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 0.45rem;
+    }
+
+    .btn-quick-settle {
+      width: 100%;
+      padding: 0.58rem 0.75rem;
+      border-radius: 8px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      font-family: inherit;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.35rem;
+      transition: all 0.15s ease;
+      border: 1px solid transparent;
+    }
+
+    .btn-quick-settle.cash {
+      background: var(--text-espresso);
+      color: #FFFFFF;
+    }
+
+    .btn-quick-settle.cash:hover {
+      background: #2D2421;
+      transform: translateY(-1px);
+    }
+
+    .btn-quick-settle.upi {
+      background: #2D6A4F;
+      color: #FFFFFF;
+    }
+
+    .btn-quick-settle.upi:hover {
       background: #23543E;
       transform: translateY(-1px);
     }
 
-    .secondary-actions {
+    /* Bottom Utility Row (Receipt, KOT, Cancel) */
+    .utility-tools-row {
       display: flex;
-      gap: 0.5rem;
+      align-items: center;
+      gap: 0.4rem;
     }
 
-    .btn-print-action {
+    .btn-util {
       flex: 1;
       background: #FFFFFF;
       border: 1px solid var(--border-warm);
       color: var(--text-espresso);
-      padding: 0.5rem;
-      font-size: 0.75rem;
+      padding: 0.42rem 0.5rem;
+      font-size: 0.74rem;
       font-weight: 600;
-      border-radius: 8px;
+      border-radius: 6px;
       text-decoration: none;
-      text-align: center;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -1032,82 +1237,22 @@ $activeNav = 'orders';
       transition: all 0.15s ease;
     }
 
-    .btn-print-action:hover {
+    .btn-util:hover {
       background: var(--bg-cream);
       border-color: rgba(26, 20, 18, 0.2);
     }
 
-    .btn-clean-stale {
-      background: rgba(201, 106, 82, 0.12);
-      border: 1px solid rgba(201, 106, 82, 0.3);
+    .btn-util.cancel {
+      flex: 0 0 34px;
+      color: var(--text-muted);
+      border-color: var(--border-warm);
+      cursor: pointer;
+    }
+
+    .btn-util.cancel:hover {
+      background: rgba(201, 106, 82, 0.1);
+      border-color: rgba(201, 106, 82, 0.3);
       color: var(--accent-terracotta);
-      padding: 0.5rem 0.95rem;
-      border-radius: 999px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.4rem;
-      font-family: inherit;
-      transition: all 0.2s ease;
-      text-decoration: none;
-    }
-
-    .btn-clean-stale:hover {
-      background: var(--accent-terracotta);
-      color: #FFFFFF;
-      box-shadow: 0 4px 12px rgba(201, 106, 82, 0.25);
-    }
-
-    .btn-copy-order {
-      background: none;
-      border: none;
-      color: var(--text-muted);
-      cursor: pointer;
-      padding: 3px 5px;
-      border-radius: 4px;
-      display: inline-flex;
-      align-items: center;
-      transition: all 0.15s ease;
-    }
-
-    .btn-copy-order:hover {
-      color: var(--text-espresso);
-      background: rgba(26, 20, 18, 0.08);
-    }
-
-    .empty-items-row {
-      padding: 0.65rem 0.85rem;
-      background: var(--bg-cream);
-      border: 1px dashed var(--border-warm);
-      border-radius: 8px;
-      font-size: 0.8rem;
-      color: var(--text-muted);
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-    }
-
-    .settled-badge-box {
-      background: rgba(45, 106, 79, 0.08);
-      border: 1px dashed rgba(45, 106, 79, 0.3);
-      border-radius: 8px;
-      padding: 0.5rem 0.75rem;
-      font-size: 0.78rem;
-      font-weight: 700;
-      color: #2D6A4F;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 0.4rem;
-      margin-bottom: 0.5rem;
-    }
-
-    .btn-cancel-trigger:hover {
-      background: rgba(201, 106, 82, 0.1) !important;
-      border-color: rgba(201, 106, 82, 0.3) !important;
-      color: var(--accent-terracotta) !important;
     }
 
     /* Modal Dialog for Order Cancellation */
@@ -1377,6 +1522,18 @@ $activeNav = 'orders';
               $statusClass = 'status-' . htmlspecialchars((string)$order['status']);
               $ageText = formatOrderAge((string)$order['created_at']);
               $itemNamesList = implode(', ', array_map(fn($it) => $it['item_name'] ?? '', $items));
+              
+              // Extract short unique order token (e.g. 13B8 from CIELO-261026-13B8)
+              $lastDash = strrpos((string)$order['order_number'], '-');
+              $shortOrderNum = ($lastDash !== false) ? substr((string)$order['order_number'], $lastDash + 1) : (string)$order['order_number'];
+              
+              // Delay warning threshold (30 mins for active uncompleted orders)
+              $orderAgeSec = time() - strtotime((string)$order['created_at']);
+              $isDelayed = ($orderAgeSec > 1800 && !in_array($order['status'], ['completed', 'cancelled'], true));
+              
+              // Only display patron row if there is a real name or phone (hide empty "Guest Diner / Walk-in")
+              $hasCustomName = !empty($user['name']) && $user['name'] !== 'Guest Diner';
+              $hasPhone = !empty($user['phone']);
             ?>
             <div class="order-card" 
                  data-order-num="<?= e($order['order_number']) ?>" 
@@ -1387,56 +1544,67 @@ $activeNav = 'orders';
               
               <!-- Card Header -->
               <div class="order-card-header">
-                <div class="order-header-left">
-                  <div class="table-badge">
-                    <span><?= e($table['table_number'] ?? 'T-??') ?></span>
-                    <span class="table-sub"><?= e($table['floor'] ?? 'Floor') ?></span>
-                  </div>
-                  <div class="order-identity">
-                    <span class="order-num-text">
-                      #<?= e($order['order_number']) ?>
-                      <button type="button" class="btn-copy-order" onclick="copyOrderNum('<?= e($order['order_number']) ?>', this)" title="Copy Order Number">
+                <!-- Row 1: Table Badge & Order ID on Left, Status Badge on Right -->
+                <div class="header-primary-row">
+                  <div class="header-left-meta">
+                    <div class="pos-table-badge">
+                      <span class="table-badge-lbl">TBL</span>
+                      <span class="table-badge-num"><?= e($table['table_number'] ?? '??') ?></span>
+                    </div>
+                    <div class="order-token-wrap">
+                      <span class="order-token">#<?= e($shortOrderNum) ?></span>
+                      <button type="button" class="btn-copy-token" onclick="copyOrderNum('<?= e($order['order_number']) ?>', this)" title="Copy full ID: <?= e($order['order_number']) ?>">
                         <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
                       </button>
-                    </span>
-                    <span class="order-time-text">
-                      <?= date('h:i A', strtotime((string)$order['created_at'])) ?> · <strong><?= $ageText ?></strong>
-                    </span>
+                    </div>
                   </div>
+
+                  <span class="status-badge <?= $statusClass ?>">
+                    <?php if ($order['status'] === 'placed'): ?>
+                      ● New Order
+                    <?php elseif ($order['status'] === 'preparing'): ?>
+                      🍳 Preparing
+                    <?php elseif ($order['status'] === 'ready'): ?>
+                      🔔 Ready to Serve
+                    <?php elseif ($order['status'] === 'completed'): ?>
+                      ✔ Completed
+                    <?php elseif ($order['status'] === 'cancelled'): ?>
+                      ✕ Cancelled
+                    <?php else: ?>
+                      <?= ucfirst((string)$order['status']) ?>
+                    <?php endif; ?>
+                  </span>
                 </div>
 
-                <span class="status-badge <?= $statusClass ?>">
-                  <?php if ($order['status'] === 'placed'): ?>
-                    ● New Order
-                  <?php elseif ($order['status'] === 'preparing'): ?>
-                    🍳 Preparing
-                  <?php elseif ($order['status'] === 'ready'): ?>
-                    🔔 Ready to Serve
-                  <?php elseif ($order['status'] === 'completed'): ?>
-                    ✔ Completed
-                  <?php elseif ($order['status'] === 'cancelled'): ?>
-                    ✕ Cancelled
-                  <?php else: ?>
-                    <?= ucfirst((string)$order['status']) ?>
-                  <?php endif; ?>
-                </span>
+                <!-- Row 2: Dedicated Time Line (Full Width, Zero Collision) -->
+                <div class="header-time-row">
+                  <span class="time-placed">
+                    <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+                    <?= date('h:i A', strtotime((string)$order['created_at'])) ?>
+                  </span>
+                  <span class="time-sep">·</span>
+                  <span class="<?= $isDelayed ? 'badge-delayed' : 'badge-ontime' ?>">
+                    <?= $isDelayed ? '⏳ ' : '' ?><?= $ageText ?>
+                  </span>
+                </div>
               </div>
 
               <!-- Card Body -->
               <div class="order-card-body">
-                <div class="patron-row">
-                  <div class="patron-name">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    <span><?= e($user['name'] ?? 'Guest Diner') ?></span>
+                <?php if ($hasCustomName || $hasPhone): ?>
+                  <div class="patron-strip">
+                    <div class="patron-name">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      <span><?= e($user['name'] ?? 'Customer') ?></span>
+                    </div>
+                    <?php if ($hasPhone): ?>
+                      <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', (string)$user['phone']) ?>" target="_blank" class="patron-wa-link" title="Chat on WhatsApp">
+                        <span>+91 <?= e((string)$user['phone']) ?></span>
+                        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                      </a>
+                    <?php endif; ?>
                   </div>
-                  <?php if (!empty($user['phone'])): ?>
-                    <a href="https://wa.me/91<?= preg_replace('/[^0-9]/', '', (string)$user['phone']) ?>" target="_blank" class="patron-phone" title="Chat on WhatsApp">
-                      +91 <?= e((string)$user['phone']) ?> ↗
-                    </a>
-                  <?php else: ?>
-                    <span style="color:var(--text-muted); font-size:0.75rem;">Walk-in</span>
-                  <?php endif; ?>
-                </div>
+                <?php endif; ?>
 
                 <!-- Items Breakdown -->
                 <?php if (!empty($items)): ?>
@@ -1447,7 +1615,7 @@ $activeNav = 'orders';
                       ?>
                       <div class="item-row">
                         <div class="item-left">
-                          <span class="item-qty-tag"><?= (int)$it['quantity'] ?>x</span>
+                          <span class="item-qty-tag"><?= (int)$it['quantity'] ?>×</span>
                           <div class="item-title-wrap">
                             <span class="item-title"><?= e($it['item_name']) ?></span>
                             <?php if (!empty($addons)): ?>
@@ -1466,9 +1634,12 @@ $activeNav = 'orders';
                   </div>
                 <?php else: ?>
                   <div class="items-container">
-                    <div class="empty-items-row">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-                      <span>Direct Charge Order (<?= Money::format((int)$order['total_paise']) ?>)</span>
+                    <div class="direct-charge-row">
+                      <div style="display:flex; align-items:center; gap:0.45rem;">
+                        <span style="font-size:1rem;">⚡</span>
+                        <span style="font-weight:600; font-size:0.86rem; color:var(--text-espresso);">Direct Table Charge</span>
+                      </div>
+                      <span class="item-price"><?= Money::format((int)$order['total_paise']) ?></span>
                     </div>
                   </div>
                 <?php endif; ?>
@@ -1484,26 +1655,64 @@ $activeNav = 'orders';
 
               <!-- Card Footer -->
               <div class="order-card-footer">
+                <!-- Financials Line -->
                 <div class="financials-row">
-                  <span class="payment-tag <?= $isPaid ? 'payment-paid' : 'payment-unpaid' ?>">
-                    <?= $isPaid ? ('PAID · ' . strtoupper(str_replace('_', ' ', (string)$order['payment_method']))) : 'UNSETTLED' ?>
+                  <span class="payment-pill <?= $isPaid ? 'paid' : 'unpaid' ?>">
+                    <?= $isPaid ? ('✔ PAID · ' . strtoupper(str_replace('_', ' ', (string)$order['payment_method']))) : '● UNPAID' ?>
                   </span>
                   <div class="grand-total-wrap">
-                    <div class="total-label">Total Amount</div>
-                    <div class="total-amount"><?= Money::format((int)$order['total_paise']) ?></div>
+                    <span class="total-label">Total</span>
+                    <span class="total-amount"><?= Money::format((int)$order['total_paise']) ?></span>
                   </div>
                 </div>
 
-                <!-- Quick Settlement Buttons (If not yet paid and not cancelled) -->
+                <!-- Primary Operational Action (Kitchen Workflow) -->
+                <?php if ($order['status'] !== 'completed' && $order['status'] !== 'cancelled'): ?>
+                  <form method="POST" style="margin:0;">
+                    <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
+                    <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
+                    <input type="hidden" name="action" value="status">
+                    <?php if ($order['status'] === 'placed'): ?>
+                      <input type="hidden" name="new_status" value="preparing">
+                      <button type="submit" class="btn-primary-flow btn-flow-prep">
+                        <span>👨‍🍳 Start Preparing Order</span>
+                        <span class="flow-arrow">➔</span>
+                      </button>
+                    <?php elseif ($order['status'] === 'preparing'): ?>
+                      <input type="hidden" name="new_status" value="ready">
+                      <button type="submit" class="btn-primary-flow btn-flow-ready">
+                        <span>🔔 Mark Ready to Serve</span>
+                        <span class="flow-arrow">➔</span>
+                      </button>
+                    <?php elseif ($order['status'] === 'ready'): ?>
+                      <input type="hidden" name="new_status" value="completed">
+                      <button type="submit" class="btn-primary-flow btn-flow-served">
+                        <span>🍽️ Mark Served & Complete</span>
+                        <span class="flow-arrow">✔</span>
+                      </button>
+                    <?php endif; ?>
+                  </form>
+                <?php elseif ($order['status'] === 'completed'): ?>
+                  <div class="completed-flow-banner">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
+                    <span>Order Served & Completed</span>
+                  </div>
+                <?php elseif ($order['status'] === 'cancelled'): ?>
+                  <div class="cancelled-flow-banner">
+                    ✕ Order Cancelled <?= !empty($order['cancelled_reason']) ? '· ' . e($order['cancelled_reason']) : '' ?>
+                  </div>
+                <?php endif; ?>
+
+                <!-- Settle Bill Row (Shown when Unpaid & Not Cancelled) -->
                 <?php if (!$isPaid && $order['status'] !== 'cancelled'): ?>
-                  <div class="actions-grid">
+                  <div class="settle-row">
                     <form method="POST" style="margin:0;">
                       <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
                       <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
                       <input type="hidden" name="action" value="settle">
                       <input type="hidden" name="payment_method" value="counter_cash">
-                      <button type="submit" class="btn-action btn-settle-cash" onclick="return confirm('Settle Order #<?= e($order['order_number']) ?> with CASH payment?')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
+                      <button type="submit" class="btn-quick-settle cash" onclick="return confirm('Settle Order #<?= e($order['order_number']) ?> with CASH payment?')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="6" width="20" height="12" rx="2"/><circle cx="12" cy="12" r="2"/></svg>
                         <span>Settle Cash</span>
                       </button>
                     </form>
@@ -1513,55 +1722,28 @@ $activeNav = 'orders';
                       <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
                       <input type="hidden" name="action" value="settle">
                       <input type="hidden" name="payment_method" value="counter_upi">
-                      <button type="submit" class="btn-action btn-settle-upi" onclick="return confirm('Settle Order #<?= e($order['order_number']) ?> with UPI payment?')">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 10 12 15 21 10"/></svg>
+                      <button type="submit" class="btn-quick-settle upi" onclick="return confirm('Settle Order #<?= e($order['order_number']) ?> with UPI payment?')">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="5" width="18" height="14" rx="2"/><polyline points="3 10 12 15 21 10"/></svg>
                         <span>Settle UPI</span>
                       </button>
                     </form>
                   </div>
-                <?php elseif ($isPaid): ?>
-                  <div class="settled-badge-box">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-                    <span>Bill Settled (<?= strtoupper(str_replace('_', ' ', (string)$order['payment_method'])) ?>)</span>
-                  </div>
                 <?php endif; ?>
 
-                <!-- Print & Status Transitions -->
-                <div class="secondary-actions">
-                  <a href="/admin/print_bill.php?order_id=<?= (int)$order['id'] ?>&autoprint=1" target="_blank" class="btn-print-action" title="Print Customer Tax Bill">
+                <!-- Bottom Utility Tools (Receipt, KOT, Cancel) -->
+                <div class="utility-tools-row">
+                  <a href="/admin/print_bill.php?order_id=<?= (int)$order['id'] ?>&autoprint=1" target="_blank" class="btn-util" title="Print Customer Tax Bill">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                    <span>Receipt</span>
+                    <span>Bill</span>
                   </a>
 
-                  <a href="/kitchen/print_kot.php?order_id=<?= (int)$order['id'] ?>&autoprint=1" target="_blank" class="btn-print-action" title="Print Kitchen Order Ticket">
+                  <a href="/kitchen/print_kot.php?order_id=<?= (int)$order['id'] ?>&autoprint=1" target="_blank" class="btn-util" title="Print Kitchen Order Ticket">
                     <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
                     <span>KOT</span>
                   </a>
 
                   <?php if ($order['status'] !== 'completed' && $order['status'] !== 'cancelled'): ?>
-                    <form method="POST" style="margin:0; flex:1;">
-                      <input type="hidden" name="csrf_token" value="<?= e($csrfToken) ?>">
-                      <input type="hidden" name="order_id" value="<?= (int)$order['id'] ?>">
-                      <input type="hidden" name="action" value="status">
-                      <?php if ($order['status'] === 'placed'): ?>
-                        <input type="hidden" name="new_status" value="preparing">
-                        <button type="submit" class="btn-print-action" style="width:100%; color:var(--accent-sky-deep);">
-                          Start Prep ➔
-                        </button>
-                      <?php elseif ($order['status'] === 'preparing'): ?>
-                        <input type="hidden" name="new_status" value="ready">
-                        <button type="submit" class="btn-print-action" style="width:100%; color:#9E6B08;">
-                          Mark Ready 🔔
-                        </button>
-                      <?php elseif ($order['status'] === 'ready'): ?>
-                        <input type="hidden" name="new_status" value="completed">
-                        <button type="submit" class="btn-print-action" style="width:100%; color:#2D6A4F; font-weight:700;">
-                          Served ✔
-                        </button>
-                      <?php endif; ?>
-                    </form>
-
-                    <button type="button" class="btn-print-action btn-cancel-trigger" style="color:var(--accent-terracotta);" onclick="promptCancelOrder(<?= (int)$order['id'] ?>, '<?= e($order['order_number']) ?>')" title="Cancel this order">
+                    <button type="button" class="btn-util cancel" onclick="promptCancelOrder(<?= (int)$order['id'] ?>, '<?= e($order['order_number']) ?>')" title="Cancel this order">
                       ✕
                     </button>
                   <?php endif; ?>

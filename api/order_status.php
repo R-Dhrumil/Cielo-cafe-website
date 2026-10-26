@@ -80,7 +80,7 @@ try {
         'payment_status' => (string)$order['payment_status'],
         'payment_method' => (string)$order['payment_method'],
         'table_number' => (string)($table['table_number'] ?? 'Counter'),
-        'floor' => (string)($table['floor'] ?? 'Ground Floor'),
+        'floor' => '',
         'created_at' => (string)$order['created_at'],
         'created_time' => date('h:i A', strtotime((string)$order['created_at'])),
         'financials' => [

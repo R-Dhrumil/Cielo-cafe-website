@@ -121,7 +121,7 @@ $items = OrderItem::where('`order_id` = :oid', ['oid' => (int)$order['id']]);
 
   <div class="table-banner">
     TABLE: <?= e($table['table_number'] ?? 'Counter') ?>
-    <div style="font-size: 12px; font-weight: normal;"><?= e($table['floor'] ?? 'Dine In') ?></div>
+    <div style="font-size: 12px; font-weight: normal;">Dine In</div>
   </div>
 
   <div>
