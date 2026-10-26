@@ -104,6 +104,11 @@ abstract class Model
         return db()->delete($table, "`{$pk}` = :id", ['id' => $id]);
     }
 
+    public static function delete(int|string $id): int
+    {
+        return static::deleteById($id);
+    }
+
     public static function paginate(int $page = 1, int $perPage = 15, string $whereSql = '1=1', array $params = [], string $orderBy = 'id DESC'): array
     {
         $page = max(1, $page);

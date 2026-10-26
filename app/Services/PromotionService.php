@@ -117,7 +117,7 @@ class PromotionService
             $discountPaise = $maxDiscountPaise > 0 ? min($calc, $maxDiscountPaise) : $calc;
         } else {
             // Flat discount: if value <= 1000, assume rupees (e.g. 50 -> 5000 paise)
-            $flatPaise = $discountValue < 500 ? (int)round($discountValue * 100) : (int)$discountValue;
+            $flatPaise = $discountValue <= 1000 ? (int)round($discountValue * 100) : (int)$discountValue;
             $discountPaise = min($flatPaise, $subtotalPaise);
         }
 

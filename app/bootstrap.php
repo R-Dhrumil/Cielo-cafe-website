@@ -65,6 +65,9 @@ function loadDotEnv(string $filePath): void {
     }
 }
 
+if (file_exists(CIELO_ROOT . '/.env.local')) {
+    loadDotEnv(CIELO_ROOT . '/.env.local');
+}
 loadDotEnv(CIELO_ROOT . '/.env');
 
 // 3. Environment & Production Error Handling Configuration

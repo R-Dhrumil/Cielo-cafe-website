@@ -78,7 +78,7 @@ class Setting extends Model
             ]);
         }
 
-        self::$cache[$key] = $value;
+        self::$cache[$key] = self::castValue($serializedVal, $type);
     }
 
     /**
