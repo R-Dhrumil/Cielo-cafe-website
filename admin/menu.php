@@ -9,6 +9,7 @@ declare(strict_types=1);
 require_once __DIR__ . '/../app/bootstrap.php';
 
 use App\Services\AuthService;
+use App\Services\ImageService;
 use App\Models\MenuItem;
 use App\Models\MenuCategory;
 use App\Models\AuditLog;
@@ -65,12 +66,28 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $desc = trim((string)($_POST['description'] ?? ''));
 
             if ($itemId > 0 && !empty($name) && $pricePaise >= 0) {
-                MenuItem::updateById($itemId, [
+                $updateData = [
                     'name' => $name,
                     'price_paise' => $pricePaise,
                     'is_veg' => $isVeg,
                     'description' => $desc,
-                ]);
+                ];
+
+                // Process uploaded photo (converted to .webp) or preset
+                $uploadedWebp = ImageService::saveAsWebp(
+                    $_FILES['dish_photo'] ?? null,
+                    !empty($_POST['image_base64_webp']) ? (string)$_POST['image_base64_webp'] : null,
+                    'assets/images/dishes',
+                    $name
+                );
+
+                if ($uploadedWebp !== null) {
+                    $updateData['image_url'] = $uploadedWebp;
+                } elseif (!empty($_POST['preset_image_url'])) {
+                    $updateData['image_url'] = trim((string)$_POST['preset_image_url']);
+                }
+
+                MenuItem::updateById($itemId, $updateData);
 
                 AuditLog::log((int)$staff['id'], 'menu_item_updated', 'menu_item', $itemId, [
                     'name' => $name,
@@ -87,10 +104,26 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
             $pricePaise = (int)round($priceRupees * 100);
             $isVeg = (int)($_POST['is_veg'] ?? 1);
             $desc = trim((string)($_POST['description'] ?? ''));
-            $imageUrl = trim((string)($_POST['image_url'] ?? 'assets/images/cafe/hero-table.jpg'));
 
             if ($catId > 0 && !empty($name) && $pricePaise > 0) {
-                $slug = strtolower(trim(preg_replace('/[^A-Za-z0-9-]+/', '-', $name), '-'));
+                $slug = strtolower(trim((string)preg_replace('/[^A-Za-z0-9-]+/', '-', $name), '-'));
+
+                // Convert and save photo as .webp
+                $uploadedWebp = ImageService::saveAsWebp(
+                    $_FILES['dish_photo'] ?? null,
+                    !empty($_POST['image_base64_webp']) ? (string)$_POST['image_base64_webp'] : null,
+                    'assets/images/dishes',
+                    $slug
+                );
+
+                if ($uploadedWebp !== null) {
+                    $imageUrl = $uploadedWebp;
+                } elseif (!empty($_POST['preset_image_url'])) {
+                    $imageUrl = trim((string)$_POST['preset_image_url']);
+                } else {
+                    $imageUrl = trim((string)($_POST['image_url'] ?? 'assets/images/dishes/pesto-pizza.webp'));
+                }
+
                 $newId = MenuItem::create([
                     'category_id' => $catId,
                     'name' => $name,
@@ -106,8 +139,9 @@ if (($_SERVER['REQUEST_METHOD'] ?? '') === 'POST') {
                 AuditLog::log((int)$staff['id'], 'menu_item_created', 'menu_item', $newId, [
                     'name' => $name,
                     'price_paise' => $pricePaise,
+                    'image_url' => $imageUrl,
                 ]);
-                $msg = "New artisanal dish '{$name}' added to menu!";
+                $msg = "New artisanal dish '{$name}' published with optimized WebP photo!";
             } else {
                 $err = 'Please select a valid category, name, and positive price.';
             }
@@ -121,6 +155,7 @@ $search = trim((string)($_GET['q'] ?? ''));
 
 $categories = MenuCategory::all('sort_order ASC');
 $items = MenuItem::getAllWithCategory($selectedCat > 0 ? $selectedCat : null, $search);
+$dishPresets = ImageService::getDishPresets();
 
 $csrfToken = Security::generateCsrfToken();
 $activeNav = 'menu';
@@ -474,7 +509,7 @@ $activeNav = 'menu';
     .dishes-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-      gap: 1.25rem;
+      gap: 1.5rem;
     }
 
     .dish-card {
@@ -482,12 +517,18 @@ $activeNav = 'menu';
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-warm);
       box-shadow: var(--shadow-card);
-      padding: 1.5rem;
+      overflow: hidden;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      transition: all 0.2s ease;
+      transition: all 0.25s ease;
       position: relative;
+    }
+
+    .dish-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 24px rgba(26, 20, 18, 0.08);
+      border-color: rgba(107, 154, 196, 0.4);
     }
 
     .dish-card.sold-out {
@@ -496,22 +537,75 @@ $activeNav = 'menu';
       border-style: dashed;
     }
 
+    /* Dish Card Image Banner with WEBP Tag */
+    .dish-img-banner {
+      width: 100%;
+      height: 140px;
+      position: relative;
+      background: #EAE6DE;
+      overflow: hidden;
+    }
+
+    .dish-img-thumb {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      transition: transform 0.4s ease;
+    }
+
+    .dish-card:hover .dish-img-thumb {
+      transform: scale(1.05);
+    }
+
+    .dish-img-overlay {
+      position: absolute;
+      top: 0.75rem;
+      left: 0.75rem;
+      right: 0.75rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      pointer-events: none;
+    }
+
+    .dish-cat-pill {
+      background: rgba(26, 20, 18, 0.82);
+      color: #FFFFFF;
+      backdrop-filter: blur(4px);
+      font-size: 0.65rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 0.22rem 0.65rem;
+      border-radius: 999px;
+    }
+
+    .dish-webp-badge {
+      background: rgba(45, 106, 79, 0.9);
+      color: #FFFFFF;
+      font-size: 0.62rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      padding: 0.2rem 0.5rem;
+      border-radius: 4px;
+      backdrop-filter: blur(4px);
+    }
+
+    .dish-body-wrap {
+      padding: 1.25rem 1.35rem;
+      display: flex;
+      flex-direction: column;
+      flex: 1;
+      justify-content: space-between;
+    }
+
     .dish-top {
       display: flex;
       justify-content: space-between;
       align-items: flex-start;
-      margin-bottom: 0.75rem;
+      margin-bottom: 0.6rem;
       gap: 0.75rem;
-    }
-
-    .dish-cat-badge {
-      font-size: 0.68rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: var(--accent-terracotta);
-      margin-bottom: 0.25rem;
-      display: block;
     }
 
     .dish-name {
@@ -542,7 +636,7 @@ $activeNav = 'menu';
       font-size: 0.82rem;
       color: var(--text-muted);
       line-height: 1.5;
-      margin-bottom: 1.25rem;
+      margin-bottom: 1.15rem;
       display: -webkit-box;
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
@@ -554,7 +648,7 @@ $activeNav = 'menu';
       justify-content: space-between;
       align-items: center;
       border-top: 1px solid var(--border-warm);
-      padding-top: 1rem;
+      padding-top: 0.9rem;
     }
 
     .dish-price {
@@ -638,8 +732,10 @@ $activeNav = 'menu';
     .modal-box {
       background: #ffffff;
       border-radius: var(--radius-lg);
-      max-width: 500px;
+      max-width: 540px;
       width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
       padding: 2rem;
       box-shadow: 0 25px 50px rgba(0, 0, 0, 0.25);
     }
@@ -669,6 +765,74 @@ $activeNav = 'menu';
     .form-group input:focus, .form-group select:focus, .form-group textarea:focus {
       border-color: var(--accent-sky);
       background: #FFFFFF;
+    }
+
+    /* WebP Photo Upload Box Styles */
+    .photo-upload-zone {
+      border: 2px dashed rgba(26, 20, 18, 0.15);
+      border-radius: 12px;
+      padding: 1.25rem;
+      text-align: center;
+      background: var(--bg-cream);
+      cursor: pointer;
+      transition: all 0.2s ease;
+      position: relative;
+    }
+    .photo-upload-zone:hover {
+      border-color: var(--accent-terracotta);
+      background: #FFFFFF;
+    }
+    .upload-icon-circle {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: rgba(201, 106, 82, 0.12);
+      color: var(--accent-terracotta);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .photo-preview-wrap {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      text-align: left;
+    }
+    .photo-preview-img {
+      width: 90px;
+      height: 70px;
+      border-radius: 8px;
+      object-fit: cover;
+      border: 1px solid var(--border-warm);
+      box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+      flex-shrink: 0;
+    }
+    .photo-preview-info {
+      display: flex;
+      flex-direction: column;
+      gap: 0.25rem;
+      min-width: 0;
+    }
+    .preview-badge-webp {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #2D6A4F;
+      background: rgba(45, 106, 79, 0.12);
+      padding: 2px 8px;
+      border-radius: 999px;
+      display: inline-block;
+      width: fit-content;
+    }
+    .btn-remove-photo {
+      background: none;
+      border: none;
+      color: var(--accent-terracotta);
+      font-size: 0.75rem;
+      font-weight: 600;
+      cursor: pointer;
+      padding: 0;
+      text-align: left;
+      text-decoration: underline;
     }
   </style>
 </head>
@@ -728,37 +892,50 @@ $activeNav = 'menu';
     <?php else: ?>
       <div class="dishes-grid">
         <?php foreach ($items as $dish): ?>
-          <?php $isAvail = (int)($dish['is_available'] ?? 1) === 1; ?>
+          <?php 
+            $isAvail = (int)($dish['is_available'] ?? 1) === 1; 
+            $imgUrl = !empty($dish['image_url']) ? (string)$dish['image_url'] : 'assets/images/dishes/pesto-pizza.webp';
+            $isWebp = str_ends_with(strtolower($imgUrl), '.webp');
+          ?>
           <div class="dish-card <?= $isAvail ? '' : 'sold-out' ?>" id="dish-card-<?= (int)$dish['id'] ?>">
-            <div>
-              <div class="dish-top">
-                <div>
-                  <span class="dish-cat-badge"><?= htmlspecialchars((string)($dish['category_name'] ?? 'Artisanal')) ?></span>
-                  <h3 class="dish-name"><?= htmlspecialchars($dish['name']) ?></h3>
-                </div>
-                <div style="display:flex; align-items:center; gap:0.5rem;">
-                  <button type="button" class="btn-quick-edit" title="Edit Price & Details" onclick="openEditDishModal(<?= (int)$dish['id'] ?>, '<?= htmlspecialchars(addslashes($dish['name']), ENT_QUOTES) ?>', <?= (float)($dish['price_paise'] / 100) ?>, <?= (int)$dish['is_veg'] ?>, '<?= htmlspecialchars(addslashes($dish['description'] ?? ''), ENT_QUOTES) ?>')">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
-                  </button>
-                  <span class="diet-badge <?= ((int)$dish['is_veg'] === 1) ? 'diet-veg' : 'diet-nonveg' ?>" title="<?= ((int)$dish['is_veg'] === 1) ? 'Vegetarian' : 'Non-Vegetarian' ?>"></span>
-                </div>
+            
+            <!-- Dish Photo Banner with Format Tag -->
+            <div class="dish-img-banner">
+              <img src="/<?= e($imgUrl) ?>" alt="<?= e($dish['name']) ?>" class="dish-img-thumb" loading="lazy">
+              <div class="dish-img-overlay">
+                <span class="dish-cat-pill"><?= htmlspecialchars((string)($dish['category_name'] ?? 'Artisanal')) ?></span>
+                <span class="dish-webp-badge"><?= $isWebp ? 'WEBP' : 'PHOTO' ?></span>
               </div>
-
-              <p class="dish-desc"><?= htmlspecialchars((string)($dish['description'] ?? 'Artisanal preparation with premium estate ingredients.')) ?></p>
             </div>
 
-            <div class="dish-footer">
-              <div class="dish-price">₹<?= number_format((int)$dish['price_paise'] / 100, 2) ?></div>
+            <div class="dish-body-wrap">
+              <div>
+                <div class="dish-top">
+                  <h3 class="dish-name"><?= htmlspecialchars($dish['name']) ?></h3>
+                  <div style="display:flex; align-items:center; gap:0.5rem;">
+                    <button type="button" class="btn-quick-edit" title="Edit Price, Details & Photo" onclick="openEditDishModal(<?= (int)$dish['id'] ?>, '<?= htmlspecialchars(addslashes($dish['name']), ENT_QUOTES) ?>', <?= (float)($dish['price_paise'] / 100) ?>, <?= (int)$dish['is_veg'] ?>, '<?= htmlspecialchars(addslashes($dish['description'] ?? ''), ENT_QUOTES) ?>', '<?= htmlspecialchars(addslashes($imgUrl), ENT_QUOTES) ?>')">
+                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+                    </button>
+                    <span class="diet-badge <?= ((int)$dish['is_veg'] === 1) ? 'diet-veg' : 'diet-nonveg' ?>" title="<?= ((int)$dish['is_veg'] === 1) ? 'Vegetarian' : 'Non-Vegetarian' ?>"></span>
+                  </div>
+                </div>
 
-              <form method="POST" style="margin:0;" onsubmit="handleStockToggle(event, <?= (int)$dish['id'] ?>)">
-                <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
-                <input type="hidden" name="action" value="toggle_stock">
-                <input type="hidden" name="item_id" value="<?= (int)$dish['id'] ?>">
+                <p class="dish-desc"><?= htmlspecialchars((string)($dish['description'] ?? 'Artisanal preparation with premium estate ingredients.')) ?></p>
+              </div>
 
-                <button type="submit" id="toggle-btn-<?= (int)$dish['id'] ?>" class="stock-toggle-btn <?= $isAvail ? 'btn-in-stock' : 'btn-sold-out' ?>">
-                  <span><?= $isAvail ? '● In Stock' : '✕ Sold Out (86ed)' ?></span>
-                </button>
-              </form>
+              <div class="dish-footer">
+                <div class="dish-price">₹<?= number_format((int)$dish['price_paise'] / 100, 2) ?></div>
+
+                <form method="POST" style="margin:0;" onsubmit="handleStockToggle(event, <?= (int)$dish['id'] ?>)">
+                  <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
+                  <input type="hidden" name="action" value="toggle_stock">
+                  <input type="hidden" name="item_id" value="<?= (int)$dish['id'] ?>">
+
+                  <button type="submit" id="toggle-btn-<?= (int)$dish['id'] ?>" class="stock-toggle-btn <?= $isAvail ? 'btn-in-stock' : 'btn-sold-out' ?>">
+                    <span><?= $isAvail ? '● In Stock' : '✕ Sold Out (86ed)' ?></span>
+                  </button>
+                </form>
+              </div>
             </div>
           </div>
         <?php endforeach; ?>
@@ -767,17 +944,21 @@ $activeNav = 'menu';
 
   </main>
 
-  <!-- ADD DISH MODAL -->
+  <!-- ADD DISH MODAL WITH WEBP PHOTO UPLOAD -->
   <div id="modalAddDish" class="modal-backdrop">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <h2 style="font-family:'Fraunces', serif; font-size:1.4rem; color:var(--text-espresso); margin:0;">Add Artisanal Dish</h2>
+        <div>
+          <h2 style="font-family:'Fraunces', serif; font-size:1.4rem; color:var(--text-espresso); margin:0;">Add Artisanal Dish</h2>
+          <span style="font-size:0.75rem; color:var(--text-muted);">With native .webp lightweight image compression</span>
+        </div>
         <button type="button" onclick="closeAddDishModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted);">&times;</button>
       </div>
 
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data" id="formAddDish">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <input type="hidden" name="action" value="create_item">
+        <input type="hidden" name="image_base64_webp" id="addDishWebpBase64">
 
         <div class="form-group">
           <label>Category</label>
@@ -791,6 +972,53 @@ $activeNav = 'menu';
         <div class="form-group">
           <label>Dish Name</label>
           <input type="text" name="name" placeholder="e.g. Truffle Penne Rigate" required>
+        </div>
+
+        <!-- Photo Upload Section (Auto-Converts to .webp) -->
+        <div class="form-group">
+          <label style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Dish Photo</span>
+            <span style="font-size:0.7rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:2px 8px; border-radius:999px;">
+              Auto-converts to WebP
+            </span>
+          </label>
+          
+          <div class="photo-upload-zone" id="addPhotoDropzone" onclick="document.getElementById('addDishPhotoInput').click()">
+            <input type="file" id="addDishPhotoInput" name="dish_photo" accept="image/*" style="display:none;" onchange="handleImageFileSelect(this, 'add')">
+            
+            <div id="addPhotoPrompt">
+              <div class="upload-icon-circle">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              </div>
+              <div style="font-weight:700; font-size:0.86rem; color:var(--text-espresso); margin-top:0.4rem;">
+                Click to upload dish photo
+              </div>
+              <div style="font-size:0.72rem; color:var(--text-muted); margin-top:2px;">
+                JPG, PNG or WEBP &bull; Automatically compressed to lightweight .webp
+              </div>
+            </div>
+
+            <!-- Live WebP Preview -->
+            <div id="addPhotoPreviewWrap" class="photo-preview-wrap" style="display:none;">
+              <img id="addPhotoPreviewImg" src="" alt="Dish Preview" class="photo-preview-img">
+              <div class="photo-preview-info">
+                <span class="preview-badge-webp">✓ Converted to .webp</span>
+                <span id="addPhotoSizeInfo" style="font-size:0.72rem; color:var(--text-muted); font-weight:600;"></span>
+                <button type="button" class="btn-remove-photo" onclick="removeSelectedPhoto(event, 'add')">Change Photo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preset Library Selector -->
+          <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem;">
+            <span style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap;">Or pick library preset:</span>
+            <select name="preset_image_url" id="addPresetSelect" onchange="handlePresetSelect(this, 'add')" style="padding:0.4rem 0.6rem; font-size:0.78rem;">
+              <option value="">-- Choose existing photo --</option>
+              <?php foreach ($dishPresets as $preset): ?>
+                <option value="<?= htmlspecialchars($preset) ?>"><?= htmlspecialchars(basename($preset)) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
@@ -820,22 +1048,71 @@ $activeNav = 'menu';
     </div>
   </div>
 
-  <!-- EDIT DISH MODAL -->
+  <!-- EDIT DISH MODAL WITH PHOTO REPLACEMENT -->
   <div id="modalEditDish" class="modal-backdrop">
     <div class="modal-box">
       <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:1.5rem;">
-        <h2 style="font-family:'Fraunces', serif; font-size:1.4rem; color:var(--text-espresso); margin:0;">Edit Dish & Price</h2>
+        <div>
+          <h2 style="font-family:'Fraunces', serif; font-size:1.4rem; color:var(--text-espresso); margin:0;">Edit Dish & Photo</h2>
+          <span style="font-size:0.75rem; color:var(--text-muted);">Update details, pricing, or replace photo with WebP</span>
+        </div>
         <button type="button" onclick="closeEditDishModal()" style="background:none; border:none; font-size:1.5rem; cursor:pointer; color:var(--text-muted);">&times;</button>
       </div>
 
-      <form method="POST">
+      <form method="POST" enctype="multipart/form-data" id="formEditDish">
         <input type="hidden" name="csrf_token" value="<?= htmlspecialchars($csrfToken) ?>">
         <input type="hidden" name="action" value="update_item">
         <input type="hidden" name="item_id" id="editItemId" value="">
+        <input type="hidden" name="image_base64_webp" id="editDishWebpBase64">
 
         <div class="form-group">
           <label>Dish Name</label>
           <input type="text" name="name" id="editName" required>
+        </div>
+
+        <!-- Photo Section in Edit Modal -->
+        <div class="form-group">
+          <label style="display:flex; justify-content:space-between; align-items:center;">
+            <span>Dish Photo</span>
+            <span style="font-size:0.7rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:2px 8px; border-radius:999px;">
+              Auto-converts to WebP
+            </span>
+          </label>
+          
+          <div class="photo-upload-zone" id="editPhotoDropzone" onclick="document.getElementById('editDishPhotoInput').click()">
+            <input type="file" id="editDishPhotoInput" name="dish_photo" accept="image/*" style="display:none;" onchange="handleImageFileSelect(this, 'edit')">
+            
+            <div id="editPhotoPrompt">
+              <img id="editCurrentPhotoImg" src="" alt="Current Dish" class="photo-preview-img" style="margin:0 auto 0.4rem; width:100px; height:75px; display:block;">
+              <div style="font-weight:700; font-size:0.84rem; color:var(--text-espresso);">
+                Click to replace photo
+              </div>
+              <div style="font-size:0.7rem; color:var(--text-muted);">
+                Upload new JPG, PNG or WEBP (auto-converts to .webp)
+              </div>
+            </div>
+
+            <!-- Live WebP Preview for Edit -->
+            <div id="editPhotoPreviewWrap" class="photo-preview-wrap" style="display:none;">
+              <img id="editPhotoPreviewImg" src="" alt="New Dish Preview" class="photo-preview-img">
+              <div class="photo-preview-info">
+                <span class="preview-badge-webp">✓ New .webp ready</span>
+                <span id="editPhotoSizeInfo" style="font-size:0.72rem; color:var(--text-muted); font-weight:600;"></span>
+                <button type="button" class="btn-remove-photo" onclick="removeSelectedPhoto(event, 'edit')">Keep Current Photo</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Preset Library Selector for Edit -->
+          <div style="margin-top:0.45rem; display:flex; align-items:center; gap:0.5rem;">
+            <span style="font-size:0.75rem; color:var(--text-muted); white-space:nowrap;">Or pick preset:</span>
+            <select name="preset_image_url" id="editPresetSelect" onchange="handlePresetSelect(this, 'edit')" style="padding:0.4rem 0.6rem; font-size:0.78rem;">
+              <option value="">-- Keep current photo --</option>
+              <?php foreach ($dishPresets as $preset): ?>
+                <option value="<?= htmlspecialchars($preset) ?>"><?= htmlspecialchars(basename($preset)) ?></option>
+              <?php endforeach; ?>
+            </select>
+          </div>
         </div>
 
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:1rem;">
@@ -873,16 +1150,120 @@ $activeNav = 'menu';
     document.getElementById('modalAddDish').style.display = 'none';
   }
 
-  function openEditDishModal(id, name, price, isVeg, desc) {
+  function openEditDishModal(id, name, price, isVeg, desc, imgUrl) {
     document.getElementById('editItemId').value = id;
     document.getElementById('editName').value = name;
     document.getElementById('editPrice').value = price;
     document.getElementById('editVeg').value = isVeg;
     document.getElementById('editDesc').value = desc;
+
+    const currentImg = document.getElementById('editCurrentPhotoImg');
+    if (currentImg) {
+      currentImg.src = '/' + (imgUrl || 'assets/images/dishes/pesto-pizza.webp');
+    }
+
+    // Reset previous selection
+    document.getElementById('editDishPhotoInput').value = '';
+    document.getElementById('editDishWebpBase64').value = '';
+    document.getElementById('editPhotoPreviewWrap').style.display = 'none';
+    document.getElementById('editPhotoPrompt').style.display = 'block';
+    document.getElementById('editPresetSelect').value = '';
+
     document.getElementById('modalEditDish').style.display = 'flex';
   }
   function closeEditDishModal() {
     document.getElementById('modalEditDish').style.display = 'none';
+  }
+
+  // Client-Side Canvas WebP Converter: Converts any PNG/JPG/WEBP into optimized .webp
+  function handleImageFileSelect(input, prefix) {
+    const file = input.files && input.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = function(e) {
+      const img = new Image();
+      img.onload = function() {
+        // Offscreen canvas for downscaling & WebP encoding
+        const canvas = document.createElement('canvas');
+        const maxDim = 1000;
+        let width = img.width;
+        let height = img.height;
+
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
+          }
+        }
+
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(img, 0, 0, width, height);
+
+        // Convert to WebP format with 0.85 quality
+        const webpDataUrl = canvas.toDataURL('image/webp', 0.85);
+
+        // Populate hidden base64 field
+        const hiddenField = document.getElementById(`${prefix}DishWebpBase64`);
+        if (hiddenField) hiddenField.value = webpDataUrl;
+
+        // Display live preview
+        const previewWrap = document.getElementById(`${prefix}PhotoPreviewWrap`);
+        const previewImg = document.getElementById(`${prefix}PhotoPreviewImg`);
+        const prompt = document.getElementById(`${prefix}PhotoPrompt`);
+        const sizeInfo = document.getElementById(`${prefix}PhotoSizeInfo`);
+
+        if (previewImg) previewImg.src = webpDataUrl;
+        const sizeKb = Math.round((webpDataUrl.length * 3 / 4) / 1024);
+        if (sizeInfo) sizeInfo.textContent = `${width}x${height} · ~${sizeKb} KB .webp`;
+
+        if (prompt) prompt.style.display = 'none';
+        if (previewWrap) previewWrap.style.display = 'flex';
+      };
+      img.src = e.target.result;
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function removeSelectedPhoto(e, prefix) {
+    e.stopPropagation();
+    const fileInput = document.getElementById(`${prefix}DishPhotoInput`);
+    if (fileInput) fileInput.value = '';
+
+    const hiddenField = document.getElementById(`${prefix}DishWebpBase64`);
+    if (hiddenField) hiddenField.value = '';
+
+    const previewWrap = document.getElementById(`${prefix}PhotoPreviewWrap`);
+    const prompt = document.getElementById(`${prefix}PhotoPrompt`);
+    if (previewWrap) previewWrap.style.display = 'none';
+    if (prompt) prompt.style.display = 'block';
+  }
+
+  function handlePresetSelect(select, prefix) {
+    const val = select.value;
+    if (!val) return;
+
+    // Reset file inputs
+    const fileInput = document.getElementById(`${prefix}DishPhotoInput`);
+    if (fileInput) fileInput.value = '';
+    const hiddenField = document.getElementById(`${prefix}DishWebpBase64`);
+    if (hiddenField) hiddenField.value = '';
+
+    const previewWrap = document.getElementById(`${prefix}PhotoPreviewWrap`);
+    const previewImg = document.getElementById(`${prefix}PhotoPreviewImg`);
+    const prompt = document.getElementById(`${prefix}PhotoPrompt`);
+    const sizeInfo = document.getElementById(`${prefix}PhotoSizeInfo`);
+
+    if (previewImg) previewImg.src = '/' + val;
+    if (sizeInfo) sizeInfo.textContent = 'Selected Library Preset';
+
+    if (prompt) prompt.style.display = 'none';
+    if (previewWrap) previewWrap.style.display = 'flex';
   }
 
   async function handleStockToggle(e, itemId) {

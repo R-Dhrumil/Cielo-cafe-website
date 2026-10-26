@@ -108,6 +108,8 @@ $activeNav = 'cms';
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-height: 100vh;
       display: flex;
+      overflow-x: hidden;
+      max-width: 100vw;
     }
 
     /* Left Sidebar Styles */
@@ -320,7 +322,7 @@ $activeNav = 'cms';
       color: #FFFFFF;
     }
 
-    /* Right Content Area */
+    /* Right Content Area - Zero Horizontal Overflow */
     .admin-main-wrapper {
       margin-left: 260px;
       flex: 1;
@@ -328,13 +330,17 @@ $activeNav = 'cms';
       display: flex;
       flex-direction: column;
       width: calc(100% - 260px);
+      max-width: calc(100% - 260px);
+      min-width: 0;
+      overflow-x: hidden;
+      box-sizing: border-box;
     }
 
     /* Top Action Bar */
     .admin-topbar {
       background: #FFFFFF;
       border-bottom: 1px solid var(--border-warm);
-      padding: 1.15rem 2.5rem;
+      padding: 1.15rem 2rem;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -342,11 +348,14 @@ $activeNav = 'cms';
       top: 0;
       z-index: 900;
       box-shadow: 0 2px 10px rgba(26, 20, 18, 0.02);
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .topbar-title-wrap {
       display: flex;
       flex-direction: column;
+      min-width: 0;
     }
 
     .topbar-heading {
@@ -368,12 +377,16 @@ $activeNav = 'cms';
       display: flex;
       align-items: center;
       gap: 1rem;
+      flex-shrink: 0;
     }
 
     /* Content Area */
     .cms-content-area {
-      padding: 2.25rem 2.5rem 6rem;
+      padding: 1.75rem 2rem 6rem;
       flex: 1;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .toast-alert {
@@ -381,7 +394,7 @@ $activeNav = 'cms';
       border-left: 4px solid var(--accent-sky);
       border-radius: 12px;
       padding: 1rem 1.5rem;
-      margin-bottom: 2rem;
+      margin-bottom: 1.75rem;
       display: flex;
       align-items: center;
       justify-content: space-between;
@@ -395,12 +408,22 @@ $activeNav = 'cms';
       color: var(--accent-terracotta);
     }
 
-    /* Studio Layout */
+    /* Studio Layout (Adaptive 2-Column with Zero Overflow) */
     .studio-layout {
       display: grid;
-      grid-template-columns: 1fr 420px;
-      gap: 2rem;
+      grid-template-columns: minmax(0, 1fr) 350px;
+      gap: 1.75rem;
       align-items: start;
+      width: 100%;
+      max-width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .form-sections {
+      min-width: 0;
+      max-width: 100%;
+      width: 100%;
     }
 
     /* Form Section Cards */
@@ -409,9 +432,13 @@ $activeNav = 'cms';
       border-radius: var(--radius-lg);
       border: 1px solid var(--border-warm);
       box-shadow: var(--shadow-card);
-      padding: 2rem;
-      margin-bottom: 2rem;
+      padding: 1.75rem 2rem;
+      margin-bottom: 1.75rem;
       transition: all 0.2s ease;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
     }
 
     .cms-card:hover {
@@ -454,27 +481,39 @@ $activeNav = 'cms';
 
     .form-grid {
       display: grid;
-      grid-template-columns: 1fr 1fr;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
       gap: 1.25rem;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
     }
 
     .form-grid.single-col {
-      grid-template-columns: 1fr;
+      grid-template-columns: minmax(0, 1fr);
     }
 
     .form-group {
       display: flex;
       flex-direction: column;
       gap: 0.4rem;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
     }
 
     .form-group label {
       font-size: 0.82rem;
       font-weight: 600;
       color: var(--text-espresso);
+      white-space: normal;
+      word-break: break-word;
     }
 
     .form-group input, .form-group textarea, .form-group select {
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      min-width: 0;
       padding: 0.8rem 1rem;
       border: 1px solid var(--border-warm);
       border-radius: 10px;
@@ -484,6 +523,12 @@ $activeNav = 'cms';
       background: #FAFAFA;
       outline: none;
       transition: all 0.2s ease;
+    }
+
+    .form-group select {
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;
     }
 
     .form-group input:focus, .form-group textarea:focus, .form-group select:focus {
@@ -496,6 +541,7 @@ $activeNav = 'cms';
       font-size: 0.74rem;
       color: var(--text-muted);
       line-height: 1.4;
+      word-break: break-word;
     }
 
     /* Live Preview Sticky Sidebar */
@@ -505,6 +551,9 @@ $activeNav = 'cms';
       display: flex;
       flex-direction: column;
       gap: 1.5rem;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .preview-card {
@@ -513,6 +562,8 @@ $activeNav = 'cms';
       border: 1px solid var(--border-warm);
       box-shadow: var(--shadow-card);
       overflow: hidden;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .preview-header {
@@ -530,6 +581,7 @@ $activeNav = 'cms';
 
     .preview-body {
       padding: 1.5rem;
+      box-sizing: border-box;
     }
 
     .preview-mock-hero {
@@ -538,6 +590,7 @@ $activeNav = 'cms';
       padding: 1.5rem;
       text-align: center;
       border: 1px dashed var(--border-warm);
+      word-break: break-word;
     }
 
     .mock-badge {
@@ -557,6 +610,7 @@ $activeNav = 'cms';
       color: var(--text-espresso);
       margin: 0;
       line-height: 1.1;
+      word-break: break-word;
     }
 
     .mock-tagline {
@@ -566,6 +620,7 @@ $activeNav = 'cms';
       color: var(--accent-terracotta);
       margin-top: 0.25rem;
       display: block;
+      word-break: break-word;
     }
 
     .mock-btn {
@@ -577,6 +632,7 @@ $activeNav = 'cms';
       font-weight: 700;
       padding: 0.5rem 1rem;
       border-radius: 999px;
+      word-break: break-word;
     }
 
     .preview-quote-box {
@@ -589,6 +645,7 @@ $activeNav = 'cms';
       font-size: 0.88rem;
       color: var(--text-espresso);
       border-left: 3px solid var(--accent-terracotta);
+      word-break: break-word;
     }
 
     /* Floating Save Bar */
@@ -596,7 +653,8 @@ $activeNav = 'cms';
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      z-index: 100;
+      z-index: 999;
+      filter: drop-shadow(0 10px 25px rgba(26, 20, 18, 0.25));
     }
 
     .btn-save-primary {
@@ -622,16 +680,24 @@ $activeNav = 'cms';
       box-shadow: 0 16px 36px rgba(26, 20, 18, 0.45);
     }
 
-    @media (max-width: 1200px) {
+    @media (max-width: 1260px) {
       .studio-layout {
-        grid-template-columns: 1fr;
+        grid-template-columns: minmax(0, 1fr);
       }
       .preview-sidebar {
-        display: none;
+        position: static;
+        top: auto;
+        order: 2;
+        width: 100%;
+        max-width: 480px;
+        margin: 0 auto;
       }
     }
 
     @media (max-width: 900px) {
+      .form-grid {
+        grid-template-columns: minmax(0, 1fr);
+      }
       .admin-sidebar {
         transform: translateX(-100%);
       }
@@ -641,6 +707,19 @@ $activeNav = 'cms';
       .admin-main-wrapper {
         margin-left: 0;
         width: 100%;
+        max-width: 100%;
+      }
+      .cms-content-area {
+        padding: 1.25rem 1rem 6rem;
+      }
+      .floating-save-bar {
+        bottom: 1rem;
+        right: 1rem;
+        left: 1rem;
+      }
+      .btn-save-primary {
+        width: 100%;
+        justify-content: center;
       }
     }
   </style>
@@ -890,12 +969,12 @@ $activeNav = 'cms';
               <div class="form-grid single-col" style="margin-bottom: 1.5rem;">
                 <div class="form-group">
                   <label>Promotional Stacking Policy</label>
-                  <select name="settings[promo_stacking_mode]">
+                  <select name="settings[promo_stacking_mode]" style="width:100%; max-width:100%;">
                     <option value="stackable" <?= (($current['promo_stacking_mode'] ?? 'stackable') === 'stackable') ? 'selected' : '' ?>>
-                      Stackable Mode (Recommended: Automated Happy Hours & Sourdough Combos combine with Coupon Codes)
+                      Stackable Mode (Recommended: Offers & Combos combine with Coupon Codes)
                     </option>
                     <option value="exclusive" <?= (($current['promo_stacking_mode'] ?? 'stackable') === 'exclusive') ? 'selected' : '' ?>>
-                      Exclusive Mode (Margin Protection: Automated Happy Hours & Combos block Coupon Codes from stacking)
+                      Exclusive Mode (Margin Guard: Automated Offers block Coupon Codes)
                     </option>
                   </select>
                   <span class="help-hint">Controls how the authoritative cart evaluator applies multiple promotions at checkout.</span>
@@ -904,7 +983,7 @@ $activeNav = 'cms';
 
               <!-- Automated Time-Based Offers (Happy Hours & Combos) -->
               <div style="margin-top: 1.25rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
                   <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-espresso); margin:0;">Automated Offers & Combos</h3>
                   <span style="font-size:0.75rem; color:var(--text-muted);"><?= count($offersList) ?> Active Schedules</span>
                 </div>
@@ -917,19 +996,19 @@ $activeNav = 'cms';
                       $daysText = !empty($sched['days']) ? implode(', ', array_slice($sched['days'], 0, 4)) . (count($sched['days']) > 4 ? '...' : '') : 'Everyday';
                       $timeText = (!empty($sched['start_time']) && !empty($sched['end_time'])) ? ($sched['start_time'] . ' - ' . $sched['end_time']) : 'All Day';
                     ?>
-                    <div style="background:var(--bg-cream); border:1px solid var(--border-warm); border-radius:12px; padding:0.9rem 1.15rem; display:flex; justify-content:space-between; align-items:center;">
-                      <div>
-                        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem;">
-                          <span style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 8px; border-radius:4px; background:<?= $off['type'] === 'happy_hour' ? 'rgba(107, 154, 196, 0.2)' : 'rgba(201, 106, 82, 0.18)' ?>; color:<?= $off['type'] === 'happy_hour' ? '#3B6A8F' : '#A74A34' ?>;">
+                    <div style="background:var(--bg-cream); border:1px solid var(--border-warm); border-radius:12px; padding:0.9rem 1.15rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; min-width:0;">
+                      <div style="min-width:0; flex:1;">
+                        <div style="display:flex; align-items:center; gap:0.5rem; margin-bottom:0.25rem; flex-wrap:wrap;">
+                          <span style="font-size:0.68rem; font-weight:700; text-transform:uppercase; letter-spacing:0.05em; padding:2px 8px; border-radius:4px; background:<?= $off['type'] === 'happy_hour' ? 'rgba(107, 154, 196, 0.2)' : 'rgba(201, 106, 82, 0.18)' ?>; color:<?= $off['type'] === 'happy_hour' ? '#3B6A8F' : '#A74A34' ?>; white-space:nowrap;">
                             <?= $off['type'] === 'happy_hour' ? 'Happy Hour' : 'Sourdough Combo' ?>
                           </span>
-                          <strong style="font-size:0.9rem; color:var(--text-espresso);"><?= e($off['title']) ?></strong>
+                          <strong style="font-size:0.9rem; color:var(--text-espresso); word-break:break-word;"><?= e($off['title']) ?></strong>
                         </div>
-                        <div style="font-size:0.78rem; color:var(--text-muted);">
+                        <div style="font-size:0.78rem; color:var(--text-muted); word-break:break-word;">
                           Schedule: <span style="color:var(--text-espresso); font-weight:600;"><?= e($daysText) ?> (<?= e($timeText) ?>)</span>
                         </div>
                       </div>
-                      <span style="font-size:0.75rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:4px 10px; border-radius:999px;">
+                      <span style="font-size:0.75rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:4px 10px; border-radius:999px; flex-shrink:0;">
                         Active
                       </span>
                     </div>
@@ -939,7 +1018,7 @@ $activeNav = 'cms';
 
               <!-- Active Coupons & Audience Targeting -->
               <div style="margin-top: 1.5rem;">
-                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem;">
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:0.75rem; flex-wrap:wrap; gap:0.5rem;">
                   <h3 style="font-size:0.95rem; font-weight:700; color:var(--text-espresso); margin:0;">Vouchers & Audience Targeting</h3>
                   <span style="font-size:0.75rem; color:var(--text-muted);"><?= count($couponsList) ?> Configured Vouchers</span>
                 </div>
@@ -953,32 +1032,32 @@ $activeNav = 'cms';
                         default => 'background:rgba(107,154,196,0.15); color:var(--accent-sky-deep); border:1px solid rgba(107,154,196,0.3);',
                       };
                       $audLabel = match($cp['audience']) {
-                        'vip' => 'VIP Patrons (5+ visits or 500+ pts)',
-                        'first_time' => 'First-Time Guests Only',
+                        'vip' => 'VIP Patrons (5+ visits)',
+                        'first_time' => 'First-Time Guests',
                         default => 'All Dining Guests',
                       };
                       $discountDisplay = ($cp['type'] === 'percentage') 
                         ? ($cp['value'] . '% Off (Capped at ₹' . ($cp['max_discount_paise'] / 100) . ')')
                         : ('Flat ₹' . $cp['value'] . ' Off');
                     ?>
-                    <div style="background:#FFFFFF; border:1px solid var(--border-warm); border-radius:12px; padding:0.9rem 1.15rem; display:flex; justify-content:space-between; align-items:center;">
-                      <div>
-                        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.3rem;">
-                          <span style="font-family:monospace; font-weight:800; font-size:0.92rem; background:rgba(26,20,18,0.06); padding:2px 8px; border-radius:6px; letter-spacing:0.05em; color:var(--text-espresso);">
+                    <div style="background:#FFFFFF; border:1px solid var(--border-warm); border-radius:12px; padding:0.9rem 1.15rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:0.75rem; min-width:0;">
+                      <div style="min-width:0; flex:1;">
+                        <div style="display:flex; align-items:center; gap:0.6rem; margin-bottom:0.3rem; flex-wrap:wrap;">
+                          <span style="font-family:monospace; font-weight:800; font-size:0.92rem; background:rgba(26,20,18,0.06); padding:2px 8px; border-radius:6px; letter-spacing:0.05em; color:var(--text-espresso); white-space:nowrap;">
                             <?= e($cp['code']) ?>
                           </span>
-                          <span style="font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:999px; <?= $audBadgeColor ?>">
+                          <span style="font-size:0.7rem; font-weight:700; padding:2px 8px; border-radius:999px; white-space:nowrap; <?= $audBadgeColor ?>">
                             <?= e($audLabel) ?>
                           </span>
                         </div>
-                        <div style="font-size:0.8rem; color:var(--text-espresso); font-weight:600;">
+                        <div style="font-size:0.8rem; color:var(--text-espresso); font-weight:600; word-break:break-word;">
                           <?= e($cp['title']) ?> &middot; <span style="color:var(--accent-terracotta);"><?= e($discountDisplay) ?></span>
                         </div>
                         <div style="font-size:0.74rem; color:var(--text-muted); margin-top:2px;">
                           Min Order: ₹<?= number_format($cp['min_order_paise'] / 100) ?> &middot; Limit: <?= $cp['usage_limit_per_user'] ?>x per patron
                         </div>
                       </div>
-                      <div style="text-align:right;">
+                      <div style="text-align:right; flex-shrink:0;">
                         <span style="font-size:0.75rem; font-weight:700; color:#2D6A4F; background:rgba(45,106,79,0.1); padding:4px 10px; border-radius:999px;">
                           <?= (!empty($cp['is_active'])) ? 'Active' : 'Inactive' ?>
                         </span>
