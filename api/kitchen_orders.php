@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         'ready' => 'ready',
         'complete' => 'completed',
         'cancel' => 'cancelled',
+        'recall' => 'preparing',
     ];
 
     if (!isset($allowedTransitions[$action])) {
@@ -58,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
     Order::updateById($orderId, $updateData);
 
-    if ($newStatus === 'completed' && $order['payment_status'] === 'paid') {
+    if ($newStatus === 'completed' && ($order['payment_status'] ?? '') === 'paid') {
         LoyaltyService::processOrderCompletion($orderId);
     } elseif ($newStatus === 'cancelled') {
         LoyaltyService::reverseOrderLoyalty($orderId, 'Cancelled via Kitchen KDS');
@@ -70,7 +71,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         "kds_status_change_{$newStatus}",
         'orders',
         $orderId,
-        ['from' => $order['status'], 'to' => $newStatus]
+        ['from' => $order['status'], 'to' => $newStatus, 'action' => $action]
     );
 
     Response::json(true, [
@@ -81,7 +82,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit;
 }
 
-// GET: Fetch Active Kitchen Tickets
+// GET: Fetch Active Kitchen Tickets & Recent Completed Orders
 try {
     $activeOrders = Order::where(
         '`status` IN ("placed", "preparing", "ready")',
@@ -89,45 +90,101 @@ try {
         'CASE `status` WHEN "placed" THEN 1 WHEN "preparing" THEN 2 WHEN "ready" THEN 3 END ASC, `created_at` ASC'
     );
 
-    $tickets = [];
+    // Fetch recent completed orders for Recall drawer
+    $completedOrders = Order::where(
+        '`status` = "completed"',
+        [],
+        '`updated_at` DESC',
+        10
+    );
+
     $now = time();
 
-    foreach ($activeOrders as $order) {
+    $formatTicket = function(array $order) use ($now): array {
         $oid = (int)$order['id'];
-        $table = Table::find((int)$order['table_id']);
+        $table = Table::find((int)($order['table_id'] ?? 0));
         $items = OrderItem::where('`order_id` = :oid', ['oid' => $oid]);
 
         $createdTimestamp = strtotime((string)$order['created_at']);
         $elapsedMinutes = (int)floor(($now - $createdTimestamp) / 60);
 
         $lineItems = [];
+        $totalItemsCount = 0;
         foreach ($items as $it) {
             $addons = !empty($it['addons_json']) ? json_decode((string)$it['addons_json'], true) : [];
+            $qty = (int)$it['quantity'];
+            $totalItemsCount += $qty;
             $lineItems[] = [
+                'id' => (int)$it['id'],
                 'name' => (string)$it['item_name'],
-                'quantity' => (int)$it['quantity'],
+                'quantity' => $qty,
                 'addons' => $addons,
                 'note' => (string)($it['item_note'] ?? ''),
             ];
         }
 
-        $tickets[] = [
+        $tableNum = (string)($table['table_number'] ?? 'Counter');
+        $floorName = (string)($table['floor'] ?? '');
+        if (empty($floorName)) {
+            $lower = strtolower($tableNum);
+            $floorName = (str_contains($lower, 'counter') || str_contains($lower, 'takeaway') || str_contains($lower, 'delivery'))
+                ? 'Takeaway'
+                : 'Dine-In';
+        }
+
+        return [
             'id' => $oid,
             'order_number' => (string)$order['order_number'],
             'status' => (string)$order['status'],
-            'table_number' => (string)($table['table_number'] ?? 'Counter'),
-            'floor' => '',
+            'table_number' => $tableNum,
+            'floor' => $floorName,
             'created_at' => (string)$order['created_at'],
+            'created_ts' => $createdTimestamp,
             'created_time' => date('h:i A', $createdTimestamp),
             'elapsed_minutes' => $elapsedMinutes,
             'kitchen_notes' => (string)($order['kitchen_notes'] ?? ''),
+            'payment_status' => (string)($order['payment_status'] ?? 'pending'),
+            'total_quantity' => $totalItemsCount,
             'items' => $lineItems,
         ];
+    };
+
+    $tickets = [];
+    $prepSummary = [];
+
+    foreach ($activeOrders as $order) {
+        $ticket = $formatTicket($order);
+        $tickets[] = $ticket;
+
+        // Collect prep summary
+        foreach ($ticket['items'] as $item) {
+            $name = $item['name'];
+            if (!isset($prepSummary[$name])) {
+                $prepSummary[$name] = [
+                    'name' => $name,
+                    'total_qty' => 0,
+                    'ticket_count' => 0,
+                ];
+            }
+            $prepSummary[$name]['total_qty'] += $item['quantity'];
+            $prepSummary[$name]['ticket_count']++;
+        }
     }
+
+    $recentCompleted = [];
+    foreach ($completedOrders as $order) {
+        $recentCompleted[] = $formatTicket($order);
+    }
+
+    // Sort prep summary by highest quantity first
+    usort($prepSummary, fn($a, $b) => $b['total_qty'] <=> $a['total_qty']);
 
     Response::json(true, [
         'ticket_count' => count($tickets),
         'tickets' => $tickets,
+        'prep_summary' => array_values($prepSummary),
+        'recent_completed' => $recentCompleted,
+        'server_time' => $now,
     ]);
 } catch (\Throwable $e) {
     Response::json(false, [], 'Failed to fetch kitchen tickets: ' . $e->getMessage(), 500);
